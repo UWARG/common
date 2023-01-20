@@ -1,0 +1,23 @@
+package messages;
+
+struct Header {
+    byte flag;
+    byte length[2]; // 16 bit uint doesnt exit
+    byte type;
+}
+
+struct SensorData {
+    double latitude;
+    double longitude;
+    float altitude;
+    float clime_rate;
+    float heading;
+    float air_speed;
+    float ground_speed;
+    float roll;
+    float pitch;
+    float yaw;
+    float roll_rate;
+    float pitch_rate;
+    float yaw_rate;
+}
