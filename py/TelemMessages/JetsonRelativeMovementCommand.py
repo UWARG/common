@@ -20,10 +20,9 @@ class JetsonRelativeMovementCommand(object):
 
     def __init__(self):
         self.header = TelemMessages.Header()
-		self.header.flag = 0x7e
-		self.header.type = 0x2
-		self.header.length.append(0x0)
-		self.header.length.append(0x10)
+        self.header.flag = 0x7e
+        self.header.type = 0x2
+        self.header.length = bytes([ 0x0, 0x10 ])
         self.x = 0.0
         self.y = 0.0
         self.z = 0.0

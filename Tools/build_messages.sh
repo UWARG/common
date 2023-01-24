@@ -12,6 +12,7 @@ if [ $1 = "python" ]; then
         echo "building .py for $FILE"
         lcm-gen --python --ppath $script_path/../py/ $FILE
     done   
+    python3 $script_path/py_gen_helpers.py
 elif [ $1 = "cpp" ]; then
     echo "building c++ messages"
     for FILE in $script_path/TelemMessages/*; do

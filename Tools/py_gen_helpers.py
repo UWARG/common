@@ -38,10 +38,9 @@ with open(msg_path + 'messages.json') as json_file:
                 print("phrase not found in file, its broken")
                 quit()
             print(index)
-            contents.insert(index + 1, "\t\tself.header.flag = 0x7e\n")
-            contents.insert(index + 2, "\t\tself.header.type = " + hex(msg["type"]) + "\n")
-            contents.insert(index + 3, "\t\tself.header.length.append(" + hex(length[0]) + ")\n")
-            contents.insert(index + 4, "\t\tself.header.length.append(" + hex(length[1]) + ")\n")
+            contents.insert(index + 1, "        self.header.flag = 0x7e\n")
+            contents.insert(index + 2, "        self.header.type = " + hex(msg["type"]) + "\n")
+            contents.insert(index + 3, "        self.header.length = bytes([ " + hex(length[0]) + ", " + hex(length[1]) + " ])\n")
 
             fd.seek(0)
             fd.writelines(contents)

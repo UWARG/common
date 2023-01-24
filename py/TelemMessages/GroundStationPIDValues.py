@@ -22,10 +22,9 @@ class GroundStationPIDValues(object):
 
     def __init__(self):
         self.header = TelemMessages.Header()
-		self.header.flag = 0x7e
-		self.header.type = 0x6
-		self.header.length.append(0x0)
-		self.header.length.append(0x1a)
+        self.header.flag = 0x7e
+        self.header.type = 0x6
+        self.header.length = bytes([ 0x0, 0x1a ])
         self.controller = 0
         self.axis = 0
         self.values = TelemMessages.PIDValues()
