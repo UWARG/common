@@ -1,4 +1,4 @@
-package messages;
+package TelemMessages;
 
 struct Header {
     byte flag;
