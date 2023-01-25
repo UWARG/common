@@ -17,20 +17,13 @@ loc = os.path.realpath(os.path.dirname(__file__))
 msg_path = loc + '/../TelemMessages/'
 py_path = loc + '/../py/TelemMessages/'
 
-# delete the existing helpers
-# if not os.path.exists(loc + '/../Inc/helpers'):
-#     print("creating helpers folder")
-#     os.mkdir(loc + '/../Inc/helpers')
-
-# Opening JSON file
 
 
 helper = "import TelemMessages\n\n"
 helper = helper + "def decodeMsg(buf):\n\t"
 helper = helper + "raw_data = buf.getbuffer().tobytes()\n\t"
 
-
-
+# open json file
 with open(msg_path + 'messages.json') as json_file:
     data = json.load(json_file)
     for msg in data:
@@ -55,12 +48,6 @@ with open(msg_path + 'messages.json') as json_file:
 
             helper = helper + "if raw_data[3] == " + hex(msg["type"]) + ":\n\t\t"
             helper = helper + "return TelemMessages." + msg["name"] + "()._decode_one(buf)\n\tel"
-            # file_contents = file_contents.replace("{{name}}", msg["name"])
-            # file_contents = file_contents.replace("{{type}}", str(msg["type"]))
-            # file_contents = file_contents.replace("{{length_0}}", str(length[0]))
-            # file_contents = file_contents.replace("{{length_1}}", str(length[1]))
-
-            # output_file_path = loc + '/../Inc/helpers/' + msg["name"] + "_helper.hpp"
 
 helper = helper + "se:\n\t\treturn None"
 output_file = open(py_path + "../helper.py", "w")

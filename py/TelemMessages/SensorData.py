@@ -10,7 +10,7 @@ except ImportError:
 import struct
 
 class SensorData(object):
-    __slots__ = ["latitude", "longitude", "altitude", "clime_rate", "heading", "air_speed", "ground_speed", "roll", "pitch", "yaw", "roll_rate", "pitch_rate", "yaw_rate"]
+    __slots__ = ["latitude", "longitude", "altitude", "climb_rate", "heading", "air_speed", "ground_speed", "roll", "pitch", "yaw", "roll_rate", "pitch_rate", "yaw_rate"]
 
     __typenames__ = ["double", "double", "float", "float", "float", "float", "float", "float", "float", "float", "float", "float", "float"]
 
@@ -20,7 +20,7 @@ class SensorData(object):
         self.latitude = 0.0
         self.longitude = 0.0
         self.altitude = 0.0
-        self.clime_rate = 0.0
+        self.climb_rate = 0.0
         self.heading = 0.0
         self.air_speed = 0.0
         self.ground_speed = 0.0
@@ -38,7 +38,7 @@ class SensorData(object):
         return buf.getvalue()
 
     def _encode_one(self, buf):
-        buf.write(struct.pack(">ddfffffffffff", self.latitude, self.longitude, self.altitude, self.clime_rate, self.heading, self.air_speed, self.ground_speed, self.roll, self.pitch, self.yaw, self.roll_rate, self.pitch_rate, self.yaw_rate))
+        buf.write(struct.pack(">ddfffffffffff", self.latitude, self.longitude, self.altitude, self.climb_rate, self.heading, self.air_speed, self.ground_speed, self.roll, self.pitch, self.yaw, self.roll_rate, self.pitch_rate, self.yaw_rate))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -52,13 +52,13 @@ class SensorData(object):
 
     def _decode_one(buf):
         self = SensorData()
-        self.latitude, self.longitude, self.altitude, self.clime_rate, self.heading, self.air_speed, self.ground_speed, self.roll, self.pitch, self.yaw, self.roll_rate, self.pitch_rate, self.yaw_rate = struct.unpack(">ddfffffffffff", buf.read(60))
+        self.latitude, self.longitude, self.altitude, self.climb_rate, self.heading, self.air_speed, self.ground_speed, self.roll, self.pitch, self.yaw, self.roll_rate, self.pitch_rate, self.yaw_rate = struct.unpack(">ddfffffffffff", buf.read(60))
         return self
     _decode_one = staticmethod(_decode_one)
 
     def _get_hash_recursive(parents):
         if SensorData in parents: return 0
-        tmphash = (0x555435b902dc9b04) & 0xffffffffffffffff
+        tmphash = (0xc7cffe8566e8465c) & 0xffffffffffffffff
         tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)

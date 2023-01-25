@@ -10,7 +10,7 @@ struct SensorData {
     double latitude;
     double longitude;
     float altitude;
-    float clime_rate;
+    float climb_rate;
     float heading;
     float air_speed;
     float ground_speed;
