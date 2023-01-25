@@ -23,6 +23,14 @@ py_path = loc + '/../py/TelemMessages/'
 #     os.mkdir(loc + '/../Inc/helpers')
 
 # Opening JSON file
+
+
+helper = "import TelemMessages\n\n"
+helper = helper + "def decodeMsg(buf):\n\t"
+helper = helper + "raw_data = buf.getbuffer().tobytes()\n\t"
+
+
+
 with open(msg_path + 'messages.json') as json_file:
     data = json.load(json_file)
     for msg in data:
@@ -44,9 +52,18 @@ with open(msg_path + 'messages.json') as json_file:
 
             fd.seek(0)
             fd.writelines(contents)
+
+            helper = helper + "if raw_data[3] == " + hex(msg["type"]) + ":\n\t\t"
+            helper = helper + "return TelemMessages." + msg["name"] + "()._decode_one(buf)\n\tel"
             # file_contents = file_contents.replace("{{name}}", msg["name"])
             # file_contents = file_contents.replace("{{type}}", str(msg["type"]))
             # file_contents = file_contents.replace("{{length_0}}", str(length[0]))
             # file_contents = file_contents.replace("{{length_1}}", str(length[1]))
 
             # output_file_path = loc + '/../Inc/helpers/' + msg["name"] + "_helper.hpp"
+
+helper = helper + "se:\n\t\treturn None"
+output_file = open(py_path + "../helper.py", "w")
+
+output_file.write(helper)
+output_file.close()

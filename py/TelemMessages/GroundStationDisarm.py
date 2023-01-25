@@ -34,7 +34,6 @@ class GroundStationDisarm(object):
 
     def _encode_one(self, buf):
         assert self.header._get_packed_fingerprint() == TelemMessages.Header._get_packed_fingerprint()
-        print("got to here")
         self.header._encode_one(buf)
         buf.write(struct.pack(">b", self.arm))
         buf.write(bytearray(self.crc[:4]))
