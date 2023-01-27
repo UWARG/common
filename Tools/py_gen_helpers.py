@@ -20,7 +20,7 @@ py_path = loc + '/../py/TelemMessages/'
 
 
 helper = "import TelemMessages\n\n"
-helper = helper + "def decodeMsg(buf):\n\t"
+helper = helper + "def decode_msg(buf):\n\t"
 helper = helper + "raw_data = buf.getbuffer().tobytes()\n\t"
 
 # open json file

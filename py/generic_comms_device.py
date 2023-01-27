@@ -1,9 +1,7 @@
-import libscrc
 import io
-import TelemMessages
+import libscrc
 import serial
-from helper import decodeMsg 
-
+from helper import decode_msg 
 
 class GenericCommsDevice():
 
@@ -12,13 +10,13 @@ class GenericCommsDevice():
         self.length = -1
         self.ser = serial.Serial(port=port, baudrate=baudrate, bytesize=8, timeout=2, stopbits=serial.STOPBITS_ONE)
 
-    def getCRC32(self, b):
+    def get_crc32(self, b):
         return libscrc.crc32(b)
 
     def transmit(self, msg):
         buf = io.BytesIO()
         msg._encode_one(buf)
-        crc32 = self.getCRC32(buf.getbuffer().tobytes())
+        crc32 = self.get_crc32(buf.getbuffer().tobytes())
         msg.crc = crc32.to_bytes(4, 'big')
         buf = io.BytesIO()
         msg._encode_one(buf)
@@ -39,12 +37,12 @@ class GenericCommsDevice():
                 if len(self.current_msg.getbuffer()) == self.length + 8:
                     # check crc
                     raw_data = self.current_msg.getbuffer().tobytes()
-                    calc_crc32 = self.getCRC32(raw_data[:-4])
+                    calc_crc32 = self.get_crc32(raw_data[:-4])
                     msg_crc32 = int.from_bytes(raw_data[-4:],'big')
                     if msg_crc32 == calc_crc32:
                         if (raw_data[3] == 5):
                             self.current_msg.seek(0)
-                            out = decodeMsg(self.current_msg)
+                            out = decode_msg(self.current_msg)
                             self.length = -1
                             self.current_msg = io.BytesIO()
                             return out
