@@ -10,15 +10,15 @@ except ImportError:
 import struct
 
 class Waypoint(object):
-    __slots__ = ["longitude", "latitude", "altitude", "waypoint_id"]
+    __slots__ = ["latitude", "longitude", "altitude", "waypoint_id"]
 
     __typenames__ = ["double", "double", "double", "byte"]
 
     __dimensions__ = [None, None, None, None]
 
     def __init__(self):
-        self.longitude = 0.0
         self.latitude = 0.0
+        self.longitude = 0.0
         self.altitude = 0.0
         self.waypoint_id = 0
 
@@ -29,7 +29,7 @@ class Waypoint(object):
         return buf.getvalue()
 
     def _encode_one(self, buf):
-        buf.write(struct.pack(">dddB", self.longitude, self.latitude, self.altitude, self.waypoint_id))
+        buf.write(struct.pack(">dddB", self.latitude, self.longitude, self.altitude, self.waypoint_id))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -43,13 +43,13 @@ class Waypoint(object):
 
     def _decode_one(buf):
         self = Waypoint()
-        self.longitude, self.latitude, self.altitude, self.waypoint_id = struct.unpack(">dddB", buf.read(25))
+        self.latitude, self.longitude, self.altitude, self.waypoint_id = struct.unpack(">dddB", buf.read(25))
         return self
     _decode_one = staticmethod(_decode_one)
 
     def _get_hash_recursive(parents):
         if Waypoint in parents: return 0
-        tmphash = (0x2d8c3d202e509fe1) & 0xffffffffffffffff
+        tmphash = (0x488b606b85e99f5b) & 0xffffffffffffffff
         tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
