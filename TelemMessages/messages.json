@@ -1,0 +1,47 @@
+[
+    {
+      "name": "JetsonOdometryData",
+      "type" : 0,
+      "length": 64
+    },
+    {
+      "name": "JetsonMovementRequest",
+      "type" : 1,
+      "length": 1
+    },
+    {
+      "name": "JetsonRelativeMovementCommand",
+      "type" : 2,
+      "length": 16
+    },
+    {
+      "name": "JetsonLandingInitiationCommand",
+      "type" : 3,
+      "length": 1
+    },
+    {
+      "name" : "GroundStationWaypoints",
+      "type" : 4,
+      "length" : 126
+    },
+    {
+      "name" : "GroundStationDisarm",
+      "type" : 5,
+      "length" : 1
+    },
+    {
+      "name" : "GroundStationPIDValues",
+      "type" : 6,
+      "length" : 26
+    },
+    {
+      "name" : "GroundStationData",
+      "type" : 7,
+      "length" : 105
+    },
+    {
+      "name": "GroundStationPIDSetResponse",
+      "type" : 8,
+      "length": 145
+    }
+  ]
