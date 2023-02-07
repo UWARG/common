@@ -15,11 +15,13 @@ if [ $1 = "python" ]; then
     python3 $script_path/py_gen_helpers.py
 elif [ $1 = "cpp" ]; then
     echo "building c++ messages"
-    for FILE in $script_path/TelemMessages/*; do
+    for FILE in $script_path/../TelemMessages/*.lcm; do
         echo "building .hpp for $FILE"
-        lcm-gen --cpp --cpp-hpath $script_path/../cpp/TelemMessages $FILE
+        lcm-gen --cpp --cpp-hpath $script_path/../cpp/ $FILE
     done   
+    python3 $script_path/cpp_gen_helpers.py
     exec $script_path/message_include.sh
+    
 elif [ $1 = "clean" ]; then
     echo "cleaning messages"
     rm -r $script_path/../cpp/TelemMessages
