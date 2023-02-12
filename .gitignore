@@ -31,4 +31,8 @@
 *.out
 *.app
 
-*__pycache__
+# Python
+__pycache__/
+.idea/
+.vscode/
+venv/
