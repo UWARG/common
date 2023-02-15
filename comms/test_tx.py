@@ -2,13 +2,13 @@
 Test communication physically
 """
 
-from py.generic_comms_device import GenericCommsDevice
-from py import TelemMessages
+from modules.generic_comms_device import GenericCommsDevice
+from modules import TelemMessages
 
 
 if __name__ == "__main__":
     sender = GenericCommsDevice("/dev/ttyUSB0", 115200)
-    receiver = GenericCommsDevice("/dev/ttyUSB0", 115200)
+    receiver = GenericCommsDevice("/dev/ttyUSB1", 115200)
     for i in range(0, 1000):
         msg = TelemMessages.GroundStationDisarm()
         msg.arm = i % 2 == 0
