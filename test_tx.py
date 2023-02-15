@@ -2,7 +2,7 @@
 Test communication physically
 """
 
-from generic_comms_device import GenericCommsDevice
+from py.generic_comms_device import GenericCommsDevice
 import TelemMessages
 
 

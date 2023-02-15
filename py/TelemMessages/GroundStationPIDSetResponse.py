@@ -9,9 +9,9 @@ except ImportError:
     from io import BytesIO
 import struct
 
-import TelemMessages.Header
+from .. import TelemMessages
 
-import TelemMessages.PIDController
+
 
 class GroundStationPIDSetResponse(object):
     __slots__ = ["header", "controller_number", "controller", "crc"]
@@ -22,6 +22,9 @@ class GroundStationPIDSetResponse(object):
 
     def __init__(self):
         self.header = TelemMessages.Header()
+        self.header.flag = 0x7e
+        self.header.type = 0x8
+        self.header.length = bytes([ 0x0, 0x91 ])
         self.header.flag = 0x7e
         self.header.type = 0x8
         self.header.length = bytes([ 0x0, 0x91 ])

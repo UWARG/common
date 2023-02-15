@@ -9,7 +9,7 @@ except ImportError:
     from io import BytesIO
 import struct
 
-import TelemMessages.Header
+from .. import TelemMessages
 
 class GroundStationDisarm(object):
     __slots__ = ["header", "arm", "crc"]
@@ -20,6 +20,9 @@ class GroundStationDisarm(object):
 
     def __init__(self):
         self.header = TelemMessages.Header()
+        self.header.flag = 0x7e
+        self.header.type = 0x5
+        self.header.length = bytes([ 0x0, 0x1 ])
         self.header.flag = 0x7e
         self.header.type = 0x5
         self.header.length = bytes([ 0x0, 0x1 ])

@@ -9,9 +9,9 @@ except ImportError:
     from io import BytesIO
 import struct
 
-import TelemMessages.Header
+from .. import TelemMessages
 
-import TelemMessages.SensorData
+
 
 class JetsonOdometryData(object):
     __slots__ = ["header", "sensorData", "crc"]
@@ -22,6 +22,9 @@ class JetsonOdometryData(object):
 
     def __init__(self):
         self.header = TelemMessages.Header()
+        self.header.flag = 0x7e
+        self.header.type = 0x0
+        self.header.length = bytes([ 0x0, 0x40 ])
         self.header.flag = 0x7e
         self.header.type = 0x0
         self.header.length = bytes([ 0x0, 0x40 ])
