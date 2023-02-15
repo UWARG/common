@@ -9,7 +9,7 @@ except ImportError:
     from io import BytesIO
 import struct
 
-import TelemMessages.PIDValues
+from .. import TelemMessages
 
 class PIDController(object):
     __slots__ = ["axes"]

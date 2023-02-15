@@ -9,9 +9,9 @@ except ImportError:
     from io import BytesIO
 import struct
 
-import TelemMessages.Header
+from .. import TelemMessages
 
-import TelemMessages.Waypoint
+
 
 class GroundStationWaypoints(object):
     __slots__ = ["header", "num_waypoints", "waypoints", "crc"]
@@ -22,6 +22,9 @@ class GroundStationWaypoints(object):
 
     def __init__(self):
         self.header = TelemMessages.Header()
+        self.header.flag = 0x7e
+        self.header.type = 0x4
+        self.header.length = bytes([ 0x0, 0x7e ])
         self.header.flag = 0x7e
         self.header.type = 0x4
         self.header.length = bytes([ 0x0, 0x7e ])

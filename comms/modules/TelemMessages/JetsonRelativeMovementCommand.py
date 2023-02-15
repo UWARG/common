@@ -9,7 +9,7 @@ except ImportError:
     from io import BytesIO
 import struct
 
-import TelemMessages.Header
+from .. import TelemMessages
 
 class JetsonRelativeMovementCommand(object):
     __slots__ = ["header", "x", "y", "z", "heading", "crc"]
@@ -20,6 +20,9 @@ class JetsonRelativeMovementCommand(object):
 
     def __init__(self):
         self.header = TelemMessages.Header()
+        self.header.flag = 0x7e
+        self.header.type = 0x2
+        self.header.length = bytes([ 0x0, 0x10 ])
         self.header.flag = 0x7e
         self.header.type = 0x2
         self.header.length = bytes([ 0x0, 0x10 ])
