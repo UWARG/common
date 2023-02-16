@@ -25,9 +25,6 @@ class GroundStationPIDSetResponse(object):
         self.header.flag = 0x7e
         self.header.type = 0x8
         self.header.length = bytes([ 0x0, 0x91 ])
-        self.header.flag = 0x7e
-        self.header.type = 0x8
-        self.header.length = bytes([ 0x0, 0x91 ])
         self.controller_number = 0
         self.controller = TelemMessages.PIDController()
         self.crc = b""

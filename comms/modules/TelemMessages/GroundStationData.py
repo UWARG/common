@@ -25,9 +25,6 @@ class GroundStationData(object):
         self.header.flag = 0x7e
         self.header.type = 0x7
         self.header.length = bytes([ 0x0, 0x69 ])
-        self.header.flag = 0x7e
-        self.header.type = 0x7
-        self.header.length = bytes([ 0x0, 0x69 ])
         self.motor_outputs = b""
         self.data = TelemMessages.SensorData()
         self.battery_voltages = b""
