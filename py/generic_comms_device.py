@@ -1,7 +1,7 @@
 import io
 import libscrc
 import serial
-from helper import decode_msg 
+from helper import decode_msg
 
 class GenericCommsDevice():
 
