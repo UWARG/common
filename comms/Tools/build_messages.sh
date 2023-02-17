@@ -10,7 +10,7 @@ if [ $1 = "python" ]; then
     echo "building python messages"
     for FILE in $script_path/../TelemMessages/*.lcm; do
         echo "building .py for $FILE"
-        lcm-gen --python --ppath $script_path/../py/ $FILE
+        lcm-gen --python --ppath $script_path/../modules/ $FILE
     done   
     python3 $script_path/py_gen_helpers.py
 elif [ $1 = "cpp" ]; then
@@ -23,7 +23,7 @@ elif [ $1 = "cpp" ]; then
 elif [ $1 = "clean" ]; then
     echo "cleaning messages"
     rm -r $script_path/../cpp/TelemMessages
-    rm -r $script_path/../py/TelemMessages
+    rm -r $script_path/../modules/TelemMessages
 
 else 
     echo "arg not recognized. exiting"

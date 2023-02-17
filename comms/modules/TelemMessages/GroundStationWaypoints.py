@@ -25,9 +25,6 @@ class GroundStationWaypoints(object):
         self.header.flag = 0x7e
         self.header.type = 0x4
         self.header.length = bytes([ 0x0, 0x7e ])
-        self.header.flag = 0x7e
-        self.header.type = 0x4
-        self.header.length = bytes([ 0x0, 0x7e ])
         self.num_waypoints = 0
         self.waypoints = [ TelemMessages.Waypoint() for dim0 in range(5) ]
         self.crc = b""

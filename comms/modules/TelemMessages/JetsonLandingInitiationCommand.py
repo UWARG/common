@@ -23,9 +23,6 @@ class JetsonLandingInitiationCommand(object):
         self.header.flag = 0x7e
         self.header.type = 0x3
         self.header.length = bytes([ 0x0, 0x1 ])
-        self.header.flag = 0x7e
-        self.header.type = 0x3
-        self.header.length = bytes([ 0x0, 0x1 ])
         self.req = False
         self.crc = b""
 

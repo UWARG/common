@@ -25,9 +25,6 @@ class JetsonOdometryData(object):
         self.header.flag = 0x7e
         self.header.type = 0x0
         self.header.length = bytes([ 0x0, 0x40 ])
-        self.header.flag = 0x7e
-        self.header.type = 0x0
-        self.header.length = bytes([ 0x0, 0x40 ])
         self.sensorData = TelemMessages.SensorData()
         self.crc = b""
 
