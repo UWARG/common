@@ -22,6 +22,7 @@ class GroundStationDisarm(object):
         self.header = TelemMessages.Header()
         self.header.flag = 0x7e
         self.header.type = 0x5
+        self.header.length = bytes([ 0x0, 0x1 ])
         self.arm = False
         self.crc = b""
 

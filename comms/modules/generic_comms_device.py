@@ -36,10 +36,6 @@ class GenericCommsDevice():
         msg._encode_one(buf)
         print("length: ", len(buf.getbuffer().tobytes()))
 
-        # length currently includes whatever data is being sent but dont include crc (which isnt included anyway)
-        # doesnt include length (which is also empty right now) and start flag and type variable (2 bytes)
-        msg.header.length = buf.getbuffer().tobytes() - 2
-
         # pylint: enable=[protected-access]
         crc32 = self.__get_crc32(buf.getbuffer().tobytes())
         msg.crc = crc32.to_bytes(4, 'big')

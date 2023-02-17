@@ -24,10 +24,11 @@ class GroundStationData(object):
         self.header = TelemMessages.Header()
         self.header.flag = 0x7e
         self.header.type = 0x7
-        self.motor_outputs = b""
+        self.header.length = bytes([ 0x0, 0x69 ])
+        self.motor_outputs = bytes(12)
         self.data = TelemMessages.SensorData()
-        self.battery_voltages = b""
-        self.controller_values = b""
+        self.battery_voltages = bytes(13)
+        self.controller_values = bytes(16)
         self.crc = b""
 
     def encode(self):

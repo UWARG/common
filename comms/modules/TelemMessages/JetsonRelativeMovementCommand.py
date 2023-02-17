@@ -22,6 +22,7 @@ class JetsonRelativeMovementCommand(object):
         self.header = TelemMessages.Header()
         self.header.flag = 0x7e
         self.header.type = 0x2
+        self.header.length = bytes([ 0x0, 0x10 ])
         self.x = 0.0
         self.y = 0.0
         self.z = 0.0

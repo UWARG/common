@@ -88,7 +88,16 @@ if __name__ == "__main__":
                 print(index)
                 contents.insert(index + 1, "        self.header.flag = 0x7e\n")
                 contents.insert(index + 2, "        self.header.type = " + hex(msg["type"]) + "\n")
-                # contents.insert(index + 3, "        self.header.length = bytes([ " + hex(length[0]) + ", " + hex(length[1]) + " ])\n")
+                contents.insert(index + 3, "        self.header.length = bytes([ " + hex(length[0]) + ", " + hex(length[1]) + " ])\n")
+
+                if "lists" in msg.keys():
+                    for key, value in msg["lists"].items():
+                        index = search_in_file("self." + key, contents)
+                        if index != -1:
+                            contents[index] = "        self." + key + " = bytes(" + str(value)  + ")\n" 
+                        #contents.insert(index, "        self." + key + " = bytes(" + str(value)  + ")" )
+                        #index = index + 1
+
 
                 fd.seek(0)
                 fd.writelines(contents)
