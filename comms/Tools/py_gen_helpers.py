@@ -39,6 +39,7 @@ def replace_import(directory: str):
 
             fd.seek(0)
             fd.writelines(contents)
+            fd.truncate()
 
 
 if __name__ == "__main__":
@@ -75,8 +76,8 @@ if __name__ == "__main__":
 
             # Open each message class
             with open(module_path + msg["name"] + ".py", "r+") as fd:
-                contents = fd.readlines()
-                print("opened " + msg["name"])
+                contents = fd.readlines() 
+                # print("opened " + msg["name"])
 
                 # Insert helper methods for message identification
                 index = search_in_file("self.header", contents)
@@ -87,10 +88,11 @@ if __name__ == "__main__":
                 print(index)
                 contents.insert(index + 1, "        self.header.flag = 0x7e\n")
                 contents.insert(index + 2, "        self.header.type = " + hex(msg["type"]) + "\n")
-                contents.insert(index + 3, "        self.header.length = bytes([ " + hex(length[0]) + ", " + hex(length[1]) + " ])\n")
+                # contents.insert(index + 3, "        self.header.length = bytes([ " + hex(length[0]) + ", " + hex(length[1]) + " ])\n")
 
                 fd.seek(0)
                 fd.writelines(contents)
+                fd.truncate()
 
                 # if or elif with spaces
                 helper += "if raw_data[3] == " + hex(msg["type"]) + ":\n"
