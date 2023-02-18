@@ -45,6 +45,41 @@ def replace_import(directory: str):
             fd.truncate()
 
 
+def decoder_header() -> str:
+    """
+    Part of generating decode_msg()
+    """
+    decoder = "def decode_msg(buf):\n"
+    decoder += "    \"\"\"\n"
+    decoder += "    Returns message class based on header type\n"
+    decoder += "    \"\"\"\n"
+    decoder += "\n"
+    decoder += "    raw_data = buf.getbuffer().tobytes()\n"
+    # Spaces before if
+    decoder += "    "
+    return decoder
+
+
+def decoder_append(message_type: str, message_name: str) -> str:
+    """
+    Part of generating decode_msg()
+    """
+    # if or elif with spaces
+    decoder = "if raw_data[3] == " + message_type + ":\n"
+    decoder += "        return TelemMessages." + message_name + "()._decode_one(buf)\n"
+    decoder += "    el"
+    return decoder
+
+
+def decoder_footer() -> str:
+    """
+    Part of generating decode_msg()
+    """
+    decoder = "se:\n"
+    decoder += "        return None\n"
+    return decoder
+
+
 def picker_header(num_types_of_messages: int) -> str:
     """
     Part of generating message_picker() for testing
@@ -60,22 +95,22 @@ def picker_header(num_types_of_messages: int) -> str:
     return picker
 
 
-def picker_append(picker: str, message_type: str, message_name: str) -> str:
+def picker_append(message_type: str, message_name: str) -> str:
     """
     Part of generating message_picker() for testing
     """
     # if or elif with spaces
-    picker += "if message == " + message_type + ":\n"
+    picker = "if message == " + message_type + ":\n"
     picker += "        return TelemMessages." + message_name + "()\n"
     picker += "    el"
     return picker
 
 
-def picker_footer(picker: str) -> str:
+def picker_footer() -> str:
     """
     Part of generating message_picker() for testing
     """
-    picker += "se:\n"
+    picker = "se:\n"
     picker += "        return None\n"
     return picker
 
@@ -97,16 +132,11 @@ if __name__ == "__main__":
     helper += "from . import TelemMessages\n"
     helper += "\n"
     helper += "\n"
-    helper += "def decode_msg(buf):\n"
-    helper += "    \"\"\"\n"
-    helper += "    Returns message class based on header type\n"
-    helper += "    \"\"\"\n"
-    helper += "\n"
-    helper += "    raw_data = buf.getbuffer().tobytes()\n"
-    # Spaces before if
-    helper += "    "
 
+    # Build helper function strings
+    decoder = decoder_header()
     picker = None
+
     # Open JSON file containing metadata
     with open(msg_path + "messages.json") as json_file:
         data = json.load(json_file)
@@ -140,19 +170,16 @@ if __name__ == "__main__":
                 fd.writelines(contents)
                 fd.truncate()
 
-                # if or elif with spaces
-                helper += "if raw_data[3] == " + hex(msg["type"]) + ":\n"
-                helper += "        return TelemMessages." + msg["name"] + "()._decode_one(buf)\n"
-                helper += "    el"
+                decoder += decoder_append(hex(msg["type"]), msg["name"])
+                picker += picker_append(hex(msg["type"]), msg["name"])
 
-                picker = picker_append(picker, hex(msg["type"]), msg["name"])
+    decoder += decoder_footer()
+    picker += picker_footer()
 
-
-    helper += "se:\n"
-    helper += "        return None\n"
+    helper += decoder
     helper += "\n"
     helper += "\n"
-    helper += picker_footer(picker)
+    helper += picker
 
     output_file = open(module_path + "../helper.py", "w")
 
