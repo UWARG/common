@@ -12,10 +12,6 @@ import struct
 class Waypoint(object):
     __slots__ = ["latitude", "longitude", "altitude", "waypoint_id"]
 
-    __typenames__ = ["double", "double", "double", "byte"]
-
-    __dimensions__ = [None, None, None, None]
-
     def __init__(self):
         self.latitude = 0.0
         self.longitude = 0.0
@@ -47,10 +43,11 @@ class Waypoint(object):
         return self
     _decode_one = staticmethod(_decode_one)
 
+    _hash = None
     def _get_hash_recursive(parents):
         if Waypoint in parents: return 0
         tmphash = (0x488b606b85e99f5b) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -60,8 +57,4 @@ class Waypoint(object):
             Waypoint._packed_fingerprint = struct.pack(">Q", Waypoint._get_hash_recursive([]))
         return Waypoint._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
-
-    def get_hash(self):
-        """Get the LCM hash of the struct"""
-        return struct.unpack(">Q", Waypoint._get_packed_fingerprint())[0]
 

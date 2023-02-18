@@ -14,11 +14,7 @@ from .. import TelemMessages
 
 
 class GroundStationWaypoints(object):
-    __slots__ = ["header", "num_waypoints", "waypoints", "crc"]
-
-    __typenames__ = ["TelemMessages.Header", "byte", "TelemMessages.Waypoint", "byte"]
-
-    __dimensions__ = [None, None, [5], [4]]
+    __slots__ = ["header", "num_waypoints", "waypoints"]
 
     def __init__(self):
         self.header = TelemMessages.Header()
@@ -27,7 +23,6 @@ class GroundStationWaypoints(object):
         self.header.length = bytes([ 0x0, 0x7e ])
         self.num_waypoints = 0
         self.waypoints = [ TelemMessages.Waypoint() for dim0 in range(5) ]
-        self.crc = b""
 
     def encode(self):
         buf = BytesIO()
@@ -42,7 +37,6 @@ class GroundStationWaypoints(object):
         for i0 in range(5):
             assert self.waypoints[i0]._get_packed_fingerprint() == TelemMessages.Waypoint._get_packed_fingerprint()
             self.waypoints[i0]._encode_one(buf)
-        buf.write(bytearray(self.crc[:4]))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -61,15 +55,15 @@ class GroundStationWaypoints(object):
         self.waypoints = []
         for i0 in range(5):
             self.waypoints.append(TelemMessages.Waypoint._decode_one(buf))
-        self.crc = buf.read(4)
         return self
     _decode_one = staticmethod(_decode_one)
 
+    _hash = None
     def _get_hash_recursive(parents):
         if GroundStationWaypoints in parents: return 0
         newparents = parents + [GroundStationWaypoints]
-        tmphash = (0x394db9686c4c248c+ TelemMessages.Header._get_hash_recursive(newparents)+ TelemMessages.Waypoint._get_hash_recursive(newparents)) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash = (0x8b561a05e7cde396+ TelemMessages.Header._get_hash_recursive(newparents)+ TelemMessages.Waypoint._get_hash_recursive(newparents)) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -79,8 +73,4 @@ class GroundStationWaypoints(object):
             GroundStationWaypoints._packed_fingerprint = struct.pack(">Q", GroundStationWaypoints._get_hash_recursive([]))
         return GroundStationWaypoints._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
-
-    def get_hash(self):
-        """Get the LCM hash of the struct"""
-        return struct.unpack(">Q", GroundStationWaypoints._get_packed_fingerprint())[0]
 
