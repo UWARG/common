@@ -12,13 +12,9 @@ import struct
 class Header(object):
     __slots__ = ["flag", "length", "type"]
 
-    __typenames__ = ["byte", "byte", "byte"]
-
-    __dimensions__ = [None, [2], None]
-
     def __init__(self):
         self.flag = 0
-        self.length = b""
+        self.length = ""
         self.type = 0
 
     def encode(self):
@@ -50,10 +46,11 @@ class Header(object):
         return self
     _decode_one = staticmethod(_decode_one)
 
+    _hash = None
     def _get_hash_recursive(parents):
         if Header in parents: return 0
         tmphash = (0x23b4b6904caa43c8) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -63,8 +60,4 @@ class Header(object):
             Header._packed_fingerprint = struct.pack(">Q", Header._get_hash_recursive([]))
         return Header._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
-
-    def get_hash(self):
-        """Get the LCM hash of the struct"""
-        return struct.unpack(">Q", Header._get_packed_fingerprint())[0]
 

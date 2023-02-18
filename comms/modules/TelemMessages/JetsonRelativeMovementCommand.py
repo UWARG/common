@@ -12,11 +12,7 @@ import struct
 from .. import TelemMessages
 
 class JetsonRelativeMovementCommand(object):
-    __slots__ = ["header", "x", "y", "z", "heading", "crc"]
-
-    __typenames__ = ["TelemMessages.Header", "float", "float", "float", "float", "byte"]
-
-    __dimensions__ = [None, None, None, None, None, [4]]
+    __slots__ = ["header", "x", "y", "z", "heading"]
 
     def __init__(self):
         self.header = TelemMessages.Header()
@@ -27,7 +23,6 @@ class JetsonRelativeMovementCommand(object):
         self.y = 0.0
         self.z = 0.0
         self.heading = 0.0
-        self.crc = b""
 
     def encode(self):
         buf = BytesIO()
@@ -39,7 +34,6 @@ class JetsonRelativeMovementCommand(object):
         assert self.header._get_packed_fingerprint() == TelemMessages.Header._get_packed_fingerprint()
         self.header._encode_one(buf)
         buf.write(struct.pack(">ffff", self.x, self.y, self.z, self.heading))
-        buf.write(bytearray(self.crc[:4]))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -55,15 +49,15 @@ class JetsonRelativeMovementCommand(object):
         self = JetsonRelativeMovementCommand()
         self.header = TelemMessages.Header._decode_one(buf)
         self.x, self.y, self.z, self.heading = struct.unpack(">ffff", buf.read(16))
-        self.crc = buf.read(4)
         return self
     _decode_one = staticmethod(_decode_one)
 
+    _hash = None
     def _get_hash_recursive(parents):
         if JetsonRelativeMovementCommand in parents: return 0
         newparents = parents + [JetsonRelativeMovementCommand]
-        tmphash = (0x90503f538ba863c+ TelemMessages.Header._get_hash_recursive(newparents)) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash = (0x956335b00053c137+ TelemMessages.Header._get_hash_recursive(newparents)) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -73,8 +67,4 @@ class JetsonRelativeMovementCommand(object):
             JetsonRelativeMovementCommand._packed_fingerprint = struct.pack(">Q", JetsonRelativeMovementCommand._get_hash_recursive([]))
         return JetsonRelativeMovementCommand._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
-
-    def get_hash(self):
-        """Get the LCM hash of the struct"""
-        return struct.unpack(">Q", JetsonRelativeMovementCommand._get_packed_fingerprint())[0]
 

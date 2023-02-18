@@ -14,11 +14,7 @@ from .. import TelemMessages
 
 
 class GroundStationPIDSetResponse(object):
-    __slots__ = ["header", "controller_number", "controller", "crc"]
-
-    __typenames__ = ["TelemMessages.Header", "byte", "TelemMessages.PIDController", "byte"]
-
-    __dimensions__ = [None, None, None, [4]]
+    __slots__ = ["header", "controller_number", "controller"]
 
     def __init__(self):
         self.header = TelemMessages.Header()
@@ -27,7 +23,6 @@ class GroundStationPIDSetResponse(object):
         self.header.length = bytes([ 0x0, 0x91 ])
         self.controller_number = 0
         self.controller = TelemMessages.PIDController()
-        self.crc = b""
 
     def encode(self):
         buf = BytesIO()
@@ -41,7 +36,6 @@ class GroundStationPIDSetResponse(object):
         buf.write(struct.pack(">B", self.controller_number))
         assert self.controller._get_packed_fingerprint() == TelemMessages.PIDController._get_packed_fingerprint()
         self.controller._encode_one(buf)
-        buf.write(bytearray(self.crc[:4]))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -58,15 +52,15 @@ class GroundStationPIDSetResponse(object):
         self.header = TelemMessages.Header._decode_one(buf)
         self.controller_number = struct.unpack(">B", buf.read(1))[0]
         self.controller = TelemMessages.PIDController._decode_one(buf)
-        self.crc = buf.read(4)
         return self
     _decode_one = staticmethod(_decode_one)
 
+    _hash = None
     def _get_hash_recursive(parents):
         if GroundStationPIDSetResponse in parents: return 0
         newparents = parents + [GroundStationPIDSetResponse]
-        tmphash = (0x4333eafa5f1ff412+ TelemMessages.Header._get_hash_recursive(newparents)+ TelemMessages.PIDController._get_hash_recursive(newparents)) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash = (0x2676ff6e462d2950+ TelemMessages.Header._get_hash_recursive(newparents)+ TelemMessages.PIDController._get_hash_recursive(newparents)) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -76,8 +70,4 @@ class GroundStationPIDSetResponse(object):
             GroundStationPIDSetResponse._packed_fingerprint = struct.pack(">Q", GroundStationPIDSetResponse._get_hash_recursive([]))
         return GroundStationPIDSetResponse._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
-
-    def get_hash(self):
-        """Get the LCM hash of the struct"""
-        return struct.unpack(">Q", GroundStationPIDSetResponse._get_packed_fingerprint())[0]
 

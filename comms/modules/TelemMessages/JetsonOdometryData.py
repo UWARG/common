@@ -14,11 +14,7 @@ from .. import TelemMessages
 
 
 class JetsonOdometryData(object):
-    __slots__ = ["header", "sensorData", "crc"]
-
-    __typenames__ = ["TelemMessages.Header", "TelemMessages.SensorData", "byte"]
-
-    __dimensions__ = [None, None, [4]]
+    __slots__ = ["header", "sensorData"]
 
     def __init__(self):
         self.header = TelemMessages.Header()
@@ -26,7 +22,6 @@ class JetsonOdometryData(object):
         self.header.type = 0x0
         self.header.length = bytes([ 0x0, 0x40 ])
         self.sensorData = TelemMessages.SensorData()
-        self.crc = b""
 
     def encode(self):
         buf = BytesIO()
@@ -39,7 +34,6 @@ class JetsonOdometryData(object):
         self.header._encode_one(buf)
         assert self.sensorData._get_packed_fingerprint() == TelemMessages.SensorData._get_packed_fingerprint()
         self.sensorData._encode_one(buf)
-        buf.write(bytearray(self.crc[:4]))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -55,15 +49,15 @@ class JetsonOdometryData(object):
         self = JetsonOdometryData()
         self.header = TelemMessages.Header._decode_one(buf)
         self.sensorData = TelemMessages.SensorData._decode_one(buf)
-        self.crc = buf.read(4)
         return self
     _decode_one = staticmethod(_decode_one)
 
+    _hash = None
     def _get_hash_recursive(parents):
         if JetsonOdometryData in parents: return 0
         newparents = parents + [JetsonOdometryData]
-        tmphash = (0x5bf65258814e37f8+ TelemMessages.Header._get_hash_recursive(newparents)+ TelemMessages.SensorData._get_hash_recursive(newparents)) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash = (0x7b2e33dc32fcc162+ TelemMessages.Header._get_hash_recursive(newparents)+ TelemMessages.SensorData._get_hash_recursive(newparents)) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -73,8 +67,4 @@ class JetsonOdometryData(object):
             JetsonOdometryData._packed_fingerprint = struct.pack(">Q", JetsonOdometryData._get_hash_recursive([]))
         return JetsonOdometryData._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
-
-    def get_hash(self):
-        """Get the LCM hash of the struct"""
-        return struct.unpack(">Q", JetsonOdometryData._get_packed_fingerprint())[0]
 

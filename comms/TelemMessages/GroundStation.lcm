@@ -22,13 +22,11 @@ struct GroundStationWaypoints {
     Header header;
     byte num_waypoints;
     Waypoint waypoints[5];
-    byte crc[4];
 }
 
 struct GroundStationDisarm {
     Header header;
     boolean arm;
-    byte crc[4];
 }
 
 struct GroundStationPIDValues {
@@ -36,7 +34,6 @@ struct GroundStationPIDValues {
     byte controller;
     byte axis;
     PIDValues values;
-    byte crc[4];
 }
 
 struct GroundStationData {
@@ -45,12 +42,10 @@ struct GroundStationData {
     SensorData data;
     byte battery_voltages[13];
     byte controller_values[16];
-    byte crc[4];
 }
 
 struct GroundStationPIDSetResponse {
     Header header;
     byte controller_number;
     PIDController controller;
-    byte crc[4];
 }

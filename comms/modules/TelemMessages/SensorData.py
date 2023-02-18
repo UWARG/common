@@ -10,17 +10,14 @@ except ImportError:
 import struct
 
 class SensorData(object):
-    __slots__ = ["latitude", "longitude", "altitude", "climb_rate", "heading", "air_speed", "ground_speed", "roll", "pitch", "yaw", "roll_rate", "pitch_rate", "yaw_rate"]
-
-    __typenames__ = ["double", "double", "float", "float", "float", "float", "float", "float", "float", "float", "float", "float", "float"]
-
-    __dimensions__ = [None, None, None, None, None, None, None, None, None, None, None, None, None]
+    __slots__ = ["latitude", "longitude", "altitude", "climb_rate", "track", "heading", "air_speed", "ground_speed", "roll", "pitch", "yaw", "roll_rate", "pitch_rate", "yaw_rate"]
 
     def __init__(self):
         self.latitude = 0.0
         self.longitude = 0.0
         self.altitude = 0.0
         self.climb_rate = 0.0
+        self.track = 0.0
         self.heading = 0.0
         self.air_speed = 0.0
         self.ground_speed = 0.0
@@ -38,7 +35,7 @@ class SensorData(object):
         return buf.getvalue()
 
     def _encode_one(self, buf):
-        buf.write(struct.pack(">ddfffffffffff", self.latitude, self.longitude, self.altitude, self.climb_rate, self.heading, self.air_speed, self.ground_speed, self.roll, self.pitch, self.yaw, self.roll_rate, self.pitch_rate, self.yaw_rate))
+        buf.write(struct.pack(">ddffffffffffff", self.latitude, self.longitude, self.altitude, self.climb_rate, self.track, self.heading, self.air_speed, self.ground_speed, self.roll, self.pitch, self.yaw, self.roll_rate, self.pitch_rate, self.yaw_rate))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -52,14 +49,15 @@ class SensorData(object):
 
     def _decode_one(buf):
         self = SensorData()
-        self.latitude, self.longitude, self.altitude, self.climb_rate, self.heading, self.air_speed, self.ground_speed, self.roll, self.pitch, self.yaw, self.roll_rate, self.pitch_rate, self.yaw_rate = struct.unpack(">ddfffffffffff", buf.read(60))
+        self.latitude, self.longitude, self.altitude, self.climb_rate, self.track, self.heading, self.air_speed, self.ground_speed, self.roll, self.pitch, self.yaw, self.roll_rate, self.pitch_rate, self.yaw_rate = struct.unpack(">ddffffffffffff", buf.read(64))
         return self
     _decode_one = staticmethod(_decode_one)
 
+    _hash = None
     def _get_hash_recursive(parents):
         if SensorData in parents: return 0
-        tmphash = (0xc7cffe8566e8465c) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash = (0x19ee6ad15763353a) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -69,8 +67,4 @@ class SensorData(object):
             SensorData._packed_fingerprint = struct.pack(">Q", SensorData._get_hash_recursive([]))
         return SensorData._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
-
-    def get_hash(self):
-        """Get the LCM hash of the struct"""
-        return struct.unpack(">Q", SensorData._get_packed_fingerprint())[0]
 
