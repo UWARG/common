@@ -12,9 +12,9 @@
 namespace helpers
 {
 
-bool encodeJetsonLandingInitiationCommand(messages::JetsonLandingInitiationCommand msg, uint8_t* buf, int maxSize) {
+bool encodeJetsonLandingInitiationCommand(TelemMessages::JetsonLandingInitiationCommand msg, uint8_t* buf, int maxSize) {
 
-    int size = sizeof(messages::JetsonLandingInitiationCommand);
+    int size = sizeof(TelemMessages::JetsonLandingInitiationCommand);
 
     // check to make sure the size of the buffer is enough
     if(size > maxSize) return false;

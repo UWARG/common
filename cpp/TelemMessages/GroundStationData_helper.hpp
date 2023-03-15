@@ -12,9 +12,9 @@
 namespace helpers
 {
 
-bool encodeGroundStationData(messages::GroundStationData msg, uint8_t* buf, int maxSize) {
+bool encodeGroundStationData(TelemMessages::GroundStationData msg, uint8_t* buf, int maxSize) {
 
-    int size = sizeof(messages::GroundStationData);
+    int size = sizeof(TelemMessages::GroundStationData);
 
     // check to make sure the size of the buffer is enough
     if(size > maxSize) return false;

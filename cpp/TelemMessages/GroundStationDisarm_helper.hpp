@@ -12,9 +12,9 @@
 namespace helpers
 {
 
-bool encodeGroundStationDisarm(messages::GroundStationDisarm msg, uint8_t* buf, int maxSize) {
+bool encodeGroundStationDisarm(TelemMessages::GroundStationDisarm msg, uint8_t* buf, int maxSize) {
 
-    int size = sizeof(messages::GroundStationDisarm);
+    int size = sizeof(TelemMessages::GroundStationDisarm);
 
     // check to make sure the size of the buffer is enough
     if(size > maxSize) return false;

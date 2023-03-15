@@ -12,9 +12,9 @@
 namespace helpers
 {
 
-bool encodeGroundStationWaypoints(messages::GroundStationWaypoints msg, uint8_t* buf, int maxSize) {
+bool encodeGroundStationWaypoints(TelemMessages::GroundStationWaypoints msg, uint8_t* buf, int maxSize) {
 
-    int size = sizeof(messages::GroundStationWaypoints);
+    int size = sizeof(TelemMessages::GroundStationWaypoints);
 
     // check to make sure the size of the buffer is enough
     if(size > maxSize) return false;

@@ -12,9 +12,9 @@
 namespace helpers
 {
 
-bool encodeJetsonRelativeMovementCommand(messages::JetsonRelativeMovementCommand msg, uint8_t* buf, int maxSize) {
+bool encodeJetsonRelativeMovementCommand(TelemMessages::JetsonRelativeMovementCommand msg, uint8_t* buf, int maxSize) {
 
-    int size = sizeof(messages::JetsonRelativeMovementCommand);
+    int size = sizeof(TelemMessages::JetsonRelativeMovementCommand);
 
     // check to make sure the size of the buffer is enough
     if(size > maxSize) return false;

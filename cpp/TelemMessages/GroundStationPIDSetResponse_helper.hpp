@@ -12,9 +12,9 @@
 namespace helpers
 {
 
-bool encodeGroundStationPIDSetResponse(messages::GroundStationPIDSetResponse msg, uint8_t* buf, int maxSize) {
+bool encodeGroundStationPIDSetResponse(TelemMessages::GroundStationPIDSetResponse msg, uint8_t* buf, int maxSize) {
 
-    int size = sizeof(messages::GroundStationPIDSetResponse);
+    int size = sizeof(TelemMessages::GroundStationPIDSetResponse);
 
     // check to make sure the size of the buffer is enough
     if(size > maxSize) return false;

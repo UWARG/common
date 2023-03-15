@@ -12,9 +12,9 @@
 namespace helpers
 {
 
-bool encodeJetsonMovementRequest(messages::JetsonMovementRequest msg, uint8_t* buf, int maxSize) {
+bool encodeJetsonMovementRequest(TelemMessages::JetsonMovementRequest msg, uint8_t* buf, int maxSize) {
 
-    int size = sizeof(messages::JetsonMovementRequest);
+    int size = sizeof(TelemMessages::JetsonMovementRequest);
 
     // check to make sure the size of the buffer is enough
     if(size > maxSize) return false;

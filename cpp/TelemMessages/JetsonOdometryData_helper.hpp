@@ -12,9 +12,9 @@
 namespace helpers
 {
 
-bool encodeJetsonOdometryData(messages::JetsonOdometryData msg, uint8_t* buf, int maxSize) {
+bool encodeJetsonOdometryData(TelemMessages::JetsonOdometryData msg, uint8_t* buf, int maxSize) {
 
-    int size = sizeof(messages::JetsonOdometryData);
+    int size = sizeof(TelemMessages::JetsonOdometryData);
 
     // check to make sure the size of the buffer is enough
     if(size > maxSize) return false;
