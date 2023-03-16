@@ -7,7 +7,7 @@
 #ifndef __TelemMessages_SensorData_hpp__
 #define __TelemMessages_SensorData_hpp__
 
-#include <lcm/lcm_coretypes.h>
+#include "lcm_coretypes.h"
 
 
 namespace TelemMessages

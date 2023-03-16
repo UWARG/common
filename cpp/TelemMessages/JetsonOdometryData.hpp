@@ -7,10 +7,10 @@
 #ifndef __TelemMessages_JetsonOdometryData_hpp__
 #define __TelemMessages_JetsonOdometryData_hpp__
 
-#include <lcm/lcm_coretypes.h>
+#include "lcm_coretypes.h"
 
-#include "TelemMessages/Header.hpp"
-#include "TelemMessages/SensorData.hpp"
+#include "Header.hpp"
+#include "SensorData.hpp"
 
 namespace TelemMessages
 {

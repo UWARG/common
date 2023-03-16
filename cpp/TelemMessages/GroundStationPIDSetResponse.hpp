@@ -7,10 +7,10 @@
 #ifndef __TelemMessages_GroundStationPIDSetResponse_hpp__
 #define __TelemMessages_GroundStationPIDSetResponse_hpp__
 
-#include <lcm/lcm_coretypes.h>
+#include "lcm_coretypes.h"
 
-#include "TelemMessages/Header.hpp"
-#include "TelemMessages/PIDController.hpp"
+#include "Header.hpp"
+#include "PIDController.hpp"
 
 namespace TelemMessages
 {

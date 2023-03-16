@@ -7,10 +7,10 @@
 #ifndef __TelemMessages_GroundStationPIDValues_hpp__
 #define __TelemMessages_GroundStationPIDValues_hpp__
 
-#include <lcm/lcm_coretypes.h>
+#include "lcm_coretypes.h"
 
-#include "TelemMessages/Header.hpp"
-#include "TelemMessages/PIDValues.hpp"
+#include "Header.hpp"
+#include "PIDValues.hpp"
 
 namespace TelemMessages
 {

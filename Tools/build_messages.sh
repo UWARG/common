@@ -19,7 +19,11 @@ elif [ $1 = "cpp" ]; then
         echo "building .hpp for $FILE"
         lcm-gen --cpp --cpp-hpath $script_path/../cpp/ $FILE
     done   
+    echo "copying lcm coretypes"
+    cp $script_path/lcm_coretypes.h $script_path/../cpp/TelemMessages/lcm_coretypes.h
+    echo "generating helpers"
     python3 $script_path/cpp_gen_helpers.py
+    echo "generating include"
     exec $script_path/message_include.sh
     
 elif [ $1 = "clean" ]; then

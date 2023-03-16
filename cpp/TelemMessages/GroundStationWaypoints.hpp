@@ -7,10 +7,10 @@
 #ifndef __TelemMessages_GroundStationWaypoints_hpp__
 #define __TelemMessages_GroundStationWaypoints_hpp__
 
-#include <lcm/lcm_coretypes.h>
+#include "lcm_coretypes.h"
 
-#include "TelemMessages/Header.hpp"
-#include "TelemMessages/Waypoint.hpp"
+#include "Header.hpp"
+#include "Waypoint.hpp"
 
 namespace TelemMessages
 {

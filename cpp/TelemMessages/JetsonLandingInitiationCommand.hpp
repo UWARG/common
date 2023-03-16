@@ -7,9 +7,9 @@
 #ifndef __TelemMessages_JetsonLandingInitiationCommand_hpp__
 #define __TelemMessages_JetsonLandingInitiationCommand_hpp__
 
-#include <lcm/lcm_coretypes.h>
+#include "lcm_coretypes.h"
 
-#include "TelemMessages/Header.hpp"
+#include "Header.hpp"
 
 namespace TelemMessages
 {

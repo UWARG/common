@@ -30,7 +30,7 @@ bool encodeGroundStationWaypoints(TelemMessages::GroundStationWaypoints msg, uin
 
     // calculate checksum
     // the 7 is the number of bytes not included in the checksum (the flag, the length, and the checksum itself)
-    uint32_t checksum = calculateChecksum(&buf[3], size - 7);
+    uint32_t checksum = calculateChecksum(buf, size - 4);
     // checksum will be in little endian
     int endOfMessage = size - 1;
     buf[endOfMessage] = (checksum & 0xFF000000) >> 24; 
@@ -41,10 +41,10 @@ bool encodeGroundStationWaypoints(TelemMessages::GroundStationWaypoints msg, uin
     return true;
 }
 
-messages::GroundStationWaypoints decodeGroundStationWaypoints(uint8_t* buf, int maxSize) {
+TelemMessages::GroundStationWaypoints decodeGroundStationWaypoints(uint8_t* buf, int maxSize) {
 
-    int size = sizeof(messages::GroundStationWaypoints);
-    messages::GroundStationWaypoints msg;
+    int size = sizeof(TelemMessages::GroundStationWaypoints);
+    TelemMessages::GroundStationWaypoints msg;
 
     // check to make sure the size of the buffer is enough, just in case
     if(size > maxSize) {
@@ -57,13 +57,13 @@ messages::GroundStationWaypoints decodeGroundStationWaypoints(uint8_t* buf, int 
 
     // calculate checksum
     // the 7 is the number of bytes not included in the checksum (the flag, the length, and the checksum itself)
-    uint32_t checksum = calculateChecksum(&buf[3], size - 7);
+    uint32_t checksum = calculateChecksum(buf, size - 4);
     // checksum will be in little endian
     int endOfMessage = size - 1;
-    uint32_t checksumFromMessage = buf[endOfMessage] << 24;
-    checksumFromMessage = checksumFromMessage | (buf[endOfMessage - 1] << 16);
-    checksumFromMessage = checksumFromMessage | (buf[endOfMessage - 2] << 8);
-    checksumFromMessage = checksumFromMessage | buf[endOfMessage - 3];
+    uint32_t checksumFromMessage = buf[endOfMessage - 3] << 24;
+    checksumFromMessage = checksumFromMessage | (buf[endOfMessage - 2] << 16);
+    checksumFromMessage = checksumFromMessage | (buf[endOfMessage - 1] << 8);
+    checksumFromMessage = checksumFromMessage | buf[endOfMessage];
 
     if(checksum != checksumFromMessage) {
         msg.header.flag = 0;
