@@ -14,7 +14,7 @@
     {
       "name": "JetsonRelativeMovementCommand",
       "type" : 2,
-      "length": 16,
+      "length": 17,
       "lists": {}
     },
     {

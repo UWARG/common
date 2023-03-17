@@ -14,6 +14,10 @@ from .. import TelemMessages
 class GroundStationDisarm(object):
     __slots__ = ["header", "arm"]
 
+    __typenames__ = ["TelemMessages.Header", "boolean"]
+
+    __dimensions__ = [None, None]
+
     def __init__(self):
         self.header = TelemMessages.Header()
         self.header.flag = 0x7e
@@ -49,12 +53,11 @@ class GroundStationDisarm(object):
         return self
     _decode_one = staticmethod(_decode_one)
 
-    _hash = None
     def _get_hash_recursive(parents):
         if GroundStationDisarm in parents: return 0
         newparents = parents + [GroundStationDisarm]
         tmphash = (0xc4cf4eb4362430ce+ TelemMessages.Header._get_hash_recursive(newparents)) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -64,4 +67,8 @@ class GroundStationDisarm(object):
             GroundStationDisarm._packed_fingerprint = struct.pack(">Q", GroundStationDisarm._get_hash_recursive([]))
         return GroundStationDisarm._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
+
+    def get_hash(self):
+        """Get the LCM hash of the struct"""
+        return struct.unpack(">Q", GroundStationDisarm._get_packed_fingerprint())[0]
 
