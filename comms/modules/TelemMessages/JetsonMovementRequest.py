@@ -12,14 +12,18 @@ import struct
 from .. import TelemMessages
 
 class JetsonMovementRequest(object):
-    __slots__ = ["header", "req"]
+    __slots__ = ["header", "id"]
+
+    __typenames__ = ["TelemMessages.Header", "byte"]
+
+    __dimensions__ = [None, None]
 
     def __init__(self):
         self.header = TelemMessages.Header()
         self.header.flag = 0x7e
         self.header.type = 0x1
         self.header.length = bytes([ 0x0, 0x1 ])
-        self.req = False
+        self.id = 0
 
     def encode(self):
         buf = BytesIO()
@@ -30,7 +34,7 @@ class JetsonMovementRequest(object):
     def _encode_one(self, buf):
         assert self.header._get_packed_fingerprint() == TelemMessages.Header._get_packed_fingerprint()
         self.header._encode_one(buf)
-        buf.write(struct.pack(">b", self.req))
+        buf.write(struct.pack(">B", self.id))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -45,16 +49,15 @@ class JetsonMovementRequest(object):
     def _decode_one(buf):
         self = JetsonMovementRequest()
         self.header = TelemMessages.Header._decode_one(buf)
-        self.req = bool(struct.unpack('b', buf.read(1))[0])
+        self.id = struct.unpack(">B", buf.read(1))[0]
         return self
     _decode_one = staticmethod(_decode_one)
 
-    _hash = None
     def _get_hash_recursive(parents):
         if JetsonMovementRequest in parents: return 0
         newparents = parents + [JetsonMovementRequest]
-        tmphash = (0xc4cf4eb4143e28ce+ TelemMessages.Header._get_hash_recursive(newparents)) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash = (0x3a2ec78c2435bae1+ TelemMessages.Header._get_hash_recursive(newparents)) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -64,4 +67,8 @@ class JetsonMovementRequest(object):
             JetsonMovementRequest._packed_fingerprint = struct.pack(">Q", JetsonMovementRequest._get_hash_recursive([]))
         return JetsonMovementRequest._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
+
+    def get_hash(self):
+        """Get the LCM hash of the struct"""
+        return struct.unpack(">Q", JetsonMovementRequest._get_packed_fingerprint())[0]
 

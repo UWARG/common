@@ -16,6 +16,10 @@ from .. import TelemMessages
 class GroundStationPIDSetResponse(object):
     __slots__ = ["header", "controller_number", "controller"]
 
+    __typenames__ = ["TelemMessages.Header", "byte", "TelemMessages.PIDController"]
+
+    __dimensions__ = [None, None, None]
+
     def __init__(self):
         self.header = TelemMessages.Header()
         self.header.flag = 0x7e
@@ -55,12 +59,11 @@ class GroundStationPIDSetResponse(object):
         return self
     _decode_one = staticmethod(_decode_one)
 
-    _hash = None
     def _get_hash_recursive(parents):
         if GroundStationPIDSetResponse in parents: return 0
         newparents = parents + [GroundStationPIDSetResponse]
         tmphash = (0x2676ff6e462d2950+ TelemMessages.Header._get_hash_recursive(newparents)+ TelemMessages.PIDController._get_hash_recursive(newparents)) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -70,4 +73,8 @@ class GroundStationPIDSetResponse(object):
             GroundStationPIDSetResponse._packed_fingerprint = struct.pack(">Q", GroundStationPIDSetResponse._get_hash_recursive([]))
         return GroundStationPIDSetResponse._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
+
+    def get_hash(self):
+        """Get the LCM hash of the struct"""
+        return struct.unpack(">Q", GroundStationPIDSetResponse._get_packed_fingerprint())[0]
 

@@ -12,6 +12,10 @@ import struct
 class PIDValues(object):
     __slots__ = ["P", "I", "D"]
 
+    __typenames__ = ["double", "double", "double"]
+
+    __dimensions__ = [None, None, None]
+
     def __init__(self):
         self.P = 0.0
         self.I = 0.0
@@ -42,11 +46,10 @@ class PIDValues(object):
         return self
     _decode_one = staticmethod(_decode_one)
 
-    _hash = None
     def _get_hash_recursive(parents):
         if PIDValues in parents: return 0
         tmphash = (0x573f2de20d48e523) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -56,4 +59,8 @@ class PIDValues(object):
             PIDValues._packed_fingerprint = struct.pack(">Q", PIDValues._get_hash_recursive([]))
         return PIDValues._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
+
+    def get_hash(self):
+        """Get the LCM hash of the struct"""
+        return struct.unpack(">Q", PIDValues._get_packed_fingerprint())[0]
 

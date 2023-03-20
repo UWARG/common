@@ -12,6 +12,10 @@ import struct
 class SensorData(object):
     __slots__ = ["latitude", "longitude", "altitude", "climb_rate", "track", "heading", "air_speed", "ground_speed", "roll", "pitch", "yaw", "roll_rate", "pitch_rate", "yaw_rate"]
 
+    __typenames__ = ["double", "double", "float", "float", "float", "float", "float", "float", "float", "float", "float", "float", "float", "float"]
+
+    __dimensions__ = [None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+
     def __init__(self):
         self.latitude = 0.0
         self.longitude = 0.0
@@ -53,11 +57,10 @@ class SensorData(object):
         return self
     _decode_one = staticmethod(_decode_one)
 
-    _hash = None
     def _get_hash_recursive(parents):
         if SensorData in parents: return 0
         tmphash = (0x19ee6ad15763353a) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -67,4 +70,8 @@ class SensorData(object):
             SensorData._packed_fingerprint = struct.pack(">Q", SensorData._get_hash_recursive([]))
         return SensorData._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
+
+    def get_hash(self):
+        """Get the LCM hash of the struct"""
+        return struct.unpack(">Q", SensorData._get_packed_fingerprint())[0]
 

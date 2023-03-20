@@ -16,6 +16,10 @@ from .. import TelemMessages
 class GroundStationData(object):
     __slots__ = ["header", "motor_outputs", "data", "battery_voltages", "controller_values"]
 
+    __typenames__ = ["TelemMessages.Header", "byte", "TelemMessages.SensorData", "byte", "byte"]
+
+    __dimensions__ = [None, [12], None, [13], [16]]
+
     def __init__(self):
         self.header = TelemMessages.Header()
         self.header.flag = 0x7e
@@ -61,12 +65,11 @@ class GroundStationData(object):
         return self
     _decode_one = staticmethod(_decode_one)
 
-    _hash = None
     def _get_hash_recursive(parents):
         if GroundStationData in parents: return 0
         newparents = parents + [GroundStationData]
         tmphash = (0xe42b6068e6ac2d15+ TelemMessages.Header._get_hash_recursive(newparents)+ TelemMessages.SensorData._get_hash_recursive(newparents)) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
+        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
@@ -76,4 +79,8 @@ class GroundStationData(object):
             GroundStationData._packed_fingerprint = struct.pack(">Q", GroundStationData._get_hash_recursive([]))
         return GroundStationData._packed_fingerprint
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
+
+    def get_hash(self):
+        """Get the LCM hash of the struct"""
+        return struct.unpack(">Q", GroundStationData._get_packed_fingerprint())[0]
 
