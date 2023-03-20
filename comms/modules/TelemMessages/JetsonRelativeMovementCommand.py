@@ -12,7 +12,7 @@ import struct
 from .. import TelemMessages
 
 class JetsonRelativeMovementCommand(object):
-    __slots__ = ["header", "ID", "x", "y", "z", "heading"]
+    __slots__ = ["header", "id", "x", "y", "z", "heading"]
 
     __typenames__ = ["TelemMessages.Header", "byte", "float", "float", "float", "float"]
 
@@ -23,7 +23,7 @@ class JetsonRelativeMovementCommand(object):
         self.header.flag = 0x7e
         self.header.type = 0x2
         self.header.length = bytes([ 0x0, 0x11 ])
-        self.ID = 0
+        self.id = 0
         self.x = 0.0
         self.y = 0.0
         self.z = 0.0
@@ -38,7 +38,7 @@ class JetsonRelativeMovementCommand(object):
     def _encode_one(self, buf):
         assert self.header._get_packed_fingerprint() == TelemMessages.Header._get_packed_fingerprint()
         self.header._encode_one(buf)
-        buf.write(struct.pack(">Bffff", self.ID, self.x, self.y, self.z, self.heading))
+        buf.write(struct.pack(">Bffff", self.id, self.x, self.y, self.z, self.heading))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -53,14 +53,14 @@ class JetsonRelativeMovementCommand(object):
     def _decode_one(buf):
         self = JetsonRelativeMovementCommand()
         self.header = TelemMessages.Header._decode_one(buf)
-        self.ID, self.x, self.y, self.z, self.heading = struct.unpack(">Bffff", buf.read(17))
+        self.id, self.x, self.y, self.z, self.heading = struct.unpack(">Bffff", buf.read(17))
         return self
     _decode_one = staticmethod(_decode_one)
 
     def _get_hash_recursive(parents):
         if JetsonRelativeMovementCommand in parents: return 0
         newparents = parents + [JetsonRelativeMovementCommand]
-        tmphash = (0xaf32ebf569830f07+ TelemMessages.Header._get_hash_recursive(newparents)) & 0xffffffffffffffff
+        tmphash = (0x8cb9b90a967d00a1+ TelemMessages.Header._get_hash_recursive(newparents)) & 0xffffffffffffffff
         tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)

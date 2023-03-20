@@ -12,7 +12,7 @@ import struct
 from .. import TelemMessages
 
 class JetsonLandingInitiationCommand(object):
-    __slots__ = ["header", "ID"]
+    __slots__ = ["header", "id"]
 
     __typenames__ = ["TelemMessages.Header", "byte"]
 
@@ -23,7 +23,7 @@ class JetsonLandingInitiationCommand(object):
         self.header.flag = 0x7e
         self.header.type = 0x3
         self.header.length = bytes([ 0x0, 0x1 ])
-        self.ID = 0
+        self.id = 0
 
     def encode(self):
         buf = BytesIO()
@@ -34,7 +34,7 @@ class JetsonLandingInitiationCommand(object):
     def _encode_one(self, buf):
         assert self.header._get_packed_fingerprint() == TelemMessages.Header._get_packed_fingerprint()
         self.header._encode_one(buf)
-        buf.write(struct.pack(">B", self.ID))
+        buf.write(struct.pack(">B", self.id))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -49,14 +49,14 @@ class JetsonLandingInitiationCommand(object):
     def _decode_one(buf):
         self = JetsonLandingInitiationCommand()
         self.header = TelemMessages.Header._decode_one(buf)
-        self.ID = struct.unpack(">B", buf.read(1))[0]
+        self.id = struct.unpack(">B", buf.read(1))[0]
         return self
     _decode_one = staticmethod(_decode_one)
 
     def _get_hash_recursive(parents):
         if JetsonLandingInitiationCommand in parents: return 0
         newparents = parents + [JetsonLandingInitiationCommand]
-        tmphash = (0x1a0ec78c2435bae1+ TelemMessages.Header._get_hash_recursive(newparents)) & 0xffffffffffffffff
+        tmphash = (0x3a2ec78c2435bae1+ TelemMessages.Header._get_hash_recursive(newparents)) & 0xffffffffffffffff
         tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
