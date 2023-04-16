@@ -1,0 +1,10 @@
+# Module names are ordered alphabetically
+# Required packages are ordered alphabetically within each module
+
+# camera
+opencv-python
+numpy
+
+# comms
+libscrc
+pyserial
