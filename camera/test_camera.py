@@ -2,15 +2,26 @@
 Test camera physically
 """
 
+import cv2
+
 from modules.camera_device import CameraDevice
 
 
 if __name__ == "__main__":
-    device = CameraDevice(0, 100, "test_camera")
+    device = CameraDevice(0, 100, "image")
 
     while True:
-        result, frame = device.get_image()
+        result, image = device.get_image()
         if not result:
+            print("ERROR")
             continue
 
-        print(frame.shape)
+        print(image.shape)
+
+        cv2.imshow("Camera", image)
+
+        # Delay for 1 ms
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    print("Done!")
