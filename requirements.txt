@@ -1,6 +1,9 @@
 # Module names are ordered alphabetically
 # Required packages are ordered alphabetically within each module
 
+# Global
+pytest
+
 # camera
 opencv-python
 numpy
@@ -8,3 +11,6 @@ numpy
 # comms
 libscrc
 pyserial
+
+# qr
+pyzbar
