@@ -19,8 +19,7 @@ class CameraDevice:
         (optional) save_name: For debugging, file name for saved images
         """
         self.__camera = cv2.VideoCapture(name)
-        if not self.__camera.isOpened():
-            print("ERROR: Cannot open camera")
+        assert self.__camera.isOpened()
 
         self.__camera.set(cv2.CAP_PROP_FRAME_WIDTH, sys.maxsize)
         self.__camera.set(cv2.CAP_PROP_FRAME_HEIGHT, sys.maxsize)
