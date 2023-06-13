@@ -40,6 +40,5 @@ __pycache__/
 .pytest_cache/
 venv/
 
-# Test
-# Camera
-image*
+# Logging
+*log*

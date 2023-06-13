@@ -1,6 +1,7 @@
 """
 Camera device using OpenCV
 """
+import sys
 
 import cv2
 import numpy as np
@@ -18,6 +19,11 @@ class CameraDevice:
         (optional) save_name: For debugging, file name for saved images
         """
         self.__camera = cv2.VideoCapture(name)
+        if not self.__camera.isOpened():
+            print("ERROR: Cannot open camera")
+
+        self.__camera.set(cv2.CAP_PROP_FRAME_WIDTH, sys.maxsize)
+        self.__camera.set(cv2.CAP_PROP_FRAME_HEIGHT, sys.maxsize)
 
         self.__divisor = save_nth_image
         self.__counter = 0
