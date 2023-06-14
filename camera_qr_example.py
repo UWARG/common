@@ -1,7 +1,6 @@
 """
 Camera to QR scanner example
 """
-import time
 
 import cv2
 
@@ -25,6 +24,7 @@ if __name__ == "__main__":
         if result:
             break
 
+        # Required for image display
         # Delay for 100 ms
         cv2.waitKey(100)
 

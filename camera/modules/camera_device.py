@@ -16,7 +16,8 @@ class CameraDevice:
     def __init__(self, name: "int | str", save_nth_image: int = 0, save_name: str = ""):
         """
         name: Device name or index (e.g. /dev/video0 )
-        (optional) save_nth_image: For debugging, saves every nth image. A value of 0 indicates no images should be saved
+        (optional) save_nth_image: For debugging, saves every nth image.
+            A value of 0 indicates no images should be saved
         (optional) save_name: For debugging, file name for saved images
         """
         self.__camera = cv2.VideoCapture(name)

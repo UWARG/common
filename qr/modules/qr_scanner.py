@@ -16,7 +16,6 @@ class QrScanner:
         Nothing to do
         """
 
-
     @staticmethod
     def get_qr_text(frame: np.ndarray) -> "tuple[bool, str | None]":
         """
