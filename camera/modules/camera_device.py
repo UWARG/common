@@ -2,6 +2,7 @@
 Camera device using OpenCV
 """
 import sys
+import time
 
 import cv2
 import numpy as np
@@ -26,7 +27,9 @@ class CameraDevice:
 
         self.__divisor = save_nth_image
         self.__counter = 0
-        self.__filename_prefix = save_name
+        self.__filename_prefix = ""
+        if save_name != "":
+            self.__filename_prefix = save_name + "_" + str(int(time.time())) + "_"
 
     def __del__(self):
         self.__camera.release()
