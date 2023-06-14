@@ -8,7 +8,7 @@ from modules.camera_device import CameraDevice
 
 
 if __name__ == "__main__":
-    device = CameraDevice(0, 100, "image")
+    device = CameraDevice(0, 100, "log_image")
 
     while True:
         result, image = device.get_image()

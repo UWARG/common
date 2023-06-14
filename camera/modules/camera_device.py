@@ -1,6 +1,8 @@
 """
 Camera device using OpenCV
 """
+import sys
+import time
 
 import cv2
 import numpy as np
@@ -18,10 +20,16 @@ class CameraDevice:
         (optional) save_name: For debugging, file name for saved images
         """
         self.__camera = cv2.VideoCapture(name)
+        assert self.__camera.isOpened()
+
+        self.__camera.set(cv2.CAP_PROP_FRAME_WIDTH, sys.maxsize)
+        self.__camera.set(cv2.CAP_PROP_FRAME_HEIGHT, sys.maxsize)
 
         self.__divisor = save_nth_image
         self.__counter = 0
-        self.__filename_prefix = save_name
+        self.__filename_prefix = ""
+        if save_name != "":
+            self.__filename_prefix = save_name + "_" + str(int(time.time())) + "_"
 
     def __del__(self):
         self.__camera.release()
