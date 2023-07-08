@@ -23,6 +23,8 @@ class InputDevice:
         
         location_info = self.vehicle.location
         data['altitude'] = location_info.altitude
+        data['latitude'] = location_info.latitude
+        data['longitude'] = location_info.longitude
 
         #if needed, distance from range finder can be added as well
 
