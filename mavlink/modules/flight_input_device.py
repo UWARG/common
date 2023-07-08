@@ -14,4 +14,19 @@ class InputDevice:
         For now since the only output is to odometry worker,
         will only get odometry data.
         """
-        return
+        data = {}
+        attitude_info = self.vehicle.attitude
+        #in radians
+        data['pitch'] = attitude_info.pitch
+        data['yaw'] = attitude_info.yaw
+        data['roll'] = attitude_info.roll 
+        
+        location_info = self.vehicle.location
+        data['altitude'] = location_info.altitude
+
+        #if needed, distance from range finder can be added as well
+
+        if not data:
+            return None
+
+        return data
