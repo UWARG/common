@@ -22,9 +22,9 @@ class InputDevice:
         data['roll'] = attitude_info.roll 
         
         location_info = self.vehicle.location
-        data['altitude'] = location_info.altitude
-        data['latitude'] = location_info.latitude
-        data['longitude'] = location_info.longitude
+        data['alt'] = location_info.global_frame.alt
+        data['lat'] = location_info.global_frame.lat
+        data['lon'] = location_info.global_frame.lon
 
         #if needed, distance from range finder can be added as well
 
