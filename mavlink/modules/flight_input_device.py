@@ -1,10 +1,19 @@
 from dronekit import connect 
 
+"""
+Creates a FlightInputDevice using dronekit which abstracts MavLink data
+Formats odometry data to dictionary 
+"""
+
 class FlightInputDevice: 
+    """
+    Wrapper for flight input
+    """
 
     def __init__(self, address: "str"):
         """
-        address: tcp address (e.g. "tcp:127.0.0.1:14550")
+        Connection address: tcp address (e.g. "tcp:127.0.0.1:14550")
+        Establishes address to host and stores inside instance self.drone
         """
         self.drone = connect(address, wait_ready = True)
         assert self.drone is not None
@@ -13,6 +22,8 @@ class FlightInputDevice:
         """
         For now since the only output is to odometry worker,
         will only get odometry data.
+
+        Returns odometry data in dictionary from the drone. 
         """
         data = {}
         attitude_info = self.drone.attitude
