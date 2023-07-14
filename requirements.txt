@@ -1,6 +1,19 @@
-dronekit==2.9.2
-libscrc==1.8.1
-numpy==1.24.4
-opencv-python==4.8.0.74
-pyzbar==0.1.9
-serial==0.0.97
+# Module names are ordered alphabetically
+# Required packages are ordered alphabetically within each module
+
+# Global
+pytest
+
+# camera
+opencv-python
+numpy
+
+# comms
+libscrc
+pyserial
+
+# mavlink
+dronekit
+
+# qr
+pyzbar
