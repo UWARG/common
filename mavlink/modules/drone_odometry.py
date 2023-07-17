@@ -76,7 +76,7 @@ class DroneOrientation:
 
 # Basically a struct
 # pylint: disable=too-few-public-methods
-class DroneOdometry: 
+class DroneOdometry:
     """
     Wrapper for DronePosition and  DroneOrientation
     """
