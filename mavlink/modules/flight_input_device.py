@@ -19,12 +19,12 @@ class FlightInputDevice:
         self.drone = dronekit.connect(address, wait_ready = True)
         assert self.drone is not None
 
-    def get_data(self) -> "drone_odometry.DroneOdometry": 
+    def get_data(self) -> "drone_odometry.DroneOdometry | None":
         """
         For now since the only output is to odometry worker,
         will only get odometry data.
 
-        Returns odometry data in dictionary from the drone. 
+        Returns odometry data in dictionary from the drone or None if missing either orientation or position 
         """
 
         attitude_info = self.drone.attitude
@@ -32,6 +32,9 @@ class FlightInputDevice:
         
         location_info = self.drone.location
         recieved_position, position_data = drone_odometry.DronePosition.create(location_info.global_frame.lat, location_info.global_frame.lon, location_info.global_frame.alt)
+
+        if not recieved_orientation or recieved_position:
+            return None
 
         recieved_odometry, odometry_data = drone_odometry.DroneOdometry.create(position_data, orientation_data)
 

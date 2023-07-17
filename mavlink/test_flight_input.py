@@ -1,6 +1,8 @@
-import modules.flight_input_device 
-import modules.drone_odometry as drone_odometry
+"""
+Test for flight input device by printing to console
+"""
 
+import modules.flight_input_device
 
 if __name__ == "__main__":
     example_drone = modules.flight_input_device.FlightInputDevice('tcp:127.0.0.1:14550')
