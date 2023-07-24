@@ -48,4 +48,3 @@ class FlightInputDevice:
         if not result:
             return False, None
         return True, odometry_data
-    
