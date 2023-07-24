@@ -19,8 +19,15 @@ class FlightInputDevice:
         address: tcp address or serial port of the drone (e.g. "tcp:127.0.0.1:14550").
         Establishes address to drone and stores dronekit object inside instance drone.
         """
-        drone = dronekit.connect(address, wait_ready = True)
-        if drone is None:
+        try:
+            drone = dronekit.connect(address, wait_ready = True)
+        except dronekit.TimeoutError:
+            print("No messages are being recieved. Make sure address/port is a host address/port.")
+            print("")
+            return False, None
+        except ConnectionRefusedError: 
+            print("Cannot connect to drone! Make sure the address/port is correct.")
+            print("")
             return False, None
         return True, FlightInputDevice(cls.__create_key, drone)
         
