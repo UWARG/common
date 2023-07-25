@@ -16,19 +16,18 @@ class FlightInputDevice:
     @classmethod
     def create(cls, address: str) -> "tuple[bool, FlightInputDevice | None]":
         """
-        address: tcp address or serial port of the drone (e.g. "tcp:127.0.0.1:14550").
-        Establishes address to drone and stores dronekit object inside instance drone.
+        address: TCP address or serial port of the drone (e.g. "tcp:127.0.0.1:14550").
+        Establishes address to drone through provided address and stores dronekit object inside instance drone.
         """
         try:
             drone = dronekit.connect(address, wait_ready = True)
         except dronekit.TimeoutError:
             print("No messages are being recieved. Make sure address/port is a host address/port.")
-            print("")
             return False, None
         except ConnectionRefusedError: 
             print("Cannot connect to drone! Make sure the address/port is correct.")
-            print("")
             return False, None
+        
         return True, FlightInputDevice(cls.__create_key, drone)
         
     def __init__(self, class_private_create_key, vehicle: dronekit.Vehicle):
@@ -47,11 +46,14 @@ class FlightInputDevice:
         result, orientation_data = drone_odometry.DroneOrientation.create(attitude_info.yaw, attitude_info.pitch, attitude_info.roll)
         if not result:
             return False, None
+        
         location_info = self.drone.location
         result, position_data = drone_odometry.DronePosition.create(location_info.global_frame.lat, location_info.global_frame.lon, location_info.global_frame.alt)
         if not result:
             return False, None
+        
         result, odometry_data = drone_odometry.DroneOdometry.create(position_data, orientation_data)
         if not result:
             return False, None
+        
         return True, odometry_data
