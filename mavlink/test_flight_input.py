@@ -6,8 +6,10 @@ import time
 from modules import flight_input_device
 
 
-DELAY_TIME = 0.5 # seconds
+DELAY_TIME = 0.5  # seconds
 DRONE_ADDRESS = "tcp:127.0.0.1:14550"
+
+
 if __name__ == "__main__":
     result, device = flight_input_device.FlightInputDevice.create(TCP_ADDRESS)
     if not result: 
