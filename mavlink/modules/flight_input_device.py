@@ -1,6 +1,6 @@
 """
 Creates a FlightInputDevice using dronekit which abstracts MavLink data
-Formats odometry data to dictionary 
+Formats odometry data to odometry data wrapper object.
 """
 
 import dronekit
