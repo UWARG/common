@@ -12,5 +12,8 @@ numpy
 libscrc
 pyserial
 
+# mavlink
+dronekit
+
 # qr
 pyzbar
