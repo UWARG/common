@@ -13,7 +13,10 @@ class DronePosition:
     __create_key = object()
 
     @classmethod
-    def create(cls, latitude: float, longitude: float, altitude: float) -> "tuple[bool, DronePosition | None]":
+    def create(cls,
+               latitude: float,
+               longitude: float,
+               altitude: float) -> "tuple[bool, DronePosition | None]":
         """
         latitude, longitude in decimal degrees.
         altitude in metres.
@@ -23,7 +26,11 @@ class DronePosition:
 
         return True, DronePosition(cls.__create_key, latitude, longitude, altitude)
 
-    def __init__(self, class_private_create_key, latitude: float, longitude: float, altitude: float):
+    def __init__(self,
+                 class_private_create_key,
+                 latitude: float,
+                 longitude: float,
+                 altitude: float):
         """
         Private constructor, use create() method.
         """
@@ -46,7 +53,10 @@ class DroneOrientation:
     __create_key = object()
 
     @classmethod
-    def create(cls, yaw: float, pitch: float, roll: float) -> "tuple[bool, DroneOrientation | None]":
+    def create(cls,
+               yaw: float,
+               pitch: float,
+               roll: float) -> "tuple[bool, DroneOrientation | None]":
         """
         yaw, pitch, roll in radians.
         """
@@ -81,21 +91,26 @@ class DroneOdometry:
     Wrapper for DronePosition and DroneOrientation.
     """
     __create_key = object()
-    
+
     @classmethod
-    def create(cls, position: DronePosition, orientation: DroneOrientation) -> "tuple[bool, DroneOdometry | None]":
+    def create(cls,
+               position: DronePosition,
+               orientation: DroneOrientation) -> "tuple[bool, DroneOdometry | None]":
         """
         Position and orientation in one class.
         """
-        if position == None:
+        if position is None:
             return False, None
-        
-        if orientation == None:
+
+        if orientation is None:
             return False, None
-        
+
         return True, DroneOdometry(cls.__create_key, position, orientation)
 
-    def __init__(self, class_private_create_key, position: DronePosition, orientation: DroneOrientation):
+    def __init__(self,
+                 class_private_create_key,
+                 position: DronePosition,
+                 orientation: DroneOrientation):
         """
         Private constructor, use create() method.
         """
