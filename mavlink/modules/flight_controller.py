@@ -1,6 +1,7 @@
 """
 Wrapper for the flight controller.
 """
+import time
 
 import dronekit
 
@@ -69,3 +70,28 @@ class FlightController:
             return False, None
 
         return True, odometry_data
+
+    def get_home_location(self, timeout: float) -> "tuple[bool, drone_odometry.DroneOdometry]":
+        """
+        Attempts to get the drone's home location until timeout.
+        timeout: Seconds.
+        """
+        start_time = time.time()
+        while self.drone.home_location is None and time.time() - start_time < timeout:
+            commands = self.drone.commands
+            commands.download()
+            commands.wait_ready()
+
+        # Timeout
+        if self.drone.home_location is None:
+            return False, None
+
+        result, location = drone_odometry.DronePosition.create(
+            self.drone.home_location.lat,
+            self.drone.home_location.lon,
+            self.drone.home_location.alt,
+        )
+        if not result:
+            return False, None
+
+        return True, location
