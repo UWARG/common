@@ -8,12 +8,12 @@ from modules import flight_controller
 
 
 DELAY_TIME = 0.5  # seconds
-DRONE_ADDRESS = "tcp:127.0.0.1:14550"
+MISSION_PLANNER_ADDRESS = "tcp:127.0.0.1:14550"
 TIMEOUT = 1.0  # seconds
 
 
 if __name__ == "__main__":
-    result, controller = flight_controller.FlightController.create(DRONE_ADDRESS)
+    result, controller = flight_controller.FlightController.create(MISSION_PLANNER_ADDRESS)
     if not result:
         print("failed")
         sys.exit()
