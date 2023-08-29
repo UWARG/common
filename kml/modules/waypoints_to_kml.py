@@ -25,7 +25,7 @@ def waypoints_to_kml(waypoints: "list[tuple[float, float]]",
     Returns
     -------
     str
-        Path to KML file.
+        Path to generated KML file.
     """
     kml = simplekml.Kml()
 
@@ -39,6 +39,7 @@ def waypoints_to_kml(waypoints: "list[tuple[float, float]]",
     if save_path is None:
         # Save in the current working directory
         save_path = os.getcwd()
+
     kml_file_path = os.path.join(save_path, f'{document_name}.kml')
     kml.save(kml_file_path)
 

@@ -16,7 +16,7 @@ def waypoints():
 
 def _validate_kml_file_from_waypoints(kml_file_path, expected_waypoints):
     """
-    Helper function that uses pykml validate KML file with expected waypoints
+    Helper function that uses pykml validate KML file with expected waypoints.
     """
     with open(kml_file_path, 'r') as f:
         kml_doc = parser.parse(f).getroot()
@@ -49,7 +49,7 @@ def test_waypoints_to_kml_with_save_path(waypoints, tmp_path):
     """
     document_name = "test_document"
 
-    # Build a temporary directory using tmp_path so the KML files are cleaned after the tests is run.
+    # Build a temporary directory using tmp_path so the KML files are cleaned after the tests is run
     save_path = tmp_path / "path/to/save"
     save_path.mkdir(parents=True, exist_ok=True)
 
@@ -70,7 +70,7 @@ def test_waypoints_to_kml_default_save_path(waypoints, tmp_path):
     """
     document_name = "test_document"
 
-    # Change current directory to the tmp_path so the KML files are cleaned after the tests is run.
+    # Change current directory to the tmp_path so the KML files are cleaned after the tests is run
     os.chdir(tmp_path)
 
     kml_file_path = waypoints_to_kml.waypoints_to_kml(waypoints, document_name)
