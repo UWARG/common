@@ -14,3 +14,7 @@ pyserial
 
 # qr
 pyzbar
+
+# kml
+simplekml
+pykml
