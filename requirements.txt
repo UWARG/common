@@ -17,4 +17,3 @@ pyzbar
 
 # kml
 simplekml
-pykml
