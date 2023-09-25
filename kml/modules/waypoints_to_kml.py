@@ -8,7 +8,7 @@ import simplekml
 
 def waypoints_to_kml(waypoints: "list[tuple[float, float]]",
                      document_name: str,
-                     save_path: pathlib.Path) -> bool:
+                     save_directory: pathlib.Path) -> bool:
     """
     Generates KML file from a list of waypoints.
 
@@ -18,7 +18,7 @@ def waypoints_to_kml(waypoints: "list[tuple[float, float]]",
         Waypoint coordinates in decimal degrees (latitude, longitude).
     document_name: str
         Name of the KML file to save (without the .kml extension).
-    save_path: pathlib.Path
+    save_directory: pathlib.Path
         Path to save the KML file to.
 
     Returns
@@ -35,7 +35,7 @@ def waypoints_to_kml(waypoints: "list[tuple[float, float]]",
         # coords parameters are in the order: lon, lat, optional height
         kml.newpoint(name=waypoint_name, coords=[(lng, lat)])
 
-    kml_file_path = pathlib.Path(save_path, f"{document_name}.kml")
+    kml_file_path = pathlib.Path(save_directory, f"{document_name}.kml")
 
     try:
         kml.save(str(kml_file_path))

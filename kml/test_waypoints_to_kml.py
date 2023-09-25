@@ -1,8 +1,8 @@
 """
 Test Process.
 """
-
 import pathlib
+
 import pytest
 
 from modules import waypoints_to_kml
@@ -14,20 +14,22 @@ def waypoints():
 
 
 def test_waypoints_to_kml_with_save_path(waypoints: "list[tuple[float, float]]",
-                                         tmp_path):
+                                         tmp_path: pathlib.Path):
     """
     Basic test case to save KML to the correct path when provided.
     """
     actual_document_name = "actual_kml_document"
 
     # Build a temporary directory using tmp_path so the KML files are cleaned after the tests are run
-    save_path = pathlib.Path(tmp_path, "path", "to", "save")
-    save_path.mkdir(parents=True, exist_ok=True)
+    tmp_path.mkdir(parents=True, exist_ok=True)
 
-    result = waypoints_to_kml.waypoints_to_kml(waypoints, actual_document_name, save_path)
+    result = waypoints_to_kml.waypoints_to_kml(waypoints, actual_document_name, tmp_path)
+
+    # Assert success
+    assert result is True
 
     # Define the path to the generated KML file
-    kml_file_path = pathlib.Path(save_path, f"{actual_document_name}.kml")
+    kml_file_path = pathlib.Path(tmp_path, f"{actual_document_name}.kml")
 
     # Assert that the KML file has been generated properly in the provided path
     assert kml_file_path.exists()
@@ -37,7 +39,7 @@ def test_waypoints_to_kml_with_save_path(waypoints: "list[tuple[float, float]]",
     test_directory = pathlib.Path(__file__).parent
 
     # Define the path to the static KML file for comparison (relative to the test file directory)
-    static_kml_path = test_directory / "expected_document.kml"
+    static_kml_path = pathlib.Path(test_directory, "expected_document.kml")
 
     # Compare the contents of the generated KML file with the static KML file
     assert kml_file_path.read_text() == static_kml_path.read_text()
