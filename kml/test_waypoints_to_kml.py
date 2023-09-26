@@ -38,11 +38,8 @@ def test_waypoints_to_kml_with_save_path(waypoints: "list[tuple[float, float]]",
     assert kml_file_path.exists()
     assert kml_file_path.suffix == ".kml"
 
-    # Get the directory where the test file is located
-    test_directory = pathlib.Path(__file__).parent
-
-    # Define the path to the static KML file for comparison (relative to the test file directory)
-    static_kml_path = test_directory / EXPECTED_KML_DOCUMENT_NAME
+    # Define the path to the static KML file for comparison
+    static_kml_path = pathlib.Path(EXPECTED_KML_DOCUMENT_NAME)
 
     # Compare the contents of the generated KML file with the static KML file
     assert kml_file_path.read_text() == static_kml_path.read_text()
