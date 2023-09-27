@@ -17,3 +17,6 @@ dronekit
 
 # qr
 pyzbar
+
+# kml
+simplekml
