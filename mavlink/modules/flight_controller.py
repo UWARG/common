@@ -5,7 +5,7 @@ import time
 
 import dronekit
 
-from modules import drone_odometry
+from . import drone_odometry
 
 
 class FlightController:
@@ -22,7 +22,8 @@ class FlightController:
         and stores the DroneKit object.
         """
         try:
-            drone = dronekit.connect(address, wait_ready=True)
+            # Wait ready is false as the drone may be on the ground
+            drone = dronekit.connect(address, wait_ready=False)
         except dronekit.TimeoutError:
             print("No messages are being received. Make sure address/port is a host address/port.")
             return False, None
