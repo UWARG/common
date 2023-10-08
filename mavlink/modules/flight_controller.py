@@ -5,7 +5,7 @@ import time
 
 import dronekit
 
-from modules import drone_odometry
+from . import drone_odometry
 
 
 class FlightController:
@@ -22,7 +22,8 @@ class FlightController:
         and stores the DroneKit object.
         """
         try:
-            drone = dronekit.connect(address, wait_ready=True)
+            # Wait ready is false as the drone may be on the ground
+            drone = dronekit.connect(address, wait_ready=False)
         except dronekit.TimeoutError:
             print("No messages are being received. Make sure address/port is a host address/port.")
             return False, None
@@ -62,6 +63,10 @@ class FlightController:
         if not result:
             return False, None
 
+        # Get Pylance to stop complaining
+        assert position_data is not None
+        assert orientation_data is not None
+
         result, odometry_data = drone_odometry.DroneOdometry.create(
             position_data,
             orientation_data,
@@ -71,7 +76,8 @@ class FlightController:
 
         return True, odometry_data
 
-    def get_home_location(self, timeout: float) -> "tuple[bool, drone_odometry.DroneOdometry]":
+    def get_home_location(self,
+                          timeout: float) -> "tuple[bool, drone_odometry.DronePosition | None]":
         """
         Attempts to get the drone's home location until timeout.
         timeout: Seconds.

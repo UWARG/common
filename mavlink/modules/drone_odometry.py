@@ -14,13 +14,22 @@ class DronePosition:
 
     @classmethod
     def create(cls,
-               latitude: float,
-               longitude: float,
-               altitude: float) -> "tuple[bool, DronePosition | None]":
+               latitude: "float | None",
+               longitude: "float | None",
+               altitude: "float | None") -> "tuple[bool, DronePosition | None]":
         """
         latitude, longitude in decimal degrees.
         altitude in metres.
         """
+        if latitude is None:
+            return False, None
+
+        if longitude is None:
+            return False, None
+
+        if altitude is None:
+            return False, None
+
         if altitude <= 0.0:
             return False, None
 
@@ -53,13 +62,24 @@ class DroneOrientation:
     __create_key = object()
 
     @classmethod
+    # Required for checks
+    # pylint: disable-next=too-many-return-statements
     def create(cls,
-               yaw: float,
-               pitch: float,
-               roll: float) -> "tuple[bool, DroneOrientation | None]":
+               yaw: "float | None",
+               pitch: "float | None",
+               roll: "float | None") -> "tuple[bool, DroneOrientation | None]":
         """
         yaw, pitch, roll in radians.
         """
+        if yaw is None:
+            return False, None
+
+        if pitch is None:
+            return False, None
+
+        if roll is None:
+            return False, None
+
         if yaw < -math.pi or yaw > math.pi:
             return False, None
 
