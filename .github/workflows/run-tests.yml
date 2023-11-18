@@ -46,11 +46,14 @@ jobs:
       - name: Test comms module
         run: |
           cd comms
-          python -m test_tx
-          python receive &
-          sleep 5  # Adjust as needed for receive startup time
-          pkill -f receive
-          python transmit
+          tmux new-session -d -s "comms_tests"
+          tmux send-keys -t "comms_tests" 'python -m test_tx' Enter
+
+          tmux new-window -t "comms_tests"
+          tmux send-keys -t "comms_tests" 'python receive' Enter
+
+          tmux new-window -t "comms_tests"
+          tmux send-keys -t "comms_tests" 'python transmit' Enter
 
       # Install mavlink dependencies and run tests with PyTest
       - name: Test mavlink module
