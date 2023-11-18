@@ -1,0 +1,66 @@
+# This workflow will install Python dependencies and run tests with PyTest using Python 3.8
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Run tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set Python version
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+
+      # Set up submodules
+      - name: Set up all submodules and submodule dependencies
+        run: |
+          git submodule update --init --recursive --remote camera
+          git submodule update --init --recursive --remote comms
+          git submodule update --init --recursive --remote mavlink
+          git submodule update --init --recursive --remote qr
+
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+
+      # Install camera dependencies and run tests with PyTest
+      - name: Test camera module
+        run: |
+          cd camera
+          python -m test_camera
+
+      # Install comms dependencies and run tests with PyTest
+      - name: Test comms module
+        run: |
+          cd comms
+          python -m test_tx
+          python receive &
+          sleep 5  # Adjust as needed for receive startup time
+          pkill -f receive
+          python transmit
+
+      # Install mavlink dependencies and run tests with PyTest
+      - name: Test mavlink module
+        run: |
+          cd mavlink
+          python -m test_flight_controller
+
+      # Install qr dependencies and run tests with PyTest
+      - name: Test qr module
+        run: |
+          cd qr
+          pytest
+          python -m camera_qr_example
