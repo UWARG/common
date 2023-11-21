@@ -25,45 +25,17 @@ jobs:
           python-version: 3.8
 
       # Set up submodules
-      - name: Set up all submodules and submodule dependencies
+      - name: Set up all submodules and project dependencies
         run: |
-          git submodule update --init --recursive --remote camera
-          git submodule update --init --recursive --remote comms
-          git submodule update --init --recursive --remote mavlink
-          git submodule update --init --recursive --remote qr
+          git submodule update --init --recursive --remote
 
+      # Install python dependencies for each project
+      - name: Install project dependencies
+        run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-
-      # Install camera dependencies and run tests with PyTest
-      - name: Test camera module
+      # Install dependencies and run tests with PyTest
+      - name: Run PyTest
         run: |
-          cd camera
-          python -m test_camera
-
-      # Install comms dependencies and run tests with PyTest
-      - name: Test comms module
-        run: |
-          cd comms
-          tmux new-session -d -s "comms_tests"
-          tmux send-keys -t "comms_tests" 'python -m test_tx' Enter
-
-          tmux new-window -t "comms_tests"
-          tmux send-keys -t "comms_tests" 'python receive' Enter
-
-          tmux new-window -t "comms_tests"
-          tmux send-keys -t "comms_tests" 'python transmit' Enter
-
-      # Install mavlink dependencies and run tests with PyTest
-      - name: Test mavlink module
-        run: |
-          cd mavlink
-          python -m test_flight_controller
-
-      # Install qr dependencies and run tests with PyTest
-      - name: Test qr module
-        run: |
-          cd qr
-          pytest
-          python -m camera_qr_example
+          pytest -vv
