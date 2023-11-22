@@ -5,10 +5,11 @@ import pathlib
 
 import pytest
 
-from modules import waypoints_to_kml
+from kml.modules import waypoints_to_kml
 
 
-EXPECTED_KML_DOCUMENT_NAME = "expected_document.kml"
+PARENT_DIRECTORY = "kml"
+EXPECTED_KML_DOCUMENT_PATH = pathlib.Path(PARENT_DIRECTORY, "expected_document.kml")
 
 
 @pytest.fixture
@@ -44,9 +45,6 @@ def test_waypoints_to_kml_with_save_path(waypoints: "list[tuple[float, float]]",
     assert actual_kml_file_path.exists()
     assert actual_kml_file_path.suffix == ".kml"
 
-    # Define the path to the static KML file for comparison
-    expected_kml_file_path = pathlib.Path(EXPECTED_KML_DOCUMENT_NAME)
-
     # Compare the contents of the generated KML file with the static KML file
     assert actual_kml_file_path.read_text(encoding="utf-8") \
-        == expected_kml_file_path.read_text(encoding="utf-8")
+        == EXPECTED_KML_DOCUMENT_PATH.read_text(encoding="utf-8")
