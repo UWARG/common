@@ -4,7 +4,7 @@ Test for flight input device by printing to console.
 import sys
 import time
 
-from modules import flight_controller
+from mavlink.modules import flight_controller
 
 
 DELAY_TIME = 0.5  # seconds

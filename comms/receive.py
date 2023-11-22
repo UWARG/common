@@ -1,14 +1,16 @@
 """
-Run transmit.py and receive.py together
+Run transmit.py and receive.py together.
 """
-
 import time
 
-from modules.generic_comms_device import GenericCommsDevice
+from comms.modules.generic_comms_device import GenericCommsDevice
+
+
+DEVICE = "/dev/ttyUSB1"
 
 
 if __name__ == "__main__":
-    receiver = GenericCommsDevice("/dev/ttyUSB1", 115200)
+    receiver = GenericCommsDevice(DEVICE, 115200)
     while True:
         time.sleep(0.01)
 

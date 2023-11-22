@@ -1,14 +1,17 @@
 """
-Test camera physically
+Test camera physically.
 """
 
 import cv2
 
-from modules.camera_device import CameraDevice
+from camera.modules.camera_device import CameraDevice
+
+
+IMAGE_LOG_PREFIX = "log_image"
 
 
 if __name__ == "__main__":
-    device = CameraDevice(0, 100, "log_image")
+    device = CameraDevice(0, 100, IMAGE_LOG_PREFIX)
 
     while True:
         result, image = device.get_image()

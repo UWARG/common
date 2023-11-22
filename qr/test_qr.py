@@ -1,15 +1,18 @@
 """
-Test on some basic QR codes
+Test on some basic QR codes.
 """
+import pathlib
 
 import cv2
 
-from modules.qr_scanner import QrScanner
+from qr.modules.qr_scanner import QrScanner
 
 
-IMAGE_2023_TASK1_ROUTE_PATH = "2023_task1_route.png"
-IMAGE_2023_TASK1_DIVERSION_PATH = "2023_task1_diversion.png"
-IMAGE_2023_TASK2_ROUTES_PATH = "2023_task2_routes.png"
+PARENT_DIRECTORY = "qr"
+
+IMAGE_2023_TASK1_ROUTE_PATH = pathlib.Path(PARENT_DIRECTORY, "2023_task1_route.png")
+IMAGE_2023_TASK1_DIVERSION_PATH = pathlib.Path(PARENT_DIRECTORY, "2023_task1_diversion.png")
+IMAGE_2023_TASK2_ROUTES_PATH = pathlib.Path(PARENT_DIRECTORY, "2023_task2_routes.png")
 
 IMAGE_2023_TASK1_ROUTE_TEXT = "Follow route: Quebec; Lima; Alpha; Tango"
 # Long strings
@@ -49,7 +52,7 @@ class TestScanner:
         """
         # Setup
         expected = IMAGE_2023_TASK1_ROUTE_TEXT
-        image = cv2.imread(IMAGE_2023_TASK1_ROUTE_PATH)
+        image = cv2.imread(str(IMAGE_2023_TASK1_ROUTE_PATH))
         assert image is not None
 
         # Run
@@ -66,7 +69,7 @@ class TestScanner:
         """
         # Setup
         expected = IMAGE_2023_TASK1_DIVERSION_TEXT
-        image = cv2.imread(IMAGE_2023_TASK1_DIVERSION_PATH)
+        image = cv2.imread(str(IMAGE_2023_TASK1_DIVERSION_PATH))
         assert image is not None
 
         # Run
@@ -83,7 +86,7 @@ class TestScanner:
         """
         # Setup
         expected = IMAGE_2023_TASK2_ROUTES_TEXT
-        image = cv2.imread(IMAGE_2023_TASK2_ROUTES_PATH)
+        image = cv2.imread(str(IMAGE_2023_TASK2_ROUTES_PATH))
         assert image is not None
 
         # Run
