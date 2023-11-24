@@ -35,6 +35,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # Install zbar library to resolve pyzbar import error
+      - name: Install zbar library
+        run: sudo apt-get install libzbar0
+
       # Install dependencies and run tests with PyTest
       - name: Run PyTest
         run: |
