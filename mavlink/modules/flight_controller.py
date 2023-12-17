@@ -172,3 +172,11 @@ class FlightController:
         )
 
         return self.upload_commands([landing_command])
+    def get_mission_status_completed(self) -> bool:
+        waypoint_count = self.drone.commands.count
+        current_waypoint = self.drone.commands.next
+
+        if current_waypoint == waypoint_count:
+            return True
+        else:
+            return False
