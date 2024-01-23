@@ -92,14 +92,19 @@ if __name__ == "__main__":
     # Start Longer Mission
     upload_mission_to_drone(controller)
 
-    # Check mission completed returns false upon upload
-    assert controller.get_mission_status_completed() is False
+    # Check mission completed returns not empty
+    result, mission_is_completed = controller.get_mission_status_completed()
+    assert mission_is_completed is not None
 
     # Check mission completed returns false
-    while controller.get_mission_status_completed() is False:
+    assert mission_is_completed is False
+
+    # Check mission completed returns false
+    while mission_is_completed is False:
         time.sleep(1)
+        status, retrieved = controller.get_mission_status_completed()
 
     # Check mission completed returns true
-    assert controller.get_mission_status_completed() is True
+    assert mission_is_completed is True
 
     print("Done!")
