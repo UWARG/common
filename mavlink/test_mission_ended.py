@@ -89,7 +89,11 @@ if __name__ == "__main__":
     # Get Pylance to stop complaining
     assert controller is not None
 
-    # Start Longer Mission
+    # Check mission completed returns empty and result is false if no mission is uploaded
+    result, mission_is_completed = controller.get_mission_status_completed()
+    assert result is False and mission_is_completed is None
+
+    # Start Mission
     upload_mission_to_drone(controller)
 
     # Check mission completed returns not empty
