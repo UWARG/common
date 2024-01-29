@@ -139,7 +139,7 @@ class FlightController:
 
         return True
 
-    def create_land_command(self, latitude: float, longitude: float) -> bool:
+    def upload_land_command(self, latitude: float, longitude: float) -> bool:
         """
         Given a target latitude and longitude, overwrite the drone's current mission 
         with a corresponding dronekit land command.
