@@ -7,7 +7,6 @@ import time
 from modules import flight_controller
 
 
-ALTITUDE = 40  # metres
 DELAY_TIME = 0.5  # seconds
 MISSION_PLANNER_ADDRESS = "tcp:127.0.0.1:14550"
 TIMEOUT = 1.0  # seconds
@@ -42,8 +41,6 @@ if __name__ == "__main__":
             print("alt: " + str(home.altitude))
 
         time.sleep(DELAY_TIME)
-
-    commands = []
 
     result, home = controller.get_home_location(TIMEOUT)
 

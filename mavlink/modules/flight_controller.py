@@ -7,14 +7,15 @@ import dronekit
 
 from . import drone_odometry
 
+
 class FlightController:
     """
     Wrapper for DroneKit-Python and MAVLink.
     """
     __create_key = object()
 
-    MAVLINK_LANDING_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL
-    MAVLINK_LANDING_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_LAND
+    __MAVLINK_LANDING_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL
+    __MAVLINK_LANDING_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_LAND
 
     @classmethod
     def create(cls, address: str) -> "tuple[bool, FlightController | None]":
@@ -104,7 +105,7 @@ class FlightController:
 
         return True, location
 
-    def upload_commands(self, commands: "list[dronekit.Command]") -> "bool":
+    def upload_commands(self, commands: "list[dronekit.Command]") -> bool:
         """
         Writes a mission to the drone from a list of commands (will overwrite any previous missions).
 
@@ -138,9 +139,10 @@ class FlightController:
 
         return True
 
-    def create_land_command(self, latitude: float, longitude: float) -> "bool":
+    def create_land_command(self, latitude: float, longitude: float) -> bool:
         """
-        Given a target latitude and longitude, returns a dronekit landing command
+        Given a target latitude and longitude, overwrite the drone's current mission 
+        with a corresponding dronekit land command.
 
         Parameters
         ----------
@@ -151,12 +153,13 @@ class FlightController:
         -------
         bool
         """
+        # TODO: DroneKit-Python's Command uses floating point value, which is not accurate enough for WARG. Investigate using MAVLink's integer command.
         landing_command = dronekit.Command(
             0,
             0,
             0,
-            self.MAVLINK_LANDING_FRAME,
-            self.MAVLINK_LANDING_COMMAND,
+            self.__MAVLINK_LANDING_FRAME,
+            self.__MAVLINK_LANDING_COMMAND,
             0,
             0,
             0,  # param1
