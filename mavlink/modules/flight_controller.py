@@ -14,6 +14,9 @@ class FlightController:
     """
     __create_key = object()
 
+    __MAVLINK_LANDING_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL
+    __MAVLINK_LANDING_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_LAND
+
     @classmethod
     def create(cls, address: str) -> "tuple[bool, FlightController | None]":
         """
@@ -101,3 +104,71 @@ class FlightController:
             return False, None
 
         return True, location
+
+    def upload_commands(self, commands: "list[dronekit.Command]") -> bool:
+        """
+        Writes a mission to the drone from a list of commands (will overwrite any previous missions).
+
+        Parameters
+        ----------
+        commands: list[dronekit.Command]
+
+        Returns
+        -------
+        bool
+        """
+        if len(commands) == 0:
+            return False
+
+        try:
+            command_sequence = self.drone.commands
+            command_sequence.download()
+            command_sequence.wait_ready()
+            command_sequence.clear()
+            for command in commands:
+                command_sequence.add(command)
+
+            # Upload commands to drone
+            command_sequence.upload()
+        except dronekit.TimeoutError:
+            print("Upload timeout, commands are not being sent.")
+            return False
+        except ConnectionResetError:
+            print("Connection with drone reset. Unable to upload commands.")
+            return False
+
+        return True
+
+    def upload_land_command(self, latitude: float, longitude: float) -> bool:
+        """
+        Given a target latitude and longitude, overwrite the drone's current mission 
+        with a corresponding dronekit land command.
+
+        Parameters
+        ----------
+        latitude: float
+        longitude: float
+
+        Returns
+        -------
+        bool
+        """
+        # TODO: DroneKit-Python's Command uses floating point value, which is not accurate enough for WARG. Investigate using MAVLink's integer command.
+        landing_command = dronekit.Command(
+            0,
+            0,
+            0,
+            self.__MAVLINK_LANDING_FRAME,
+            self.__MAVLINK_LANDING_COMMAND,
+            0,
+            0,
+            0,  # param1
+            0,
+            0,
+            0,
+            latitude,
+            longitude,
+            0,
+        )
+
+        return self.upload_commands([landing_command])

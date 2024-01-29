@@ -42,4 +42,13 @@ if __name__ == "__main__":
 
         time.sleep(DELAY_TIME)
 
+    result, home = controller.get_home_location(TIMEOUT)
+
+    # Create and add land command
+    result = controller.upload_land_command(home.latitude, home.longitude)
+
+    if not result:
+        print("Could not upload land command.")
+        sys.exit()
+
     print("Done!")
