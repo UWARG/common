@@ -177,10 +177,13 @@ class FlightController:
         waypoint_count = self.drone.commands.count
         current_waypoint = self.drone.commands.next
 
-        if waypoint_count or current_waypoint is None:
+        if waypoint_count < 0 or current_waypoint < 0:
             return False, None
 
-        if current_waypoint == waypoint_count:
-            return True, True
-        else:
+        if waypoint_count == 0:
             return True, False
+        elif waypoint_count > 0:
+            if current_waypoint == waypoint_count:
+                return True, True
+            else:
+                return True, False
