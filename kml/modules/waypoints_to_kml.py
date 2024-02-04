@@ -30,7 +30,7 @@ def waypoints_to_kml(ground_locations: "list[location_ground.LocationGround]",
     """
     kml = simplekml.Kml()
 
-    for ground_location in enumerate(ground_locations):
+    for ground_location in ground_locations:
         ground_location_name = f"Point {ground_location.name}"
         lat = ground_location.latitude
         lng = ground_location.longitude
