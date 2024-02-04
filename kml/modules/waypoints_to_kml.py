@@ -6,8 +6,9 @@ import time
 
 import simplekml
 
+from kml.modules import location_ground
 
-def waypoints_to_kml(waypoints: "list[tuple[float, float]]",
+def waypoints_to_kml(ground_locations: "list[location_ground.LocationGround]",
                      document_name_prefix: str,
                      save_directory: pathlib.Path) -> "tuple[bool, pathlib.Path | None]":
     """
@@ -29,12 +30,13 @@ def waypoints_to_kml(waypoints: "list[tuple[float, float]]",
     """
     kml = simplekml.Kml()
 
-    for idx, waypoint in enumerate(waypoints):
-        waypoint_name = f"Point {idx}"
-        lat, lng = waypoint
+    for ground_location in enumerate(ground_locations):
+        ground_location_name = f"Point {ground_location.name}"
+        lat = ground_location.latitude
+        lng = ground_location.longitude
 
         # coords parameters are in the order: lon, lat, optional height
-        kml.newpoint(name=waypoint_name, coords=[(lng, lat)])
+        kml.newpoint(name=ground_location_name, coords=[(lng, lat)])
 
     kml_file_path = pathlib.Path(save_directory, f"{document_name_prefix}_{int(time.time())}.kml")
 
