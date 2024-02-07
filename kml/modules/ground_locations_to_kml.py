@@ -1,5 +1,5 @@
 """
-Module to convert waypoints list to kml document.
+Module to convert ground locations list to kml document.
 """
 import pathlib
 import time
@@ -8,16 +8,17 @@ import simplekml
 
 from kml.modules import location_ground
 
-def waypoints_to_kml(ground_locations: "list[location_ground.LocationGround]",
+
+def ground_locations_to_kml(ground_locations: "list[location_ground.LocationGround]",
                      document_name_prefix: str,
                      save_directory: pathlib.Path) -> "tuple[bool, pathlib.Path | None]":
     """
-    Generates KML file from a list of waypoints.
+    Generates KML file from a list of ground locations.
 
     Parameters
     ----------
-    waypoints: list[tuple[float, float]]
-        Waypoint coordinates in decimal degrees (latitude, longitude).
+    ground_locations: list[location_ground.LocationGround]
+        Ground location coordinates in decimal degrees (latitude, longitude).
     document_name_prefix: str
         Name of the KML file to save (without the timestamp or .kml extension).
     save_directory: pathlib.Path
@@ -30,8 +31,8 @@ def waypoints_to_kml(ground_locations: "list[location_ground.LocationGround]",
     """
     kml = simplekml.Kml()
 
-    for ground_location in ground_locations:
-        ground_location_name = f"Point {ground_location.name}"
+    for index, ground_location in enumerate(ground_locations):
+        ground_location_name = f"Point {index + 1}: {ground_location.name}"
         lat = ground_location.latitude
         lng = ground_location.longitude
 

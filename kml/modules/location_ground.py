@@ -4,12 +4,12 @@ Class LocationGround to use instead of tuple for coordinates.
 
 class LocationGround:
     """
-    LocationGround class represents a geographical waypoint with a name, latitude, and longitude.
+    LocationGround class represents a geographical ground location with a name, latitude, and longitude.
 
     Attributes:
-        name (str): The name or label for the waypoint.
-        latitude (float): The latitude coordinate of the waypoint in decimal degrees.
-        longitude (float): The longitude coordinate of the waypoint in decimal degrees.
+        name (str): The name or label for the ground location.
+        latitude (float): The latitude coordinate of the ground location in decimal degrees.
+        longitude (float): The longitude coordinate of the ground location in decimal degrees.
 
     Methods:
         __init__(name, latitude, longitude): Initializes a LocationGround object.
@@ -21,9 +21,9 @@ class LocationGround:
         Constructor for the LocationGround object.
 
         Args:
-            name (str): The name or label for the waypoint.
-            latitude (float): The latitude coordinate of the waypoint in decimal degrees.
-            longitude (float): The longitude coordinate of the waypoint in decimal degrees.
+            name (str): The name or label for the ground location.
+            latitude (float): The latitude coordinate of the ground location in decimal degrees.
+            longitude (float): The longitude coordinate of the ground location in decimal degrees.
         """
         self.name = name
         self.latitude = latitude
