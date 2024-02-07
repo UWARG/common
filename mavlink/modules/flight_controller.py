@@ -182,7 +182,7 @@ class FlightController:
 
         if waypoint_count == 0:
             return True, False
-        elif waypoint_count > 0:
+        else:
             if current_waypoint == waypoint_count:
                 return True, True
             else:

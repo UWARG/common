@@ -1,9 +1,13 @@
+"""
+Test for drone's destination at final waypoint by uploading mission and monitoring it.
+"""
 import sys
 import time
 
 import dronekit
 
 from modules import flight_controller
+
 
 DELAY_TIME = 10.0  # seconds
 MISSION_PLANNER_ADDRESS = "tcp:127.0.0.1:14550"
@@ -18,10 +22,8 @@ ALTITUDE = 10
 ACCEPT_RADIUS = 10
 
 
-def upload_mission(
-        waypoints: "list[tuple[float, float, float]]",
-        controller: "flight_controller.FlightController",
-) -> bool:
+def upload_mission(waypoints: "list[tuple[float, float, float]]",
+                   controller: "flight_controller.FlightController") -> bool:
     # Clear existing mission
     controller.drone.commands.download()
     controller.drone.commands.wait_ready()
@@ -69,20 +71,24 @@ def upload_mission(
         controller.drone.commands.add(command)
 
     # Upload the mission to the drone
-    controller.drone.commands.upload()
+    try:
+        controller.drone.commands.upload()
+        return True
+    except dronekit.TimeoutError:
+        return False
+
 
 
 if __name__ == "__main__":
     result, controller = flight_controller.FlightController.create(MISSION_PLANNER_ADDRESS)
     if not result:
-        print("failed")
+        print("Failed to create flight controller.")
         sys.exit()
 
     # Get Pylance to stop complaining
     assert controller is not None
 
-    # Set the home location of the drone to E5
-    # Set extra command line to `--home=43.472978,-80.540103,336,0`
+    # List of waypoints for the drone to travel
     waypoints = [
         (43.4731, -80.5419, ALTITUDE),
         (43.4723, -80.5380, ALTITUDE),
@@ -91,12 +97,27 @@ if __name__ == "__main__":
     ]
 
     # Upload Mission
-    upload_mission(waypoints, controller)
+    result = upload_mission(waypoints, controller)
 
-    result, drone_is_approaching_final_waypoint = controller.drone_travelling_to_final_waypoint()
+    if not result:
+        print("Failed to upload mission.")
+        sys.exit()
 
-    while not drone_is_approaching_final_waypoint:
-        time.sleep(1)
-        result, drone_is_approaching_final_waypoint = controller.drone_travelling_to_final_waypoint()
+    while True:
+        result, is_drone_destination_final_waypoint = controller.is_drone_destination_final_waypoint()
+        if not result:
+            print("Failed to get if the drones destination is the final waypoint.")
+            sys.exit()
 
-    print("Done")
+        # Get Pylance to stop complaining
+        assert is_drone_destination_final_waypoint is not None
+
+        if is_drone_destination_final_waypoint:
+            print("Drones destination is final waypoint.")
+            break
+
+        print("Drones destination is not final waypoint.")
+
+        time.sleep(DELAY_TIME)
+
+    print("Done!")
