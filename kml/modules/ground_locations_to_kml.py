@@ -25,8 +25,8 @@ def ground_locations_to_kml(ground_locations: "list[location_ground.LocationGrou
 
     Returns
     -------
-    bool
-        Whether the operation was a success.
+    bool: Whether the operation was a success.
+    pathlib.Path: A path to the plotted kml file
     """
     kml = simplekml.Kml()
 
