@@ -6,7 +6,7 @@ import time
 
 import dronekit
 
-from modules import flight_controller
+from mavlink.modules import flight_controller
 
 
 DELAY_TIME = 1.0  # seconds
