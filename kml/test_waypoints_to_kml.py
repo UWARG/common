@@ -18,9 +18,8 @@ def waypoints():
     """
     Waypoints input.
     """
-
     return [
-        location_ground.LocationGround("San Fransico", 37.7749, -122.4194), 
+        location_ground.LocationGround("San Francisco", 37.7749, -122.4194), 
         location_ground.LocationGround("Los Angeles", 34.0522, -118.2437), 
         location_ground.LocationGround("New York City", 40.7128, -74.0060)
     ]

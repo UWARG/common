@@ -1,5 +1,5 @@
 """
-Class LocationGround to use instead of tuple for coordinates.
+Class to use instead of tuple for coordinates.
 """
 
 class LocationGround:
@@ -7,9 +7,9 @@ class LocationGround:
     LocationGround class represents a geographical ground location with a name, latitude, and longitude.
 
     Attributes:
-        name (str): The name or label for the ground location.
-        latitude (float): The latitude coordinate of the ground location in decimal degrees.
-        longitude (float): The longitude coordinate of the ground location in decimal degrees.
+        name (str): The name or label for the location.
+        latitude (float): The latitude coordinate in decimal degrees.
+        longitude (float): The longitude coordinate in decimal degrees.
 
     Methods:
         __init__(name, latitude, longitude): Initializes a LocationGround object.
@@ -21,9 +21,9 @@ class LocationGround:
         Constructor for the LocationGround object.
 
         Args:
-            name (str): The name or label for the ground location.
-            latitude (float): The latitude coordinate of the ground location in decimal degrees.
-            longitude (float): The longitude coordinate of the ground location in decimal degrees.
+            name (str): The name or label for the location.
+            latitude (float): The latitude coordinate in decimal degrees.
+            longitude (float): The longitude coordinate decimal degrees.
         """
         self.name = name
         self.latitude = latitude
@@ -49,4 +49,4 @@ class LocationGround:
         """
         Returns a string representation of the LocationGround object.
         """
-        return f"Ground Location: {self.name}, latitude: {self.latitude}, longitude: {self.longitude})"
+        return f"LocationGround: {self.name}, latitude: {self.latitude}, longitude: {self.longitude})"

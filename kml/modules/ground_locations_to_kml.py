@@ -18,7 +18,6 @@ def ground_locations_to_kml(ground_locations: "list[location_ground.LocationGrou
     Parameters
     ----------
     ground_locations: list[location_ground.LocationGround]
-        Ground location coordinates in decimal degrees (latitude, longitude).
     document_name_prefix: str
         Name of the KML file to save (without the timestamp or .kml extension).
     save_directory: pathlib.Path
