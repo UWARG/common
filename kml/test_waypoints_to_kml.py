@@ -5,7 +5,8 @@ import pathlib
 
 import pytest
 
-from kml.modules import waypoints_to_kml
+from kml.modules import ground_locations_to_kml
+from kml.modules import location_ground
 
 
 PARENT_DIRECTORY = "kml"
@@ -17,10 +18,14 @@ def waypoints():
     """
     Waypoints input.
     """
-    return [(37.7749, -122.4194), (34.0522, -118.2437), (40.7128, -74.0060)]
+    return [
+        location_ground.LocationGround("San Francisco", 37.7749, -122.4194), 
+        location_ground.LocationGround("Los Angeles", 34.0522, -118.2437), 
+        location_ground.LocationGround("New York City", 40.7128, -74.0060)
+    ]
 
 
-def test_waypoints_to_kml_with_save_path(waypoints: "list[tuple[float, float]]",
+def test_waypoints_to_kml_with_save_path(waypoints: "list[location_ground.LocationGround]",
                                          tmp_path: pathlib.Path):
     """
     Basic test case to save KML to the correct path when provided.
@@ -31,7 +36,7 @@ def test_waypoints_to_kml_with_save_path(waypoints: "list[tuple[float, float]]",
     # the KML files are cleaned after the tests are run
     tmp_path.mkdir(parents=True, exist_ok=True)
 
-    result, actual_kml_file_path = waypoints_to_kml.waypoints_to_kml(
+    result, actual_kml_file_path = ground_locations_to_kml.ground_locations_to_kml(
         waypoints,
         actual_kml_document_name,
         tmp_path,
