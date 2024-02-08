@@ -98,7 +98,6 @@ if __name__ == "__main__":
 
     # Upload mission
     result = upload_mission(controller, waypoints)
-
     if not result:
         print("Failed to upload mission.")
         sys.exit()
