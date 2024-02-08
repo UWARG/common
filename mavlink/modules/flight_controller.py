@@ -141,7 +141,7 @@ class FlightController:
 
     def upload_land_command(self, latitude: float, longitude: float) -> bool:
         """
-        Given a target latitude and longitude, overwrite the drone's current mission 
+        Given a target latitude and longitude, overwrite the drone's current mission
         with a corresponding dronekit land command.
 
         Parameters
@@ -183,7 +183,4 @@ class FlightController:
         if waypoint_count == 0:
             return True, False
         else:
-            if current_waypoint == waypoint_count:
-                return True, True
-            else:
-                return True, False
+            return True, (current_waypoint == waypoint_count)

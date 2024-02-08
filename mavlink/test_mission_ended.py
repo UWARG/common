@@ -9,7 +9,7 @@ import dronekit
 from modules import flight_controller
 
 
-DELAY_TIME = 10.0  # seconds
+DELAY_TIME = 1.0  # seconds
 MISSION_PLANNER_ADDRESS = "tcp:127.0.0.1:14550"
 TIMEOUT = 1.0  # seconds
 
@@ -18,12 +18,13 @@ MAVLINK_TAKEOFF_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_TAKEOFF
 MAVLINK_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT
 MAVLINK_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_WAYPOINT
 
-ALTITUDE = 10
-ACCEPT_RADIUS = 10
+ALTITUDE = 10  # metres
+ACCEPT_RADIUS = 10  # metres
 
 
-def upload_mission(waypoints: "list[tuple[float, float, float]]",
-                   controller: "flight_controller.FlightController") -> bool:
+# TODO: This function is to be removed when Dronekit-Python interfaces are moved from pathing.
+def upload_mission(controller: "flight_controller.FlightController",
+                   waypoints: "list[tuple[float, float, float]]") -> bool:
     # Clear existing mission
     controller.drone.commands.download()
     controller.drone.commands.wait_ready()
@@ -78,7 +79,6 @@ def upload_mission(waypoints: "list[tuple[float, float, float]]",
         return False
 
 
-
 if __name__ == "__main__":
     result, controller = flight_controller.FlightController.create(MISSION_PLANNER_ADDRESS)
     if not result:
@@ -96,8 +96,8 @@ if __name__ == "__main__":
         (43.4743, -80.5400, ALTITUDE),
     ]
 
-    # Upload Mission
-    result = upload_mission(waypoints, controller)
+    # Upload mission
+    result = upload_mission(controller, waypoints)
 
     if not result:
         print("Failed to upload mission.")
@@ -106,18 +106,18 @@ if __name__ == "__main__":
     while True:
         result, is_drone_destination_final_waypoint = controller.is_drone_destination_final_waypoint()
         if not result:
-            print("Failed to get if the drones destination is the final waypoint.")
+            print("Failed to get if the drone's destination is the final waypoint.")
             sys.exit()
 
         # Get Pylance to stop complaining
         assert is_drone_destination_final_waypoint is not None
 
         if is_drone_destination_final_waypoint:
-            print("Drones destination is final waypoint.")
             break
 
-        print("Drones destination is not final waypoint.")
+        print("Drone's destination is not final waypoint.")
 
         time.sleep(DELAY_TIME)
 
+    print("Drone's destination is final waypoint.")
     print("Done!")
