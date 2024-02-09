@@ -22,8 +22,8 @@ ALTITUDE = 10  # metres
 ACCEPT_RADIUS = 10  # metres
 
 
-# TODO: This function is to be removed when Dronekit-Python interfaces are moved from pathing.
-def upload_mission(controller: "flight_controller.FlightController",
+# TODO: This function is to be removed when Dronekit-Python interfaces are moved from pathing repository.
+def upload_mission(controller: flight_controller.FlightController,
                    waypoints: "list[tuple[float, float, float]]") -> bool:
     # Clear existing mission
     controller.drone.commands.download()
