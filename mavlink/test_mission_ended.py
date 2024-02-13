@@ -34,8 +34,8 @@ def upload_mission(controller: flight_controller.FlightController,
     ----------
     controller: "flight_controller.FlightController"
     waypoints: "list[tuple[float, float, float]]"
-        The three values in the tuple represent latitude (degrees),
-        longitude (degrees), and altitude (metres) respectively.
+        The three values in the tuple represent latitude (decimal degrees),
+        longitude (decimal degrees), and altitude (metres) respectively.
 
     Returns
     -------

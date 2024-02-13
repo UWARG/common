@@ -176,6 +176,16 @@ class FlightController:
     def is_drone_destination_final_waypoint(self) -> "tuple[bool, bool | None]":
         """
         Returns if the drone's destination is the final waypoint in the mission.
+
+        Returns
+        -------
+        tuple[bool, bool | None]
+            The first boolean in the tuple represents if retrieving the mission
+            information is successful.
+            - If it is not successful, the second parameter will be None.
+            - If it is successful, the second parameter will be a boolean
+              indicating if the drone's destination is set to the final
+              waypoint in the mission.
         """
         waypoint_count = self.drone.commands.count
         current_waypoint = self.drone.commands.next
