@@ -22,9 +22,23 @@ ALTITUDE = 10  # metres
 ACCEPT_RADIUS = 10  # metres
 
 
-# TODO: This function is to be removed when Dronekit-Python interfaces are moved from pathing repository.
+# TODO: This function is to be removed when Dronekit-Python interfaces are
+# moved from pathing repository.
 def upload_mission(controller: flight_controller.FlightController,
                    waypoints: "list[tuple[float, float, float]]") -> bool:
+    """
+    Add a takeoff command and waypoint following commands to the drone's
+    command sequence, and upload them.
+
+    Parameters
+    ----------
+    controller: "flight_controller.FlightController"
+    waypoints: "list[tuple[float, float, float]]"
+
+    Returns
+    -------
+    bool
+    """
     # Clear existing mission
     controller.drone.commands.download()
     controller.drone.commands.wait_ready()
@@ -103,7 +117,8 @@ if __name__ == "__main__":
         sys.exit()
 
     while True:
-        result, is_drone_destination_final_waypoint = controller.is_drone_destination_final_waypoint()
+        result, is_drone_destination_final_waypoint \
+            = controller.is_drone_destination_final_waypoint()
         if not result:
             print("Failed to get if the drone's destination is the final waypoint.")
             sys.exit()

@@ -173,7 +173,7 @@ class FlightController:
 
         return self.upload_commands([landing_command])
 
-    def is_drone_destination_final_waypoint(self) -> bool:
+    def is_drone_destination_final_waypoint(self) -> "tuple[bool, bool | None]":
         """
         Returns if the drone's destination is the final waypoint in the mission.
         """
