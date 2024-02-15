@@ -102,22 +102,21 @@ class FlightController:
 
         return True, location
 
-
-    def go_there(self, latitude: float, longitude: float) -> bool:
- 
+    def hover_above_location(self, latitude: float, longitude: float) -> bool:
+        """
+        Commands the drone to hover at a specified latitude and longitude
+        at the predefined LOITER_ALTITUDE.
+        """
         try:
-            # Set mode to guided
             self.drone.mode = dronekit.VehicleMode("GUIDED")
-            """    
-            Create a LocationGlobal object with the specified latitude, longitude, 
-            which is from location and the constant altitude
-            """
+            # Create a LocationGlobal object with the specified latitude,
+            # longitude, and the constant altitude
             loiter_location = dronekit.LocationGlobal(latitude, longitude, self.LOITER_ALTITUDE)
 
-            # tell the drone to go to the location
+            # Tell the drone to go to the location
             self.drone.simple_goto(loiter_location)
 
             return True
         except Exception as e:
-            print(f" Some error occured in go_there function: {e}")
+            print(f"ERROR in hover_above_location() method: {e}")
             return False
