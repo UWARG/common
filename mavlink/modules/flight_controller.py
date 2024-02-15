@@ -12,6 +12,8 @@ class FlightController:
     """
     Wrapper for DroneKit-Python and MAVLink.
     """
+
+    LOITER_ALTITUDE = 10.0  # Example altitude, adjust as necessary
     __create_key = object()
 
     @classmethod
