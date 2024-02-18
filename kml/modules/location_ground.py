@@ -4,7 +4,8 @@ Class to use instead of tuple for coordinates.
 
 class LocationGround:
     """
-    LocationGround class represents a geographical ground location with a name, latitude, and longitude.
+    LocationGround class represents a geographical ground location with
+    a name, latitude, and longitude.
 
     Attributes:
         name (str): The name or label for the location.
@@ -29,7 +30,7 @@ class LocationGround:
         self.latitude = latitude
         self.longitude = longitude
 
-    def __eq__(self, other: "LocationGround"):
+    def __eq__(self, other: "LocationGround") -> bool:
         """
         Checks if two LocationGround objects are equal.
 
@@ -45,8 +46,9 @@ class LocationGround:
             and self.longitude == other.longitude
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
-        Returns a string representation of the LocationGround object.
+        String representation
         """
-        return f"LocationGround: {self.name}, latitude: {self.latitude}, longitude: {self.longitude})"
+        return \
+            f"LocationGround: {self.name}, latitude: {self.latitude}, longitude: {self.longitude}"
