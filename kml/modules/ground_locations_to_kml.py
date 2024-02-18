@@ -6,7 +6,7 @@ import time
 
 import simplekml
 
-from kml.modules import location_ground
+from . import location_ground
 
 
 def ground_locations_to_kml(ground_locations: "list[location_ground.LocationGround]",
@@ -30,13 +30,13 @@ def ground_locations_to_kml(ground_locations: "list[location_ground.LocationGrou
     """
     kml = simplekml.Kml()
 
-    for index, ground_location in enumerate(ground_locations):
-        ground_location_name = f"Point {index + 1}: {ground_location.name}"
-        lat = ground_location.latitude
-        lng = ground_location.longitude
+    for i, ground_location in enumerate(ground_locations):
+        ground_location_name = f"Point {i + 1}: {ground_location.name}"
+        latitude = ground_location.latitude
+        longitude = ground_location.longitude
 
-        # coords parameters are in the order: lon, lat, optional height
-        kml.newpoint(name=ground_location_name, coords=[(lng, lat)])
+        # Coordinates are in the order: longitude, latitude, optional height
+        kml.newpoint(name=ground_location_name, coords=[(longitude, latitude)])
 
     kml_file_path = pathlib.Path(save_directory, f"{document_name_prefix}_{int(time.time())}.kml")
 
