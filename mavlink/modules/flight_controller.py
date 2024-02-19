@@ -13,7 +13,6 @@ class FlightController:
     Wrapper for DroneKit-Python and MAVLink.
     """
     __create_key = object()
-    LOITER_ALTITUDE = 10.0  # Example altitude, adjust as necessary
 
     @classmethod
     def create(cls, address: str) -> "tuple[bool, FlightController | None]":
@@ -103,15 +102,10 @@ class FlightController:
 
         return True, location
 
-    def hover_above_location(self, latitude: float, longitude: float) -> bool:
-            self.drone.mode = dronekit.VehicleMode("GUIDED")
-            loiter_location = dronekit.LocationGlobal(latitude, longitude, self.LOITER_ALTITUDE)
-            self.drone.simple_goto(loiter_location)
-            return True
-
     def move_to_position(self, position: drone_odometry.DronePosition) -> bool:
         """
         Commands the drone to move to a specified position in 3D space.
+        There is no check to verify that the specified altitude is above ground.
         """
         try:
             self.drone.mode = dronekit.VehicleMode("GUIDED")
@@ -124,4 +118,3 @@ class FlightController:
         except Exception as e:
             print(f"ERROR in move_to_position() method: {e}")
             return False
-        
