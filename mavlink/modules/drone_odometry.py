@@ -1,22 +1,21 @@
 """
 Position and orientation of drone.
 """
+
 import math
 
 
-# Basically a struct
-# pylint: disable=too-few-public-methods
 class DronePosition:
     """
     WGS 84 following ISO 6709 (latitude before longitude).
     """
+
     __create_key = object()
 
     @classmethod
-    def create(cls,
-               latitude: "float | None",
-               longitude: "float | None",
-               altitude: "float | None") -> "tuple[bool, DronePosition | None]":
+    def create(
+        cls, latitude: "float | None", longitude: "float | None", altitude: "float | None"
+    ) -> "tuple[bool, DronePosition | None]":
         """
         latitude, longitude in decimal degrees.
         altitude in metres.
@@ -35,11 +34,9 @@ class DronePosition:
 
         return True, DronePosition(cls.__create_key, latitude, longitude, altitude)
 
-    def __init__(self,
-                 class_private_create_key,
-                 latitude: float,
-                 longitude: float,
-                 altitude: float):
+    def __init__(
+        self, class_private_create_key: object, latitude: float, longitude: float, altitude: float
+    ) -> None:
         """
         Private constructor, use create() method.
         """
@@ -49,25 +46,21 @@ class DronePosition:
         self.longitude = longitude
         self.altitude = altitude
 
-# pylint: enable=too-few-public-methods
 
-
-# Basically a struct
-# pylint: disable=too-few-public-methods
 class DroneOrientation:
     """
     Yaw, pitch, roll following NED system (x forward, y right, z down).
     Specifically, intrinsic (Tait-Bryan) rotations in the zyx/3-2-1 order.
     """
+
     __create_key = object()
 
     @classmethod
     # Required for checks
     # pylint: disable-next=too-many-return-statements
-    def create(cls,
-               yaw: "float | None",
-               pitch: "float | None",
-               roll: "float | None") -> "tuple[bool, DroneOrientation | None]":
+    def create(
+        cls, yaw: "float | None", pitch: "float | None", roll: "float | None"
+    ) -> "tuple[bool, DroneOrientation | None]":
         """
         yaw, pitch, roll in radians.
         """
@@ -91,7 +84,9 @@ class DroneOrientation:
 
         return True, DroneOrientation(cls.__create_key, yaw, pitch, roll)
 
-    def __init__(self, class_private_create_key, yaw: float, pitch: float, roll: float):
+    def __init__(
+        self, class_private_create_key: object, yaw: float, pitch: float, roll: float
+    ) -> None:
         """
         Private constructor, use create() method.
         """
@@ -101,21 +96,18 @@ class DroneOrientation:
         self.pitch = pitch
         self.roll = roll
 
-# pylint: enable=too-few-public-methods
 
-
-# Basically a struct
-# pylint: disable=too-few-public-methods
 class DroneOdometry:
     """
     Wrapper for DronePosition and DroneOrientation.
     """
+
     __create_key = object()
 
     @classmethod
-    def create(cls,
-               position: DronePosition,
-               orientation: DroneOrientation) -> "tuple[bool, DroneOdometry | None]":
+    def create(
+        cls, position: DronePosition, orientation: DroneOrientation
+    ) -> "tuple[bool, DroneOdometry | None]":
         """
         Position and orientation in one class.
         """
@@ -127,10 +119,12 @@ class DroneOdometry:
 
         return True, DroneOdometry(cls.__create_key, position, orientation)
 
-    def __init__(self,
-                 class_private_create_key,
-                 position: DronePosition,
-                 orientation: DroneOrientation):
+    def __init__(
+        self,
+        class_private_create_key: object,
+        position: DronePosition,
+        orientation: DroneOrientation,
+    ) -> None:
         """
         Private constructor, use create() method.
         """

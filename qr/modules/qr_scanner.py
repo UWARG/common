@@ -1,5 +1,5 @@
 """
-Converts an image containing QR codes into text
+Converts an image containing QR codes into text.
 """
 
 import numpy as np
@@ -8,18 +8,18 @@ from pyzbar import pyzbar
 
 class QrScanner:
     """
-    Wrapper for pyzbar
+    Wrapper for pyzbar.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
-        Nothing to do
+        Nothing to do.
         """
 
     @staticmethod
     def get_qr_text(frame: np.ndarray) -> "tuple[bool, str | None]":
         """
-        Attempts to find and decode a QR code from the given frame
+        Attempts to find and decode a QR code from the given frame.
         """
         decoded_qrs = pyzbar.decode(frame)
         if len(decoded_qrs) == 0:

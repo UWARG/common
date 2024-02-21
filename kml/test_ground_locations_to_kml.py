@@ -1,6 +1,7 @@
 """
 Test Process.
 """
+
 import pathlib
 
 import pytest
@@ -13,8 +14,13 @@ PARENT_DIRECTORY = "kml"
 EXPECTED_KML_DOCUMENT_PATH = pathlib.Path(PARENT_DIRECTORY, "expected_document.kml")
 
 
+# Test functions use test fixture signature names and access class privates
+# No enable
+# pylint: disable=protected-access,redefined-outer-name
+
+
 @pytest.fixture
-def locations():
+def locations() -> "list[location_ground.LocationGround]":  # type: ignore
     """
     List of LocationGround.
     """
@@ -25,8 +31,9 @@ def locations():
     ]
 
 
-def test_locations_to_kml_with_save_path(locations: "list[location_ground.LocationGround]",
-                                         tmp_path: pathlib.Path):
+def test_locations_to_kml_with_save_path(
+    locations: "list[location_ground.LocationGround]", tmp_path: pathlib.Path
+) -> None:
     """
     Basic test case to save KML to the correct path when provided.
     """
@@ -51,5 +58,6 @@ def test_locations_to_kml_with_save_path(locations: "list[location_ground.Locati
     assert actual_kml_file_path.suffix == ".kml"
 
     # Compare the contents of the generated KML file with the static KML file
-    assert actual_kml_file_path.read_text(encoding="utf-8") \
-        == EXPECTED_KML_DOCUMENT_PATH.read_text(encoding="utf-8")
+    assert actual_kml_file_path.read_text(encoding="utf-8") == EXPECTED_KML_DOCUMENT_PATH.read_text(
+        encoding="utf-8"
+    )

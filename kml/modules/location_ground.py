@@ -2,6 +2,7 @@
 Class to use instead of tuple for coordinates.
 """
 
+
 class LocationGround:
     """
     LocationGround class represents a geographical ground location with
@@ -17,7 +18,8 @@ class LocationGround:
         __eq__(other): Checks if two LocationGround objects are equal.
         __repr__(): Returns a string representation of the LocationGround object.
     """
-    def __init__(self, name: str, latitude: float, longitude: float):
+
+    def __init__(self, name: str, latitude: float, longitude: float) -> None:
         """
         Constructor for the LocationGround object.
 
@@ -48,7 +50,8 @@ class LocationGround:
 
     def __repr__(self) -> str:
         """
-        String representation
+        String representation.
         """
-        return \
+        return (
             f"LocationGround: {self.name}, latitude: {self.latitude}, longitude: {self.longitude}"
+        )
