@@ -4,17 +4,17 @@
 # Global
 pytest
 
-# camera
+# Module camera
 opencv-python
 numpy
 
-# mavlink
+# Module mavlink
 dronekit
 
-# qr
+# Module qr
 pyzbar
 
-# kml
+# Module kml
 simplekml
 
 # Linters and formatters are explicitly versioned
