@@ -19,8 +19,7 @@ IMAGE_2023_TASK1_ROUTE_TEXT = "Follow route: Quebec; Lima; Alpha; Tango"
 IMAGE_2023_TASK1_DIVERSION_TEXT = (
     "Avoid the area bounded by: Zulu; Bravo; Tango; Uniform.  Rejoin the route at Lima"
 )
-IMAGE_2023_TASK2_ROUTES_TEXT = \
-"""Route number 1: 2 pers; Alpha; Hotel; 15 kg; nil; $37
+IMAGE_2023_TASK2_ROUTES_TEXT = """Route number 1: 2 pers; Alpha; Hotel; 15 kg; nil; $37
 Route number 2: 6 pers; Bravo; Oscar; 10 kg; nil; $150
 Route number 3: 3 pers; Alpha; Papa; 15 kg; nil; $101
 Route number 4: 2 pers; Papa; Whiskey; 15 kg; nil; $75
