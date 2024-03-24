@@ -8,10 +8,6 @@ pytest
 opencv-python
 numpy
 
-# comms
-libscrc
-pyserial
-
 # mavlink
 dronekit
 

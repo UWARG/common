@@ -16,7 +16,7 @@ class LocationGround:
     Methods:
         __init__(name, latitude, longitude): Initializes a LocationGround object.
         __eq__(other): Checks if two LocationGround objects are equal.
-        __repr__(): Returns a string representation of the LocationGround object.
+        __str__(): Returns a string representation of the LocationGround object.
     """
 
     def __init__(self, name: str, latitude: float, longitude: float) -> None:
@@ -48,9 +48,9 @@ class LocationGround:
             and self.longitude == other.longitude
         )
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         """
-        String representation.
+        To string.
         """
         return (
             f"LocationGround: {self.name}, latitude: {self.latitude}, longitude: {self.longitude}"
