@@ -1,7 +1,7 @@
 """
 Test for drone's destination at final waypoint by uploading mission and monitoring it.
 """
-import sys
+
 import time
 
 import dronekit
@@ -24,8 +24,9 @@ ACCEPT_RADIUS = 10  # metres
 
 # TODO: This function is to be removed when Dronekit-Python interfaces are
 # moved from pathing repository.
-def upload_mission(controller: flight_controller.FlightController,
-                   waypoints: "list[tuple[float, float, float]]") -> bool:
+def upload_mission(
+    controller: flight_controller.FlightController, waypoints: "list[tuple[float, float, float]]"
+) -> bool:
     """
     Add a takeoff command and waypoint following commands to the drone's
     command sequence, and upload them.
@@ -96,11 +97,14 @@ def upload_mission(controller: flight_controller.FlightController,
         return False
 
 
-if __name__ == "__main__":
+def main() -> int:
+    """
+    Main function.
+    """
     result, controller = flight_controller.FlightController.create(MISSION_PLANNER_ADDRESS)
     if not result:
         print("Failed to create flight controller.")
-        sys.exit()
+        return -1
 
     # Get Pylance to stop complaining
     assert controller is not None
@@ -117,14 +121,15 @@ if __name__ == "__main__":
     result = upload_mission(controller, waypoints)
     if not result:
         print("Failed to upload mission.")
-        sys.exit()
+        return -1
 
     while True:
-        result, is_drone_destination_final_waypoint \
-            = controller.is_drone_destination_final_waypoint()
+        result, is_drone_destination_final_waypoint = (
+            controller.is_drone_destination_final_waypoint()
+        )
         if not result:
             print("Failed to get if the drone's destination is the final waypoint.")
-            sys.exit()
+            return -1
 
         # Get Pylance to stop complaining
         assert is_drone_destination_final_waypoint is not None
@@ -137,4 +142,12 @@ if __name__ == "__main__":
         time.sleep(DELAY_TIME)
 
     print("Drone's destination is final waypoint.")
+    return 0
+
+
+if __name__ == "__main__":
+    result_main = main()
+    if result_main < 0:
+        print(f"ERROR: Status code: {result_main}")
+
     print("Done!")
