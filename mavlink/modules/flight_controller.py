@@ -2,11 +2,16 @@
 Wrapper for the flight controller.
 """
 
+
 import time
+
 
 import dronekit
 
+
 from . import drone_odometry
+
+
 
 
 class FlightController:
@@ -14,10 +19,13 @@ class FlightController:
     Wrapper for DroneKit-Python and MAVLink.
     """
 
+
     __create_key = object()
+
 
     __MAVLINK_LANDING_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL
     __MAVLINK_LANDING_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_LAND
+
 
     @classmethod
     def create(cls, address: str) -> "tuple[bool, FlightController | None]":
@@ -36,7 +44,9 @@ class FlightController:
             print("Cannot connect to drone! Make sure the address/port is correct.")
             return False, None
 
+
         return True, FlightController(cls.__create_key, drone)
+
 
     def __init__(self, class_private_create_key: object, vehicle: dronekit.Vehicle) -> None:
         """
@@ -44,7 +54,9 @@ class FlightController:
         """
         assert class_private_create_key is FlightController.__create_key, "Use create() method"
 
+
         self.drone = vehicle
+
 
     def get_odometry(self) -> "tuple[bool, drone_odometry.DroneOdometry | None]":
         """
@@ -59,6 +71,7 @@ class FlightController:
         if not result:
             return False, None
 
+
         location_info = self.drone.location
         result, position_data = drone_odometry.DronePosition.create(
             location_info.global_frame.lat,
@@ -68,9 +81,11 @@ class FlightController:
         if not result:
             return False, None
 
+
         # Get Pylance to stop complaining
         assert position_data is not None
         assert orientation_data is not None
+
 
         result, odometry_data = drone_odometry.DroneOdometry.create(
             position_data,
@@ -79,7 +94,9 @@ class FlightController:
         if not result:
             return False, None
 
+
         return True, odometry_data
+
 
     def get_home_location(
         self, timeout: float
@@ -94,9 +111,11 @@ class FlightController:
             commands.download()
             commands.wait_ready()
 
+
         # Timeout
         if self.drone.home_location is None:
             return False, None
+
 
         result, location = drone_odometry.DronePosition.create(
             self.drone.home_location.lat,
@@ -106,15 +125,19 @@ class FlightController:
         if not result:
             return False, None
 
+
         return True, location
+
 
     def upload_commands(self, commands: "list[dronekit.Command]") -> bool:
         """
         Writes a mission to the drone from a list of commands (will overwrite any previous missions).
 
+
         Parameters
         ----------
         commands: List of commands.
+
 
         Returns
         -------
@@ -123,6 +146,7 @@ class FlightController:
         if len(commands) == 0:
             return False
 
+
         try:
             command_sequence = self.drone.commands
             command_sequence.download()
@@ -130,6 +154,7 @@ class FlightController:
             command_sequence.clear()
             for command in commands:
                 command_sequence.add(command)
+
 
             # Upload commands to drone
             command_sequence.upload()
@@ -140,17 +165,21 @@ class FlightController:
             print("Connection with drone reset. Unable to upload commands.")
             return False
 
+
         return True
+
 
     def upload_land_command(self, latitude: float, longitude: float) -> bool:
         """
         Given a target latitude and longitude, overwrite the drone's current mission
         with a corresponding land command.
 
+
         Parameters
         ----------
         latitude: Decimal degrees.
         longitude: Decimal degrees.
+
 
         Returns
         -------
@@ -174,11 +203,14 @@ class FlightController:
             0,
         )
 
+
         return self.upload_commands([landing_command])
+
 
     def is_drone_destination_final_waypoint(self) -> "tuple[bool, bool | None]":
         """
         Returns if the drone's destination is the final waypoint in the mission.
+
 
         Returns
         -------
@@ -193,10 +225,31 @@ class FlightController:
         waypoint_count = self.drone.commands.count
         current_waypoint = self.drone.commands.next
 
+
         if waypoint_count < 0 or current_waypoint < 0:
             return False, None
+
 
         if waypoint_count == 0:
             return True, False
 
+
         return True, (current_waypoint == waypoint_count)
+   
+    def move_to_position(self, position: drone_odometry.DronePosition) -> bool:
+        """
+        Commands the drone to move to a specified position in 3D space.
+        There is no check to verify that the specified altitude is above ground.
+        """
+        try:
+            self.drone.mode = dronekit.VehicleMode("GUIDED")
+            # Create a LocationGlobal object with the specified latitude,
+            # longitude, and altitude from the target destination
+            target_location = dronekit.LocationGlobal(position.latitude, position.longitude, position.altitude)
+            self.drone.simple_goto(target_location)
+           
+            return True
+        except Exception as e:
+            print(f"ERROR in move_to_position() method: {e}")
+            return False
+           
