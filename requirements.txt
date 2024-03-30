@@ -8,6 +8,9 @@ pytest
 opencv-python
 numpy
 
+# Module lte
+Pillow
+
 # Module mavlink
 dronekit
 
