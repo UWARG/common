@@ -4,7 +4,9 @@ For encoding images returned by the camera device.
 import cv2
 import numpy as np
 
+
 IMAGE_ENCODE_EXT = ".png"
+
 
 def image_encode(image: "np.ndarray") -> "tuple[bool, bytes | None]" :
     """
@@ -22,8 +24,6 @@ def image_encode(image: "np.ndarray") -> "tuple[bool, bytes | None]" :
         - If it is successful, the second parameter will be the byte representation
           of the encoded image.
     """
-    # TODO: this implementation will change once the different formats are
-    # profiled then selected.
     result, encoded_image = cv2.imencode(IMAGE_ENCODE_EXT, image)
     if not result:
         return False, None
