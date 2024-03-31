@@ -1,9 +1,7 @@
 """
 Wrapper for socket operations.
 """
-
 import socket
-
 from enum import Enum
 
 
@@ -14,48 +12,17 @@ class Protocol(Enum):
     TCP = socket.SOCK_STREAM
     UDP = socket.SOCK_DGRAM
 
-class Socket:
+def create_socket(
+    func
+):
     """
-    Wrapper for Python's socket module.
+    Decorator for socket initialization.
     """
-    __create_key = object()
-
-    def __init__(self, class_private_create_key, socket_instance: socket.socket):
-        """
-        Private constructor, use create() method.
-        """
-        assert class_private_create_key is Socket.__create_key, "Use create() method"
-
-        self.__socket = socket_instance
-
-    @classmethod
-    def create(
-        cls,
-        instance: socket.socket = None,
-        **kwargs,
-    ) -> "tuple[bool, Socket | None]":
-        """
-        Establishes socket connection through provided host and port.
-
-        Parameters
-        ----------
-        instance: socket.socket (default None)
-            For initializing Socket with an existing socket object.
-
-        **kwargs: Additional keyword arguments.
-
-        Returns
-        -------
-        tuple[bool, Socket | None]
-            The first parameter represents if the socket creation is successful.
-            - If it is not successful, the second parameter will be None.
-            - If it is successful, the second parameter will be the created
-              Socket object.
-        """
+    def wrapper(cls, instance: socket.socket = None, **kwargs): 
         # Reassign instance before check or Pylance will complain
         socket_instance = instance
         if socket_instance is not None:
-            return True, Socket(cls.__create_key, socket_instance)
+            return True, func(cls, instance=socket_instance)
 
         create_max_attempts = kwargs.get("create_max_attempts", 10)
         connect_max_attempts = kwargs.get("connect_max_attempts", 10)
@@ -80,7 +47,7 @@ class Socket:
                     socket_instance.bind((host, port))
                     socket_instance.listen()
                 else:
-                    socket_instance.connect(host, port)
+                    socket_instance.connect((host, port))
                 connected = True
                 break
             except socket.gaierror as e:
@@ -92,7 +59,22 @@ class Socket:
         if not connected:
             return False, None
 
-        return True, Socket(cls.__create_key, socket_instance)
+        return True, func(cls, instance=socket_instance)
+    
+    return wrapper
+
+class Socket:
+    """
+    Wrapper for Python's socket module.
+    """
+    def __init__(self, socket_instance: socket.socket):
+        """
+        Parameters
+        ----------
+        instance: socket.socket
+            For initializing Socket with an existing socket object.
+        """
+        self.__socket = socket_instance
 
     def send(self, data: bytes) -> bool:
         """
@@ -142,6 +124,10 @@ class Socket:
     def close(self) -> bool:
         """
         Closes the socket object. All future operations on the socket object will fail.
+
+        Returns
+        -------
+        bool: If the socket was closed successfully.
         """
         try:
             self.__socket.close()
@@ -151,15 +137,43 @@ class Socket:
 
         return True
 
+    def address(self) -> "tuple[str, int]":
+        """
+        Retrieves the address that the socket is listening on.
+
+        Returns
+        -------
+        tuple[str, int]
+            The address in the format (ip address, port).
+        """
+        return self.__socket.getsockname()
+    
+    def get_socket(self) -> socket.socket:
+        """
+        Getter for the underlying socket objet.
+        """
+        return self.__socket
+
+
 class ServerSocket(Socket):
     """
     Wrapper for server socket operations.
     """
+    __create_key = object()
+
+    def __init__(self, class_private_create_key, socket_instance: socket.socket):
+        """
+        Private constructor, use create() method.
+        """
+        assert class_private_create_key is ServerSocket.__create_key, "Use create() method"
+
+        super().__init__(socket_instance=socket_instance)
+
     @classmethod
     def create(
-        cls,
-        instance: socket.socket = None,
-        **kwargs,
+        cls, 
+        instance: socket.socket = None, 
+        **kwargs
     ) -> "tuple[bool, ServerSocket | None]":
         """
         Establishes socket connection through provided host and port.
@@ -187,7 +201,18 @@ class ServerSocket(Socket):
             - If it is successful, the second parameter will be the created
               ServerSocket object.
         """
-        return super().create(instance=instance, **kwargs, bind=True)
+        return cls.__create(instance=instance, **kwargs, bind=True)
+
+    @classmethod
+    @create_socket
+    def __create(
+        cls,
+        instance: socket.socket = None,
+    ) -> "tuple[bool, ServerSocket | None]":
+        """
+        Private member, use create() method.
+        """
+        return ServerSocket(class_private_create_key=cls.__create_key, socket_instance=instance)
 
     def accept(self) -> "tuple[bool, ClientSocket | None]":
         """
@@ -203,7 +228,7 @@ class ServerSocket(Socket):
               ClientSocket object.
         """
         try:
-            client_socket, addr = self.__socket.accept()
+            client_socket, addr = self.get_socket().accept()
         except socket.error as e:
             print(f"Could not accept incoming connection: {e}.")
             return False, None
@@ -216,12 +241,22 @@ class ClientSocket(Socket):
     """
     Wrapper for client socket operations.
     """
+    __create_key = object()
+
+    def __init__(self, class_private_create_key, socket_instance: socket.socket):
+        """
+        Private constructor, use create() method.
+        """
+        assert class_private_create_key is ClientSocket.__create_key, "Use create() method"
+
+        super().__init__(socket_instance=socket_instance)
+
     @classmethod
     def create(
         cls,
         instance: socket.socket = None,
         **kwargs,
-    ) -> "tuple[bool, ClientSocket | None]":
+    ):
         """
         Establishes socket connection through provided host and port.
 
@@ -246,6 +281,17 @@ class ClientSocket(Socket):
             The first parameter represents if the socket creation is successful.
             - If it is not successful, the second parameter will be None.
             - If it is successful, the second parameter will be the created
-              ClientSocket object.
+                ClientSocket object.
         """
-        return super().create(instance=instance, **kwargs)
+        return cls.__create(instance=instance, **kwargs)
+
+    @classmethod
+    @create_socket
+    def __create(
+        cls,
+        instance: socket.socket = None,
+    ) -> "tuple[bool, ClientSocket | None]":
+        """
+        Private member, use create() method.
+        """
+        return ClientSocket(class_private_create_key=cls.__create_key, socket_instance=instance)
