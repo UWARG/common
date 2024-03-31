@@ -4,19 +4,20 @@
 # Global
 pytest
 
-# camera
+# Module camera
 opencv-python
 numpy
 
-# comms
-libscrc
-pyserial
-
-# mavlink
+# Module mavlink
 dronekit
 
-# qr
+# Module qr
 pyzbar
 
-# kml
+# Module kml
 simplekml
+
+# Linters and formatters are explicitly versioned
+black==24.2.0
+flake8-annotations==3.0.1
+pylint==3.0.3

@@ -1,6 +1,7 @@
 """
 Module to convert ground locations list to kml document.
 """
+
 import pathlib
 import time
 
@@ -9,9 +10,11 @@ import simplekml
 from . import location_ground
 
 
-def ground_locations_to_kml(ground_locations: "list[location_ground.LocationGround]",
-                     document_name_prefix: str,
-                     save_directory: pathlib.Path) -> "tuple[bool, pathlib.Path | None]":
+def ground_locations_to_kml(
+    ground_locations: "list[location_ground.LocationGround]",
+    document_name_prefix: str,
+    save_directory: pathlib.Path,
+) -> "tuple[bool, pathlib.Path | None]":
     """
     Generates KML file from a list of ground locations.
 

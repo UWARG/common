@@ -8,8 +8,10 @@ from camera.modules import camera_device
 from qr.modules import qr_scanner
 
 
-if __name__ == "__main__":
-
+def main() -> int:
+    """
+    Main function.
+    """
     camera = camera_device.CameraDevice(0, 0, "")
 
     text = ""
@@ -29,5 +31,13 @@ if __name__ == "__main__":
         cv2.waitKey(100)
 
     print(text)
+
+    return 0
+
+
+if __name__ == "__main__":
+    result_main = main()
+    if result_main < 0:
+        print(f"ERROR: Status code: {result_main}")
 
     print("Done!")

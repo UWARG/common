@@ -1,6 +1,7 @@
 """
 Wrapper for the flight controller.
 """
+
 import time
 
 import dronekit
@@ -12,6 +13,7 @@ class FlightController:
     """
     Wrapper for DroneKit-Python and MAVLink.
     """
+
     __create_key = object()
 
     __MAVLINK_LANDING_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL
@@ -36,7 +38,7 @@ class FlightController:
 
         return True, FlightController(cls.__create_key, drone)
 
-    def __init__(self, class_private_create_key, vehicle: dronekit.Vehicle):
+    def __init__(self, class_private_create_key: object, vehicle: dronekit.Vehicle) -> None:
         """
         Private constructor, use create() method.
         """
@@ -79,8 +81,9 @@ class FlightController:
 
         return True, odometry_data
 
-    def get_home_location(self,
-                          timeout: float) -> "tuple[bool, drone_odometry.DronePosition | None]":
+    def get_home_location(
+        self, timeout: float
+    ) -> "tuple[bool, drone_odometry.DronePosition | None]":
         """
         Attempts to get the drone's home location until timeout.
         timeout: Seconds.
@@ -111,11 +114,11 @@ class FlightController:
 
         Parameters
         ----------
-        commands: list[dronekit.Command]
+        commands: List of commands.
 
         Returns
         -------
-        bool
+        bool: Whether the upload is successful.
         """
         if len(commands) == 0:
             return False
@@ -142,16 +145,16 @@ class FlightController:
     def upload_land_command(self, latitude: float, longitude: float) -> bool:
         """
         Given a target latitude and longitude, overwrite the drone's current mission
-        with a corresponding dronekit land command.
+        with a corresponding land command.
 
         Parameters
         ----------
-        latitude: float
-        longitude: float
+        latitude: Decimal degrees.
+        longitude: Decimal degrees.
 
         Returns
         -------
-        bool
+        bool: Whether the upload is successful.
         """
         # TODO: DroneKit-Python's Command uses floating point value, which is not accurate enough for WARG. Investigate using MAVLink's integer command.
         landing_command = dronekit.Command(
