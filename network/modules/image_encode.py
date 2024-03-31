@@ -1,6 +1,7 @@
 """
 For encoding images returned by the camera device.
 """
+
 import cv2
 import numpy as np
 
@@ -8,7 +9,7 @@ import numpy as np
 IMAGE_ENCODE_EXT = ".png"
 
 
-def image_encode(image: "np.ndarray") -> "tuple[bool, bytes | None]" :
+def image_encode(image: "np.ndarray") -> "tuple[bool, bytes | None]":
     """
     Encodes an image (np.ndarray as an RGB matrix) and returns its byte sequence.
 

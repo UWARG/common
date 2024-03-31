@@ -1,24 +1,31 @@
 """
 Wrapper for socket operations.
 """
+
 import socket
 from enum import Enum
+from typing import Callable
 
 
 class Protocol(Enum):
     """
     Enum used to select protocol when instantiating Socket.
     """
+
     TCP = socket.SOCK_STREAM
     UDP = socket.SOCK_DGRAM
 
-def create_socket(
-    func
-):
+
+def create_socket(func: Callable) -> Callable:
     """
     Decorator for socket initialization.
     """
-    def wrapper(cls, instance: socket.socket = None, **kwargs): 
+
+    def wrapper(
+        cls: object,
+        instance: socket.socket = None,
+        **kwargs,  # noqa: ANN003
+    ) -> "tuple[bool, ServerSocket | ClientSocket | None]":
         # Reassign instance before check or Pylance will complain
         socket_instance = instance
         if socket_instance is not None:
@@ -51,8 +58,10 @@ def create_socket(
                 connected = True
                 break
             except socket.gaierror as e:
-                print(f"Could not connect to socket, address related error: {e}. "
-                    "Make sure the host and port are correct.")
+                print(
+                    f"Could not connect to socket, address related error: {e}. "
+                    "Make sure the host and port are correct."
+                )
             except socket.error as e:
                 print(f"Could not connect to socket, connection error: {e}.")
 
@@ -60,14 +69,16 @@ def create_socket(
             return False, None
 
         return True, func(cls, instance=socket_instance)
-    
+
     return wrapper
+
 
 class Socket:
     """
     Wrapper for Python's socket module.
     """
-    def __init__(self, socket_instance: socket.socket):
+
+    def __init__(self, socket_instance: socket.socket) -> None:
         """
         Parameters
         ----------
@@ -147,7 +158,7 @@ class Socket:
             The address in the format (ip address, port).
         """
         return self.__socket.getsockname()
-    
+
     def get_socket(self) -> socket.socket:
         """
         Getter for the underlying socket objet.
@@ -159,9 +170,10 @@ class ServerSocket(Socket):
     """
     Wrapper for server socket operations.
     """
+
     __create_key = object()
 
-    def __init__(self, class_private_create_key, socket_instance: socket.socket):
+    def __init__(self, class_private_create_key: object, socket_instance: socket.socket) -> None:
         """
         Private constructor, use create() method.
         """
@@ -171,9 +183,9 @@ class ServerSocket(Socket):
 
     @classmethod
     def create(
-        cls, 
-        instance: socket.socket = None, 
-        **kwargs
+        cls,
+        instance: socket.socket = None,
+        **kwargs,  # noqa: ANN003
     ) -> "tuple[bool, ServerSocket | None]":
         """
         Establishes socket connection through provided host and port.
@@ -201,7 +213,7 @@ class ServerSocket(Socket):
             - If it is successful, the second parameter will be the created
               ServerSocket object.
         """
-        return cls.__create(instance=instance, **kwargs, bind=True)
+        return cls.__create(instance=instance, **kwargs, bind=True)  # pylint: disable=unexpected-keyword-arg
 
     @classmethod
     @create_socket
@@ -241,9 +253,10 @@ class ClientSocket(Socket):
     """
     Wrapper for client socket operations.
     """
+
     __create_key = object()
 
-    def __init__(self, class_private_create_key, socket_instance: socket.socket):
+    def __init__(self, class_private_create_key: object, socket_instance: socket.socket) -> None:
         """
         Private constructor, use create() method.
         """
@@ -255,8 +268,8 @@ class ClientSocket(Socket):
     def create(
         cls,
         instance: socket.socket = None,
-        **kwargs,
-    ):
+        **kwargs,  # noqa: ANN003
+    ) -> "tuple[bool, ClientSocket | None]":
         """
         Establishes socket connection through provided host and port.
 
