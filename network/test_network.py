@@ -1,6 +1,7 @@
 """
 Test socket operations by sending images over client sockets.
 """
+
 import struct
 import threading
 from pathlib import Path
@@ -21,7 +22,7 @@ def recv_all(client_socket: ClientSocket, data_len: int) -> bytes:
     """
     Receives an image of data_len bytes from a socket
     """
-    image_data = b''
+    image_data = b""
     data_recv = 0
     while data_recv < data_len:
         result, data = client_socket.recv(data_len - data_recv)
@@ -35,14 +36,17 @@ def recv_all(client_socket: ClientSocket, data_len: int) -> bytes:
     return image_data
 
 
-def start_server(host: str, port: int):
-    result, server_socket = ServerSocket.create(host=host, port=port)
+def start_server(host: str, port: int) -> None:
+    """
+    Starts server listening on host:port that receives images and sends them back to the client.
+    """
+    result, server_socket = ServerSocket.create(host=host, port=port)   # pylint: disable=unpacking-non-sequence
     if not result:
         pytest.fail("Failed to create ServerSocket.")
 
     print(f"Listening on {host}:{port}.")
 
-    result, client_socket = server_socket.accept() # pylint: disable=no-member
+    result, client_socket = server_socket.accept()
     if not result:
         pytest.fail(f"Failed to accept connection from {host}:{port}.")
 
@@ -85,7 +89,7 @@ def start_server(host: str, port: int):
 
 
 @pytest.fixture
-def images():
+def images() -> "list[bytes]":
     """
     Returns a list of images in byte representation.
     """
@@ -94,22 +98,29 @@ def images():
         image_encode(cv2.imread(str(IMAGE_PATH / "test_images/landing_pad_2.png")))[1],
     ]
 
+
 @pytest.fixture
-def server():
+def server(autouse=True):   # noqa: ANN001, ANN201 # pylint: disable=unused-argument
     """
     Starts server in a new thread.
     """
-    server_thread = threading.Thread(target=start_server, args=(SOCKET_ADDRESS, SOCKET_PORT,))
+    server_thread = threading.Thread(
+        target=start_server,
+        args=(
+            SOCKET_ADDRESS,
+            SOCKET_PORT,
+        ),
+    )
     server_thread.start()
     yield
     server_thread.join()
 
 
-def test(images, server):
+def test(images: "list[bytes]") -> None:    # pylint: disable=redefined-outer-name
     """
     Client will send landing pad images to the server, and the server will send them back.
     """
-    result, client_socket = ClientSocket.create(host=SOCKET_ADDRESS, port=SOCKET_PORT)
+    result, client_socket = ClientSocket.create(host=SOCKET_ADDRESS, port=SOCKET_PORT)  # pylint: disable=unpacking-non-sequence
     assert result, "Failed to create ClientSocket."
     print(f"Connected to: {SOCKET_ADDRESS}:{SOCKET_PORT}.")
 
