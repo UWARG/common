@@ -40,7 +40,9 @@ def start_server(host: str, port: int) -> None:
     """
     Starts server listening on host:port that receives images and sends them back to the client.
     """
-    result, server_socket = ServerSocket.create(host=host, port=port)   # pylint: disable=unpacking-non-sequence
+    result, server_socket = ServerSocket.create(  # pylint: disable=unpacking-non-sequence
+        host=host, port=port
+    )
     if not result:
         pytest.fail("Failed to create ServerSocket.")
 
@@ -100,7 +102,7 @@ def images() -> "list[bytes]":
 
 
 @pytest.fixture
-def server(autouse=True):   # noqa: ANN001, ANN201 # pylint: disable=unused-argument
+def server(autouse=True):  # noqa: ANN001, ANN201 # pylint: disable=unused-argument
     """
     Starts server in a new thread.
     """
@@ -116,11 +118,13 @@ def server(autouse=True):   # noqa: ANN001, ANN201 # pylint: disable=unused-argu
     server_thread.join()
 
 
-def test(images: "list[bytes]") -> None:    # pylint: disable=redefined-outer-name
+def test(images: "list[bytes]") -> None:  # pylint: disable=redefined-outer-name
     """
     Client will send landing pad images to the server, and the server will send them back.
     """
-    result, client_socket = ClientSocket.create(host=SOCKET_ADDRESS, port=SOCKET_PORT)  # pylint: disable=unpacking-non-sequence
+    result, client_socket = ClientSocket.create(  # pylint: disable=unpacking-non-sequence
+        host=SOCKET_ADDRESS, port=SOCKET_PORT
+    )
     assert result, "Failed to create ClientSocket."
     print(f"Connected to: {SOCKET_ADDRESS}:{SOCKET_PORT}.")
 

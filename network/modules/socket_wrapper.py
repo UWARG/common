@@ -213,7 +213,8 @@ class ServerSocket(Socket):
             - If it is successful, the second parameter will be the created
               ServerSocket object.
         """
-        return cls.__create(instance=instance, **kwargs, bind=True)  # pylint: disable=unexpected-keyword-arg
+        # pylint: disable=unexpected-keyword-arg
+        return cls.__create(instance=instance, **kwargs, bind=True)
 
     @classmethod
     @create_socket
