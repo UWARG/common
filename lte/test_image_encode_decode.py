@@ -6,9 +6,10 @@ from lte.modules import image_decode
 
 def main() -> int:
     # TODO: Get test images and Encode
+    raw_data = 0
 
     # Decode
-    img_array = image_decode.decode()
+    img_array = image_decode.decode(raw_data)
 
     # Do checks
     # eg. check output shape
