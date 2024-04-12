@@ -102,7 +102,7 @@ def images() -> "list[bytes]":
 
 
 @pytest.fixture
-def server(autouse=True):  # noqa: ANN001, ANN201 # pylint: disable=unused-argument
+def server():  # noqa: ANN001, ANN201 # pylint: disable=unused-argument
     """
     Starts server in a new thread.
     """
@@ -118,7 +118,9 @@ def server(autouse=True):  # noqa: ANN001, ANN201 # pylint: disable=unused-argum
     server_thread.join()
 
 
-def test(images: "list[bytes]") -> None:  # pylint: disable=redefined-outer-name
+def test(
+    images: "list[bytes]", server: None  # pylint: disable=redefined-outer-name, unused-argument
+) -> None:
     """
     Client will send landing pad images to the server, and the server will send them back.
     """
