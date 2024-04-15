@@ -1,5 +1,5 @@
 """
-Decodes a numpy array and returns a JPEG encoded image, filtering out A channel if PNG
+Decodes a numpy array and returns a JPEG encoded image
 """
 
 import io
