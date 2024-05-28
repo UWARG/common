@@ -200,3 +200,22 @@ class FlightController:
             return True, False
 
         return True, (current_waypoint == waypoint_count)
+
+    def move_to_position(self, position: drone_odometry.DronePosition) -> bool:
+        """
+        Commands the drone to move to a specified position in 3D space.
+        There is no check to verify that the specified altitude is above ground.
+        """
+        try:
+            self.drone.mode = dronekit.VehicleMode("GUIDED")
+            # Create a LocationGlobal object with the specified latitude,
+            # longitude, and altitude from the target destination
+            target_location = dronekit.LocationGlobal(
+                position.latitude, position.longitude, position.altitude
+            )
+            self.drone.simple_goto(target_location)
+
+            return True
+        except Exception as e:
+            print(f"ERROR in move_to_position() method: {e}")
+            return False
