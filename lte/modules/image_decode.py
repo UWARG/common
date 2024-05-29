@@ -2,8 +2,6 @@
 Decodes images from JPEG bytes to numpy array.
 """
 
-import io
-
 from PIL import Image
 import numpy as np
 

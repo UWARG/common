@@ -3,15 +3,21 @@ Test image encode and decode.
 TODO: finish image encode and then write this test
 """
 
-from lte.modules import image_decode
+# from lte.modules import image_decode
 
 
 def main() -> int:
+    """
+    This is the main function to test image encoding and decoding.
+
+    Returns:
+        int: The exit code of the function.
+    """
     # TODO: Get test images and Encode
-    raw_data = 0
+    # raw_data = 0
 
     # Decode
-    img_array = image_decode.decode(raw_data)
+    # img_array = image_decode.decode(raw_data)
 
     # Do checks
     # eg. check output shape

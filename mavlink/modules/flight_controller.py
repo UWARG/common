@@ -216,6 +216,9 @@ class FlightController:
             self.drone.simple_goto(target_location)
 
             return True
-        except Exception as e:
+        except KeyError:
+            print("ERROR: an unsupported flight mode is set by dronekit.VehicleMode()")
+            return False
+        except dronekit.APIException as e:
             print(f"ERROR in move_to_position() method: {e}")
             return False
