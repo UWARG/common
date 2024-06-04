@@ -12,6 +12,9 @@ from lte.modules import image_encode
 
 
 def main() -> int:
+    """
+    Main testing sequence of encoding and decoding an image.
+    """
     # Get test image in numpy form
     im = Image.open(pathlib.Path("lte", "test.png"))
     raw_data = np.asarray(im)
