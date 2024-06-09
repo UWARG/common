@@ -27,7 +27,11 @@ class ServerSocket(Socket):
     def create(
         cls,
         instance: socket.socket = None,
-        **kwargs,  # noqa: ANN003
+        host: str = "127.0.0.1",
+        port: int = 5000,
+        protocol: NetworkProtocol = NetworkProtocol.TCP,
+        create_max_attempts: int = 10,
+        connect_max_attempts: int = 10,
     ) -> "tuple[bool, ServerSocket | None]":
         """
         Establishes socket connection through provided host and port.
@@ -60,12 +64,6 @@ class ServerSocket(Socket):
         if socket_instance is not None:
             return True, ServerSocket(cls.__create_key, socket_instance)
 
-        create_max_attempts = kwargs.get("create_max_attempts", 10)
-        connect_max_attempts = kwargs.get("connect_max_attempts", 10)
-        host = kwargs.get("host", "127.0.0.1")
-        port = kwargs.get("port", 8080)
-        protocol = kwargs.get("protocol", NetworkProtocol.TCP)
-
         for _ in range(create_max_attempts):
             try:
                 socket_instance = socket.socket(socket.AF_INET, protocol.value)
@@ -79,11 +77,8 @@ class ServerSocket(Socket):
         connected = False
         for _ in range(connect_max_attempts):
             try:
-                if "bind" in kwargs:
-                    socket_instance.bind((host, port))
-                    socket_instance.listen()
-                else:
-                    socket_instance.connect((host, port))
+                socket_instance.bind((host, port))
+                socket_instance.listen()
                 connected = True
                 break
             except socket.gaierror as e:
