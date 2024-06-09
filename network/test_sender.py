@@ -60,15 +60,15 @@ def recv_all(client_socket: ClientSocket, data_len: int) -> tuple[bool, bytes | 
     return True, image_data
 
 
-def start_sender() -> int:
+def start_sender(host: str, port: int) -> int:
     """
     Client will send landing pad images to the server, and the server will send them back.
     """
     result, client_socket = ClientSocket.create(  # pylint: disable=unpacking-non-sequence
-        host=SOCKET_ADDRESS, port=SOCKET_PORT
+        host=host, port=port
     )
     assert result, "Failed to create ClientSocket."
-    print(f"Connected to: {SOCKET_ADDRESS}:{SOCKET_PORT}.")
+    print(f"Connected to: {host}:{port}.")
 
     for image in get_images:
         # Send image byte length, 4 byte message
