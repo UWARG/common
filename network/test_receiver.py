@@ -3,6 +3,7 @@ Test socket operations by receiving images over server sockets.
 """
 
 import struct
+import numpy as np
 from pathlib import Path
 
 import cv2
@@ -12,10 +13,10 @@ from network.modules.server_socket import ClientSocket, ServerSocket
 
 IMAGE_PATH = Path(__file__).resolve().parent
 SOCKET_ADDRESS = "127.0.0.1"
-SOCKET_PORT = 8080
+SOCKET_PORT = 5000 
 
 
-def recv_all(client_socket: ClientSocket, data_len: int) -> tuple[bool, bytes | None]:
+def recv_all(client_socket: ClientSocket, data_len: int) -> "tuple[bool, bytes | None]":
     """
     Receives an image of data_len bytes from a socket
     """
@@ -72,7 +73,9 @@ def start_server(host: str, port: int) -> int:
             return -1
         print("Received image data from client.")
 
-        cv2.imshow("Receiver ouput", image_data)
+        decoded_image = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
+        cv2.imshow("Receiver output", decoded_image)
+        cv2.waitKey()
 
         result = client_socket.send(image_data)
         if not result:

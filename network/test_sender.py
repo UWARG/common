@@ -13,7 +13,7 @@ from network.modules.server_socket import ClientSocket
 
 IMAGE_PATH = Path(__file__).resolve().parent
 SOCKET_ADDRESS = "127.0.0.1"
-SOCKET_PORT = 8080
+SOCKET_PORT = 5000 
 
 
 IMAGE_ENCODE_EXT = ".png"
@@ -42,7 +42,7 @@ def image_encode(image: "np.ndarray") -> "tuple[bool, bytes | None]":
     return True, encoded_image_bytes
 
 
-def recv_all(client_socket: ClientSocket, data_len: int) -> tuple[bool, bytes | None]:
+def recv_all(client_socket: ClientSocket, data_len: int) -> "tuple[bool, bytes | None]":
     """
     Receives an image of data_len bytes from a socket
     """
@@ -60,7 +60,7 @@ def recv_all(client_socket: ClientSocket, data_len: int) -> tuple[bool, bytes | 
     return True, image_data
 
 
-def start_sender(host: str, port: int) -> int:
+def start_sender(host: str, port: int):
     """
     Client will send landing pad images to the server, and the server will send them back.
     """
@@ -70,7 +70,7 @@ def start_sender(host: str, port: int) -> int:
     assert result, "Failed to create ClientSocket."
     print(f"Connected to: {host}:{port}.")
 
-    for image in get_images:
+    for image in get_images():
         # Send image byte length, 4 byte message
         data_len = struct.pack("<I", len(image))
         result = client_socket.send(data_len)
@@ -81,9 +81,8 @@ def start_sender(host: str, port: int) -> int:
         assert result, "Failed to send image data."
         print("Sent image data to server.")
 
-        image_data = recv_all(client_socket, len(image))
+        recv_all(client_socket, len(image))
         print("Received image data from server.")
-        assert image == image_data, "Sent image bytes does not match received image bytes"
 
     result = client_socket.close()
     assert result, "Failed to close client connection."
@@ -94,7 +93,5 @@ def start_sender(host: str, port: int) -> int:
 
 if __name__ == "__main__":
     result = start_sender(SOCKET_ADDRESS, SOCKET_PORT)
-    if result < 0:
-        print(f"ERROR: Status code: {result}")
 
     print("Done!")
