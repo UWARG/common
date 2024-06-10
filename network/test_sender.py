@@ -42,7 +42,7 @@ def image_encode(image: "np.ndarray") -> "tuple[bool, bytes | None]":
     return True, encoded_image_bytes
 
 
-def recv_all(client_socket: ClientSocket, data_len: int) -> tuple[bool, bytes | None]:
+def recv_all(client_socket: ClientSocket, data_len: int) -> "tuple[bool, bytes | None]":
     """
     Receives an image of data_len bytes from a socket
     """
@@ -70,7 +70,7 @@ def start_sender(host: str, port: int) -> int:
     assert result, "Failed to create ClientSocket."
     print(f"Connected to: {host}:{port}.")
 
-    for image in get_images:
+    for image in get_images():
         # Send image byte length, 4 byte message
         data_len = struct.pack("<I", len(image))
         result = client_socket.send(data_len)
@@ -81,15 +81,17 @@ def start_sender(host: str, port: int) -> int:
         assert result, "Failed to send image data."
         print("Sent image data to server.")
 
-        image_data = recv_all(client_socket, len(image))
+        result, image_data = recv_all(client_socket, len(image))
+        assert result, "Failed to receive returning image data."
         print("Received image data from server.")
         assert image == image_data, "Sent image bytes does not match received image bytes"
+        print("Received data is same as sent data, no corruption has occured.")
 
     result = client_socket.close()
     assert result, "Failed to close client connection."
 
     print("Connection to server closed.")
-
+    return 0
 
 
 if __name__ == "__main__":
