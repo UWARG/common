@@ -3,19 +3,15 @@ Test socket operations by receiving images over server sockets.
 """
 
 import struct
-from pathlib import Path
-
-import cv2
 
 from network.modules.server_socket import ClientSocket, ServerSocket
 
 
-IMAGE_PATH = Path(__file__).resolve().parent
 SOCKET_ADDRESS = "127.0.0.1"
 SOCKET_PORT = 8080
 
 
-def recv_all(client_socket: ClientSocket, data_len: int) -> tuple[bool, bytes | None]:
+def recv_all(client_socket: ClientSocket, data_len: int) -> "tuple[bool, bytes | None]":
     """
     Receives an image of data_len bytes from a socket
     """
@@ -47,10 +43,10 @@ def start_server(host: str, port: int) -> int:
 
     result, client_socket = server_socket.accept()
     if not result:
-        return -1
+        return -2
 
     if client_socket.address() != (host, port):
-        return -1
+        return -3
 
     print(f"Accepted connection from {host}:{port}.")
 
@@ -58,7 +54,7 @@ def start_server(host: str, port: int) -> int:
         # Length of image in bytes
         result, data_len = client_socket.recv(4)
         if not result:
-            return -1
+            return -4
 
         if not data_len:
             break
@@ -69,27 +65,25 @@ def start_server(host: str, port: int) -> int:
 
         result, image_data = recv_all(client_socket, data_len[0])
         if not result:
-            return -1
+            return -5
         print("Received image data from client.")
-
-        cv2.imshow("Receiver ouput", image_data)
 
         result = client_socket.send(image_data)
         if not result:
-            return -1
+            return -6
 
         print("Sent image data back to client.")
 
     result = client_socket.close()
     if not result:
-        return -1
+        return -7
 
     print("Connection to client closed.")
 
     result = server_socket.close()
     if not result:
-        return -1
-    
+        return -8
+
     return 0
 
 
