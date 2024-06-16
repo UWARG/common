@@ -18,7 +18,6 @@ class TcpServerSocket(TcpSocket):
         """
         Private constructor, use create() method.
         """
-
         assert class_private_create_key is TcpServerSocket.__create_key, "Use create() method"
 
         super().__init__(socket_instance=socket_instance)
