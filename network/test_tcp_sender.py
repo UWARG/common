@@ -8,11 +8,11 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from network.modules.server_socket import ClientSocket
+from network.modules.TCP.client_socket import TcpClientSocket
 
 
 IMAGE_PATH = Path(__file__).resolve().parent
-SOCKET_ADDRESS = "127.0.0.1"
+SOCKET_ADDRESS = "localhost"
 SOCKET_PORT = 8080
 
 
@@ -42,31 +42,11 @@ def image_encode(image: "np.ndarray") -> "tuple[bool, bytes | None]":
     return True, encoded_image_bytes
 
 
-def recv_all(client_socket: ClientSocket, data_len: int) -> "tuple[bool, bytes | None]":
-    """
-    Receives an image of data_len bytes from a socket
-    """
-    image_data = b""
-    data_recv = 0
-    while data_recv < data_len:
-        result, data = client_socket.recv(data_len - data_recv)
-        if not result:
-            return False, None
-
-        print(f"Received {len(data)} bytes.")
-        data_recv += len(data)
-        image_data += data
-
-    return True, image_data
-
-
 def start_sender(host: str, port: int) -> int:
     """
     Client will send landing pad images to the server, and the server will send them back.
     """
-    result, client_socket = ClientSocket.create(  # pylint: disable=unpacking-non-sequence
-        host=host, port=port
-    )
+    result, client_socket = TcpClientSocket.create(host=host, port=port)
     assert result, "Failed to create ClientSocket."
     print(f"Connected to: {host}:{port}.")
 
@@ -81,7 +61,7 @@ def start_sender(host: str, port: int) -> int:
         assert result, "Failed to send image data."
         print("Sent image data to server.")
 
-        result, image_data = recv_all(client_socket, len(image))
+        result, image_data = client_socket.recv(len(image))
         assert result, "Failed to receive returning image data."
         print("Received image data from server.")
         assert image == image_data, "Sent image bytes does not match received image bytes"

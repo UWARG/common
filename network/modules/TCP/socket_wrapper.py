@@ -3,19 +3,9 @@ Wrapper for socket operations.
 """
 
 import socket
-from enum import Enum
 
 
-class NetworkProtocol(Enum):
-    """
-    Enum used to select protocol when instantiating Socket.
-    """
-
-    TCP = socket.SOCK_STREAM
-    UDP = socket.SOCK_DGRAM
-
-
-class Socket:
+class TcpSocket:
     """
     Wrapper for Python's socket module.
     """
@@ -60,19 +50,27 @@ class Socket:
 
         Returns
         -------
-        tuple[bool, Socket | None]
+        tuple[bool, bytes | None]
             The first parameter represents if the read is successful.
             - If it is not successful, the second parameter will be None.
             - If it is successful, the second parameter will be the data
               that is read.
         """
-        try:
-            data = self.__socket.recv(buf_size)
-        except socket.error as e:
-            print(f"Could not receive data: {e}.")
-            return False, None
+        chunks = []
+        bytes_recd = 0
+        while bytes_recd < buf_size:
+            # 4096 or other low powers of 2 is recommended
+            # Although while testing without a limit, it has been observed to reach above 100000
+            chunk = self.__socket.recv(min(buf_size - bytes_recd, 4096))
 
-        return True, data
+            if chunk == b"":
+                print("Socket connection broken")  # When 0 is received, means error
+                return False, None
+
+            chunks.append(chunk)
+            bytes_recd = bytes_recd + len(chunk)
+
+        return True, b"".join(chunks)
 
     def close(self) -> bool:
         """
