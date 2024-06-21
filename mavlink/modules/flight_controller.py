@@ -222,3 +222,15 @@ class FlightController:
         except dronekit.APIException as e:
             print(f"ERROR in move_to_position() method: {e}")
             return False
+
+    def set_flight_mode(self, mode: str) -> bool:
+        """
+        Changes the flight mode of the drone.
+        https://ardupilot.org/copter/docs/flight-modes.html
+        """
+        try:
+            self.drone.mode = dronekit.VehicleMode(mode)
+        except KeyError:
+            print("ERROR: an unsupported flight mode is set by dronekit.VehicleMode()")
+            return False
+        return True
