@@ -2,6 +2,8 @@
 Decodes images from JPEG bytes to numpy array.
 """
 
+# Used in type annotation of flight interface output
+# pylint: disable-next=unused-import
 import io
 
 from PIL import Image
