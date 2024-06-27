@@ -7,11 +7,14 @@ class UdpServerSocket(UdpSocket):
     Wrapper for server socket operations.
     """
 
-
     __create_key = object()
 
-
-    def __init__(self, class_private_create_key: object, socket_instance: socket.socket, server_address: tuple) -> None:
+    def __init__(
+        self,
+        class_private_create_key: object,
+        socket_instance: socket.socket,
+        server_address: tuple,
+    ) -> None:
         """
         Private Constructor, use create() method.
         """
@@ -19,7 +22,6 @@ class UdpServerSocket(UdpSocket):
         super().__init__(socket_instance=socket_instance)
         self.__socket = socket_instance
         self.server_address = server_address
-
 
     @classmethod
     def create(cls, host: str = "", port: int = 5000) -> "tuple[bool, UdpServerSocket | None]":
@@ -54,7 +56,6 @@ class UdpServerSocket(UdpSocket):
             print(f"Could not create socket, error: {e}.")
             return False, None
 
-
     def receive(self, buffer_size: int = 1024) -> "tuple[bytes, tuple]":
         """
         Receives data from the socket.
@@ -76,8 +77,7 @@ class UdpServerSocket(UdpSocket):
             return data, address
         except socket.error as e:
             print(f"Error receiving data: {e}.")
-            return b'', ()
-
+            return b"", ()
 
     def close(self) -> None:
         """
@@ -88,5 +88,3 @@ class UdpServerSocket(UdpSocket):
             print(f"Socket bound to {self.server_address} closed successfully.")
         except socket.error as e:
             print(f"Error closing socket: {e}.")
-
-

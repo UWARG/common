@@ -6,9 +6,15 @@ class UdpClientSocket(UdpSocket):
     """
     Wrapper for client socket operations
     """
+
     __create_key = object()
-   
-    def __init__(self, class_private_create_key: object, socket_instance: socket.socket, server_address: tuple) -> None:
+
+    def __init__(
+        self,
+        class_private_create_key: object,
+        socket_instance: socket.socket,
+        server_address: tuple,
+    ) -> None:
         """
         Private Constructor, use create() method.
         """
@@ -16,9 +22,10 @@ class UdpClientSocket(UdpSocket):
         self.__socket = socket_instance
         self.server_address = server_address
 
-
     @classmethod
-    def create(cls, host: str = "localhost", port: int = 5000) -> "tuple[bool, UdpClientSocket | None]":
+    def create(
+        cls, host: str = "localhost", port: int = 5000
+    ) -> "tuple[bool, UdpClientSocket | None]":
         """
         Initializes UDP client socket with the appropriate server address.
 
@@ -42,16 +49,16 @@ class UdpClientSocket(UdpSocket):
             socket_instance = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             server_address = (host, port)
             return True, UdpClientSocket(cls.__create_key, socket_instance, server_address)
-        
+
         except socket.gaierror as e:
-            print(f"Could not connect to socket, address related error: {e}. Make sure the host and port are correct.")
-        
+            print(
+                f"Could not connect to socket, address related error: {e}. Make sure the host and port are correct."
+            )
+
         except socket.error as e:
             print(f"Could not connect: {e}")
 
-
         return False, None
-
 
     def send(self, data: bytes) -> bool:
         """
@@ -70,12 +77,11 @@ class UdpClientSocket(UdpSocket):
             True if data was sent successfully, False otherwise.
         """
         try:
-            self.__socket.sendto(data, self.server_address) 
+            self.__socket.sendto(data, self.server_address)
             return True
         except socket.error as e:
             print(f"Failed to send data: {e}")
             return False
-
 
     def close(self) -> None:
         """
@@ -86,5 +92,3 @@ class UdpClientSocket(UdpSocket):
             print("Socket closed successfully.")
         except socket.error as e:
             print(f"Error occurred while closing the socket: {e}")
-
-

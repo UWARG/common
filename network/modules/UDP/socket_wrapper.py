@@ -6,7 +6,6 @@ class UdpSocket:
     Wrapper for Python's socket module.
     """
 
-
     def __init__(self, socket_instance: socket.socket) -> None:
         """
         Parameters
@@ -19,8 +18,6 @@ class UdpSocket:
         else:
             self.__socket = socket_instance
 
-
-   
     def send_to(self, data: bytes, address: tuple) -> bool:
         """
         Sends data to specified address
@@ -35,17 +32,15 @@ class UdpSocket:
         Returns
         -------
         bool: if data was transferred successfully
-       
+
         """
         try:
             self.__socket.sendto(data, address)
         except socket.error as e:
             print(f"Could not send data: {e}")
             return False
-       
-        return True
-   
 
+        return True
 
     def recv_from(self, buf_size: int) -> "tuple[bool, bytes | None]":
         """
@@ -61,18 +56,15 @@ class UdpSocket:
         Returns
         -------
         tuple: If the data and address were received
-       
+
         """
         try:
             data, addr = self.__socket.recvfrom(buf_size)
         except socket.error as e:
             print(f"Could not receive data: {e}")
             return False, None, ()
-       
+
         return True, data, addr
-
-
-
 
     def close(self) -> bool:
         """
@@ -88,10 +80,8 @@ class UdpSocket:
         except socket.error as e:
             print(f"Could not close socket: {e}")
             return False
-       
-        return False
-   
 
+        return False
 
     def address(self) -> "tuple[str, int]":
         """
@@ -105,10 +95,8 @@ class UdpSocket:
         """
         return self.__socket.getsockname()
 
-
     def get_socket(self) -> socket.socket:
         """
         Getter for the underlying socket objet.
         """
         return self.__socket
-   
