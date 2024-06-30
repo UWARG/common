@@ -7,8 +7,8 @@ import pathlib
 from PIL import Image
 import numpy as np
 
-from image_encode.modules import decoder
-from image_encode.modules import encoder
+from image_encoding.modules import decoder
+from image_encoding.modules import encoder
 
 
 def main() -> int:
