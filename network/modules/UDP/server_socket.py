@@ -56,35 +56,4 @@ class UdpServerSocket(UdpSocket):
             print(f"Could not create socket, error: {e}.")
             return False, None
 
-    def receive(self, buffer_size: int = 1024) -> "tuple[bytes, tuple]":
-        """
-        Receives data from the socket.
 
-
-        Parameters
-        ----------
-        buffer_size: int (default 1024)
-            The maximum amount of data to be received at once.
-
-
-        Returns
-        -------
-        tuple[bytes, tuple]
-            A tuple containing the received data and the address of the sender.
-        """
-        try:
-            data, address = self.__socket.recvfrom(buffer_size)
-            return data, address
-        except socket.error as e:
-            print(f"Error receiving data: {e}.")
-            return b"", ()
-
-    def close(self) -> None:
-        """
-        Closes the socket.
-        """
-        try:
-            self.__socket.close()
-            print(f"Socket bound to {self.server_address} closed successfully.")
-        except socket.error as e:
-            print(f"Error closing socket: {e}.")

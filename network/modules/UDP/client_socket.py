@@ -33,7 +33,7 @@ class UdpClientSocket(UdpSocket):
         Parameters
         ----------
         host: str, default "localhost"
-            The hostname of the server.
+            The hostname of the server. 
         port: int, default 5000
             The port number of the server.
 
@@ -60,35 +60,6 @@ class UdpClientSocket(UdpSocket):
 
         return False, None
 
-    def send(self, data: bytes) -> bool:
-        """
-        Sends data to the server.
 
 
-        Parameters
-        ----------
-        data: bytes
-            The data to be sent to the server.
 
-
-        Returns
-        -------
-        bool
-            True if data was sent successfully, False otherwise.
-        """
-        try:
-            self.__socket.sendto(data, self.server_address)
-            return True
-        except socket.error as e:
-            print(f"Failed to send data: {e}")
-            return False
-
-    def close(self) -> None:
-        """
-        Closes the socket.
-        """
-        try:
-            self.__socket.close()
-            print("Socket closed successfully.")
-        except socket.error as e:
-            print(f"Error occurred while closing the socket: {e}")
