@@ -11,12 +11,17 @@ from image_encoding.modules import decoder
 from image_encoding.modules import encoder
 
 
+ROOT_DIR = "image_encoding"
+TEST_IMG = "test.png"
+RESULT_IMG = "result.jpg"
+
+
 def main() -> int:
     """
     Main testing sequence of encoding and decoding an image.
     """
     # Get test image in numpy form
-    im = Image.open(pathlib.Path("lte", "test.png"))
+    im = Image.open(pathlib.Path(ROOT_DIR, TEST_IMG))
     raw_data = np.asarray(im)
 
     # Encode image into JPEG
@@ -27,7 +32,7 @@ def main() -> int:
 
     # Reconstruct the image (for human viewing/comparison)
     result = Image.fromarray(img_array, mode="RGB")
-    result.save(pathlib.Path("lte", "result.jpg"), quality=80)
+    result.save(pathlib.Path(ROOT_DIR, RESULT_IMG), quality=80)
 
     # Check output shape
     assert img_array.shape == raw_data.shape
