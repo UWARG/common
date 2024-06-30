@@ -7,8 +7,8 @@ import pathlib
 from PIL import Image
 import numpy as np
 
-from lte.modules import image_decode
-from lte.modules import image_encode
+from image_encode.modules import decoder
+from image_encode.modules import encoder
 
 
 def main() -> int:
@@ -20,10 +20,10 @@ def main() -> int:
     raw_data = np.asarray(im)
 
     # Encode image into JPEG
-    jpeg_bytes = image_encode.encode(raw_data)
+    jpeg_bytes = encoder.encode(raw_data)
 
     # Decode JPEG image back to numpy
-    img_array = image_decode.decode(jpeg_bytes)
+    img_array = decoder.decode(jpeg_bytes)
 
     # Reconstruct the image (for human viewing/comparison)
     result = Image.fromarray(img_array, mode="RGB")
