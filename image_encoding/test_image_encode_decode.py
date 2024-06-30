@@ -7,8 +7,13 @@ import pathlib
 from PIL import Image
 import numpy as np
 
-from lte.modules import image_decode
-from lte.modules import image_encode
+from image_encoding.modules import decoder
+from image_encoding.modules import encoder
+
+
+ROOT_DIR = "image_encoding"
+TEST_IMG = "test.png"
+RESULT_IMG = "result.jpg"
 
 
 def main() -> int:
@@ -16,18 +21,18 @@ def main() -> int:
     Main testing sequence of encoding and decoding an image.
     """
     # Get test image in numpy form
-    im = Image.open(pathlib.Path("lte", "test.png"))
+    im = Image.open(pathlib.Path(ROOT_DIR, TEST_IMG))
     raw_data = np.asarray(im)
 
     # Encode image into JPEG
-    jpeg_bytes = image_encode.encode(raw_data)
+    jpeg_bytes = encoder.encode(raw_data)
 
     # Decode JPEG image back to numpy
-    img_array = image_decode.decode(jpeg_bytes)
+    img_array = decoder.decode(jpeg_bytes)
 
     # Reconstruct the image (for human viewing/comparison)
     result = Image.fromarray(img_array, mode="RGB")
-    result.save(pathlib.Path("lte", "result.jpg"), quality=80)
+    result.save(pathlib.Path(ROOT_DIR, RESULT_IMG), quality=80)
 
     # Check output shape
     assert img_array.shape == raw_data.shape
