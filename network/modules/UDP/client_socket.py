@@ -60,6 +60,49 @@ class UdpClientSocket(UdpSocket):
 
         return False, None
 
+    def send(self, data: bytes) -> bool:
+        """
+        Sends data to the specified server address 
+
+        Parameters
+        ----------
+        data: bytes
+            Takes in raw data that we wish to send 
+
+        Returns
+        -------
+        bool: True if data is sent successfully, and false if it fails to send 
+        
+        """
+
+        try:
+            host, port = self.server_address
+            super().send_to(data, host, port)
+        except socket.error as e:
+            print(f"Could not send data: {e}")
+            return False
+        
+        return True 
+    
+    def recv(self, buf_size: int) -> None:
+
+        """
+        Receive data method override to prevent client sockets from receiving data.
+
+        Parameters
+        ----------
+        bufsize: int
+            The maximum amount of data to be received at once.
+
+        Raises
+        ------
+        NotImplementedError
+            Always raised because client sockets should not receive data.
+        
+        """
+
+        raise NotImplementedError("Client sockets cannot receive data as they are not bound by a port.")
+            
 
 
 

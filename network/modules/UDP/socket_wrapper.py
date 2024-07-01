@@ -18,6 +18,7 @@ class UdpSocket:
         else:
             self.__socket = socket_instance
 
+    @classmethod
     def send_to(self, data: bytes, host: str = "", port: int = 5000) -> bool:
         """
         Sends data to specified address
@@ -41,14 +42,14 @@ class UdpSocket:
 
         data_sent = 0
         data_size = len(data)
+        chunk_size = 4096
 
-        while data_sent < data_size:
+        while data_sent + chunk_size < data_size:
 
-            chunk = data[data_sent:data_sent+4096]
-            packed_data = struct.pack(f'!{len(chunk)}s', chunk)
+            chunk = data[data_sent:data_sent+chunk_size]
 
             try:
-                self.__socket.sendto(packed_data, address)
+                self.__socket.sendto(chunk, address)
                 data_sent += len(chunk)
             except socket.error as e:
                 print(f"Could not send data: {e}")
@@ -72,6 +73,7 @@ class UdpSocket:
         """
         data = b''
         addr = None
+        data_size = 0
 
         while True:
 
@@ -82,24 +84,21 @@ class UdpSocket:
                 elif addr != current_addr:
                     print(f"Data received from multiple addresses: {addr} and {current_addr}")
                     return False, None
+                
+                # Add the received packet to the accumulated data and increment the size accordingly 
+                data += packet  
+                data_size += len(packet) 
 
-                data += packet  # Add the received packet to the accumulated data
-
-                # Assuming that receiving less than buf_size means end of data
-                if len(packet) < buf_size:
+                # Assuming that the data size exceeding the buf_size means that we've accumulated all the necessary data
+                if data_size >= buf_size:
                     break
 
             except socket.error as e:
                 print(f"Could not receive data: {e}")
                 return False, None
             
-        try:
-            unpacked_data = struct.unpack(f'!{len(data)}', data)
-        except struct.error as e:
-                print(f"Could not unpack data: {e}")
-                return False, None
 
-        return True, unpacked_data
+        return True, data
 
 
     def close(self) -> bool:
