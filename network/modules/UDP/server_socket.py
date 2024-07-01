@@ -33,10 +33,10 @@ class UdpServerSocket(UdpSocket):
         ----------
         host: str (default "")
             The hostname or IP address to bind the socket to.
-
-
         port: int (default 5000)
             The port number to bind the socket to.
+        connection_timeout: float (default 10.0)
+            Timeout for establishing connection, in seconds
 
 
         Returns

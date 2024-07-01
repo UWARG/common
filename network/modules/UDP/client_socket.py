@@ -36,6 +36,8 @@ class UdpClientSocket(UdpSocket):
             The hostname of the server. 
         port: int, default 5000
             The port number of the server.
+        connection_timeout: float, default 10.0
+            Timeout for establishing connection, in seconds 
 
 
         Returns
