@@ -24,7 +24,7 @@ class UdpClientSocket(UdpSocket):
 
     @classmethod
     def create(
-        cls, host: str = "localhost", port: int = 5000
+        cls, host: str = "localhost", port: int = 5000, connection_timeout: float = 10.0
     ) -> "tuple[bool, UdpClientSocket | None]":
         """
         Initializes UDP client socket with the appropriate server address.
@@ -45,10 +45,19 @@ class UdpClientSocket(UdpSocket):
                 - If it is not successful, the second parameter will be None.
                 - If it is successful, the method will return True and a UdpClientSocket object will be created.
         """
+
+        if connection_timeout <= 0:
+            print("Must provide positive non-zero value.")
+            return False, None
+
         try:
             socket_instance = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            socket_instance.settimeout(connection_timeout)
             server_address = (host, port)
             return True, UdpClientSocket(cls.__create_key, socket_instance, server_address)
+        
+        except TimeoutError as e:
+            print(f"Connection timed out: {e}")
 
         except socket.gaierror as e:
             print(

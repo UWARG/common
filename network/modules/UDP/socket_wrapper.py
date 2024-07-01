@@ -1,10 +1,14 @@
 import socket
 import struct 
 
+CHUNK_SIZE = 4096
+
 class UdpSocket:
     """
     Wrapper for Python's socket module.
     """
+
+
 
     def __init__(self, socket_instance: socket.socket = None) -> None:
         """
@@ -13,8 +17,10 @@ class UdpSocket:
         instance: socket.socket
             For initializing Socket with an existing socket object.
         """
+
         if socket_instance is None:
             self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.__socket.settimeout(10.0)
         else:
             self.__socket = socket_instance
 
@@ -42,11 +48,13 @@ class UdpSocket:
 
         data_sent = 0
         data_size = len(data)
-        chunk_size = 4096
 
-        while data_sent + chunk_size < data_size:
+        while data_sent < data_size:
 
-            chunk = data[data_sent:data_sent+chunk_size]
+            if data_sent + CHUNK_SIZE > data_size:
+                chunk = data[data_sent:data_size]
+            else:
+                chunk = data[data_sent:data_sent+CHUNK_SIZE]
 
             try:
                 self.__socket.sendto(chunk, address)
@@ -75,7 +83,7 @@ class UdpSocket:
         addr = None
         data_size = 0
 
-        while True:
+        while data_size < buf_size:
 
             try:
                 packet, current_addr = self.__socket.recvfrom(buf_size)
@@ -83,15 +91,12 @@ class UdpSocket:
                     addr = current_addr
                 elif addr != current_addr:
                     print(f"Data received from multiple addresses: {addr} and {current_addr}")
-                    return False, None
+                    packet = b''
                 
                 # Add the received packet to the accumulated data and increment the size accordingly 
                 data += packet  
                 data_size += len(packet) 
 
-                # Assuming that the data size exceeding the buf_size means that we've accumulated all the necessary data
-                if data_size >= buf_size:
-                    break
 
             except socket.error as e:
                 print(f"Could not receive data: {e}")

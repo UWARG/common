@@ -24,7 +24,7 @@ class UdpServerSocket(UdpSocket):
         self.server_address = server_address
 
     @classmethod
-    def create(cls, host: str = "", port: int = 5000) -> "tuple[bool, UdpServerSocket | None]":
+    def create(cls, host: str = "", port: int = 5000, connection_timeout: float = 10.0) -> "tuple[bool, UdpServerSocket | None]":
         """
         Creates a UDP server socket bound to the provided host and port.
 
@@ -47,11 +47,20 @@ class UdpServerSocket(UdpSocket):
             - If it is successful, the second parameter will be the created
                 UdpServerSocket object.
         """
+
+        if connection_timeout <= 0:
+            print(f"Must provide a positive non-zero value.")
+            return False, None
+
         try:
             socket_instance = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            socket_instance.settimeout(connection_timeout)
             server_address = (host, port)
             socket_instance.bind(server_address)
             return True, UdpServerSocket(cls.__create_key, socket_instance, server_address)
+        
+        except TimeoutError as e:
+            print(f"Connection timed out.")
         except socket.error as e:
             print(f"Could not create socket, error: {e}.")
             return False, None
