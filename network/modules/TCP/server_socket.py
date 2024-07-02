@@ -18,6 +18,7 @@ class TcpServerSocket(TcpSocket):
         """
         Private constructor, use create() method.
         """
+
         assert class_private_create_key is TcpServerSocket.__create_key, "Use create() method"
 
         super().__init__(socket_instance=socket_instance)
@@ -28,6 +29,7 @@ class TcpServerSocket(TcpSocket):
         instance: socket.socket = None,
         host: str = "",
         port: int = 5000,
+        connection_timeout: float = 10.0,
     ) -> "tuple[bool, TcpServerSocket | None]":
         """
         Establishes socket connection through provided host and port.
@@ -38,12 +40,13 @@ class TcpServerSocket(TcpSocket):
         ----------
         instance: socket.socket (default None)
             For initializing Socket with an existing socket object.
-
         host: str (default "")
             Empty string is interpreted as '0.0.0.0' (IPv4) or '::' (IPv6), which is all addresses.
             Could also use socket.gethostname(). (needed to enable other machines to connect)
         port: int (default 5000)
             The host combined with the port will form an address (e.g. localhost:5000)
+        connection_timeout: float (default 10.0)
+            Timeout for operations such as recieve
 
         Returns
         -------
@@ -51,8 +54,9 @@ class TcpServerSocket(TcpSocket):
             The first parameter represents if the socket creation is successful.
             - If it is not successful, the second parameter will be None.
             - If it is successful, the second parameter will be the created
-              ServerSocket object.
+              TcpServerSocket object.
         """
+
         # Reassign instance before check or Pylance will complain
         socket_instance = instance
         if socket_instance is not None:
@@ -68,8 +72,8 @@ class TcpServerSocket(TcpSocket):
                 )
             except socket.gaierror as e:
                 print(
-                    f"Could not connect to socket, address related error: {e}. "
-                    "Make sure the host and port are correct."
+                    f"Could not connect to socket, address related error: {e}.",
+                    "Make sure the host and port are correct.",
                 )
                 return False, None
             except socket.error as e:
@@ -95,12 +99,13 @@ class TcpServerSocket(TcpSocket):
         else:
             print(f"Listening for internal connections on {host}:{port}")
 
-        # Since this is in blocking mode, nothing can happen here, including keyboard interrupt
-
+        # This is in blocking mode, nothing can happen until this finishes, even keyboard interrupt
         socket_instance, addr = server.accept()
 
         # Now, a connection as been accepted (created a new 'client' socket)
         print(f"Accepted a connection from {addr[0]}:{addr[1]}")
+
+        socket_instance.settimeout(connection_timeout)
 
         server.close()
         print("No longer accepting new connections.")

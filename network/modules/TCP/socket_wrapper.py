@@ -17,6 +17,7 @@ class TcpSocket:
         instance: socket.socket
             For initializing Socket with an existing socket object.
         """
+
         self.__socket = socket_instance
 
     def send(self, data: bytes) -> bool:
@@ -31,6 +32,7 @@ class TcpSocket:
         -------
         bool: If the data was sent successfully.
         """
+
         try:
             self.__socket.sendall(data)
         except socket.error as e:
@@ -53,9 +55,9 @@ class TcpSocket:
         tuple[bool, bytes | None]
             The first parameter represents if the read is successful.
             - If it is not successful, the second parameter will be None.
-            - If it is successful, the second parameter will be the data
-              that is read.
+            - If it is successful, the second parameter will be the data that is read.
         """
+
         chunks = []
         bytes_recd = 0
         while bytes_recd < buf_size:
@@ -80,6 +82,7 @@ class TcpSocket:
         -------
         bool: If the socket was closed successfully.
         """
+
         try:
             self.__socket.close()
         except socket.error as e:
@@ -97,10 +100,12 @@ class TcpSocket:
         tuple[str, int]
             The address in the format (ip address, port).
         """
+
         return self.__socket.getsockname()
 
     def get_socket(self) -> socket.socket:
         """
         Getter for the underlying socket objet.
         """
+
         return self.__socket

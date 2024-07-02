@@ -28,7 +28,7 @@ class TcpClientSocket(TcpSocket):
         instance: socket.socket = None,
         host: str = "localhost",
         port: int = 5000,
-        connect_timeout: float = 10.0,
+        connection_timeout: float = 10.0,
     ) -> "tuple[bool, TcpClientSocket | None]":
         """
         Establishes socket connection through provided host and port.
@@ -37,12 +37,10 @@ class TcpClientSocket(TcpSocket):
         ----------
         instance: socket.socket (default None)
             For initializing Socket with an existing socket object.
-
         host: str (default "localhost")
         port: int (default 5000)
             The host combined with the port will form an address (e.g. localhost:5000)
-
-        connect_timeout: float (default 10.0)
+        connection_timeout: float (default 10.0)
             Timeout for establishing connection, in seconds
 
         Returns
@@ -50,22 +48,21 @@ class TcpClientSocket(TcpSocket):
         tuple[bool, TcpClientSocket | None]
             The first parameter represents if the socket creation is successful.
             - If it is not successful, the second parameter will be None.
-            - If it is successful, the second parameter will be the created
-                TcpClientSocket object.
+            - If it is successful, the second parameter will be the created TcpClientSocket object.
         """
+
         # Reassign instance before check or Pylance will complain
         socket_instance = instance
         if socket_instance is not None:
             return True, TcpClientSocket(cls.__create_key, socket_instance)
 
-        if connect_timeout <= 0:
-            # raise valueError?
+        if connection_timeout <= 0:
             # Zero puts it on non-blocking mode, which complicates things
             print("Must be a positive non-zero value")
             return False, None
 
         try:
-            socket_instance = socket.create_connection((host, port), connect_timeout)
+            socket_instance = socket.create_connection((host, port), connection_timeout)
             return True, TcpClientSocket(cls.__create_key, socket_instance)
         except TimeoutError as e:
             print("Connection timed out.")

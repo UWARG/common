@@ -4,8 +4,6 @@ Test socket operations by sending images over client sockets.
 
 import struct
 from pathlib import Path
-
-import cv2
 import numpy as np
 
 from network.modules.TCP.client_socket import TcpClientSocket
@@ -19,52 +17,36 @@ SOCKET_PORT = 8080
 IMAGE_ENCODE_EXT = ".png"
 
 
-def get_images() -> "list[bytes]":
-    """
-    Returns a list of images in byte representation.
-    """
-    return [
-        image_encode(cv2.imread(str(IMAGE_PATH / "test_images/landing_pad_1.png")))[1],
-        image_encode(cv2.imread(str(IMAGE_PATH / "test_images/landing_pad_2.png")))[1],
-    ]
-
-
-def image_encode(image: "np.ndarray") -> "tuple[bool, bytes | None]":
-    """
-    Encodes an image (np.ndarray as an RGB matrix) and returns its byte sequence.
-    """
-    result, encoded_image = cv2.imencode(IMAGE_ENCODE_EXT, image)
-    if not result:
-        return False, None
-
-    encoded_image_bytes = encoded_image.tobytes()
-
-    return True, encoded_image_bytes
-
-
 def start_sender(host: str, port: int) -> int:
     """
     Client will send landing pad images to the server, and the server will send them back.
     """
+
+    test_messages = [
+        b"Hello world!",
+        np.random.bytes(4096),
+        np.random.bytes(10000000),
+    ]
+
     result, client_socket = TcpClientSocket.create(host=host, port=port)
     assert result, "Failed to create ClientSocket."
     print(f"Connected to: {host}:{port}.")
 
-    for image in get_images():
-        # Send image byte length, 4 byte message
-        data_len = struct.pack("<I", len(image))
+    for data in test_messages:
+        # Send data length, 4 byte message (unsigned int, network or big-endian format)
+        data_len = struct.pack("!I", len(data))
         result = client_socket.send(data_len)
-        assert result, "Failed to send image byte length."
-        print("Sent image byte length to server.")
+        assert result, "Failed to send data byte length."
+        print("Sent data byte length to server.")
 
-        result = client_socket.send(image)
-        assert result, "Failed to send image data."
-        print("Sent image data to server.")
+        result = client_socket.send(data)
+        assert result, "Failed to send data."
+        print("Sent data to server.")
 
-        result, image_data = client_socket.recv(len(image))
-        assert result, "Failed to receive returning image data."
-        print("Received image data from server.")
-        assert image == image_data, "Sent image bytes does not match received image bytes"
+        result, recv_data = client_socket.recv(len(data))
+        assert result, "Failed to receive returning data."
+        print("Received data from server.")
+        assert data == recv_data, "Sent data does not match received data"
         print("Received data is same as sent data, no corruption has occured.")
 
     result = client_socket.close()
@@ -75,8 +57,8 @@ def start_sender(host: str, port: int) -> int:
 
 
 if __name__ == "__main__":
-    result = start_sender(SOCKET_ADDRESS, SOCKET_PORT)
-    if result < 0:
-        print(f"ERROR: Status code: {result}")
+    RESULT = start_sender(SOCKET_ADDRESS, SOCKET_PORT)
+    if RESULT < 0:
+        print(f"ERROR: Status code: {RESULT}")
 
     print("Done!")

@@ -18,6 +18,7 @@ class UdpClientSocket(UdpSocket):
         """
         Private Constructor, use create() method.
         """
+
         assert class_private_create_key is UdpClientSocket.__create_key
         self.__socket = socket_instance
         self.server_address = server_address
@@ -29,16 +30,14 @@ class UdpClientSocket(UdpSocket):
         """
         Initializes UDP client socket with the appropriate server address.
 
-
         Parameters
         ----------
-        host: str, default "localhost"
-            The hostname of the server. 
-        port: int, default 5000
+        host: str (default "localhost")
+            The hostname or IP address of the server.
+        port: int (default 5000)
             The port number of the server.
-        connection_timeout: float, default 10.0
-            Timeout for establishing connection, in seconds 
-
+        connection_timeout: float (default 10.0)
+            Timeout for establishing connection, in seconds
 
         Returns
         -------
@@ -57,7 +56,7 @@ class UdpClientSocket(UdpSocket):
             socket_instance.settimeout(connection_timeout)
             server_address = (host, port)
             return True, UdpClientSocket(cls.__create_key, socket_instance, server_address)
-        
+
         except TimeoutError as e:
             print(f"Connection timed out: {e}")
 
@@ -73,17 +72,16 @@ class UdpClientSocket(UdpSocket):
 
     def send(self, data: bytes) -> bool:
         """
-        Sends data to the specified server address 
+        Sends data to the specified server address
 
         Parameters
         ----------
         data: bytes
-            Takes in raw data that we wish to send 
+            Takes in raw data that we wish to send
 
         Returns
         -------
-        bool: True if data is sent successfully, and false if it fails to send 
-        
+        bool: True if data is sent successfully, and false if it fails to send
         """
 
         try:
@@ -92,28 +90,24 @@ class UdpClientSocket(UdpSocket):
         except socket.error as e:
             print(f"Could not send data: {e}")
             return False
-        
-        return True 
-    
-    def recv(self, buf_size: int) -> None:
 
+        return True
+
+    def recv(self, buf_size: int) -> None:
         """
         Receive data method override to prevent client sockets from receiving data.
 
         Parameters
         ----------
         bufsize: int
-            The maximum amount of data to be received at once.
+            The amount of data to be received.
 
         Raises
         ------
         NotImplementedError
             Always raised because client sockets should not receive data.
-        
         """
 
-        raise NotImplementedError("Client sockets cannot receive data as they are not bound by a port.")
-            
-
-
-
+        raise NotImplementedError(
+            "Client sockets cannot receive data as they are not bound by a port."
+        )
