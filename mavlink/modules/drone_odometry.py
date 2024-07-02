@@ -46,6 +46,12 @@ class DronePosition:
         self.longitude = longitude
         self.altitude = altitude
 
+    def __str__(self) -> str:
+        """
+        To string.
+        """
+        return f"{self.__class__}, latitude: {self.latitude}, longitude: {self.longitude}, altitude: {self.altitude}"
+
 
 class DroneOrientation:
     """
@@ -96,6 +102,12 @@ class DroneOrientation:
         self.pitch = pitch
         self.roll = roll
 
+    def __str__(self) -> str:
+        """
+        To string.
+        """
+        return f"{self.__class__}, yaw: {self.yaw}, pitch: {self.pitch}, roll: {self.roll}"
+
 
 class DroneOdometry:
     """
@@ -132,3 +144,9 @@ class DroneOdometry:
 
         self.position = position
         self.orientation = orientation
+
+    def __str__(self) -> str:
+        """
+        To string.
+        """
+        return f"{self.__class__}, position: {self.position}, orientation: {self.orientation}"
