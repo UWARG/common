@@ -99,5 +99,4 @@ class UdpSocket:
         """
         Getter for the underlying socket objet.
         """
-
         return self.__socket

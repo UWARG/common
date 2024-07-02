@@ -56,7 +56,6 @@ class UdpClientSocket(UdpSocket):
             socket_instance.settimeout(connection_timeout)
             server_address = (host, port)
             return True, UdpClientSocket(cls.__create_key, socket_instance, server_address)
-
         except TimeoutError as e:
             print(f"Connection timed out: {e}")
 
