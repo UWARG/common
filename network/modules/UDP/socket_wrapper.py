@@ -5,6 +5,7 @@ CHUNK_SIZE = 2**15  # 32 kb, may need to be shrunk on pi becasue its buffer may 
 SEND_DELAY = 1e-4  # Delay in seconds in between sends to avoid filling socket buffer
 
 
+
 class UdpSocket:
     """
     Wrapper for Python's socket module.
@@ -99,4 +100,5 @@ class UdpSocket:
         """
         Getter for the underlying socket objet.
         """
+
         return self.__socket
