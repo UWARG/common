@@ -20,15 +20,16 @@ class FlightController:
     __MAVLINK_LANDING_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_LAND
 
     @classmethod
-    def create(cls, address: str) -> "tuple[bool, FlightController | None]":
+    def create(cls, address: str, baud: int = 57600) -> "tuple[bool, FlightController | None]":
         """
         address: TCP address or serial port of the drone (e.g. "tcp:127.0.0.1:14550").
+        baud: Baud rate for the connection (default is 57600).
         Establishes connection to drone through provided address
         and stores the DroneKit object.
         """
         try:
             # Wait ready is false as the drone may be on the ground
-            drone = dronekit.connect(address, wait_ready=False)
+            drone = dronekit.connect(address, wait_ready=False, baud=baud)
         except dronekit.TimeoutError:
             print("No messages are being received. Make sure address/port is a host address/port.")
             return False, None
