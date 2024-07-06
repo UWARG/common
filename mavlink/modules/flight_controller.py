@@ -235,3 +235,9 @@ class FlightController:
             print("ERROR: an unsupported flight mode is set by dronekit.VehicleMode()")
             return False
         return True
+
+    def get_flight_mode(self) -> str:
+        """
+        Gets the current flight mode of the drone.
+        """
+        return self.drone.mode.name
