@@ -240,4 +240,4 @@ class FlightController:
         """
         Gets the current flight mode of the drone.
         """
-        return self.drone.mode.name
+        return self.drone.mode
