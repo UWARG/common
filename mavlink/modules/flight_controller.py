@@ -236,7 +236,7 @@ class FlightController:
             return False
         return True
 
-    def get_flight_mode(self) -> str:
+    def get_flight_mode(self) -> dronekit.VehicleMode:
         """
         Gets the current flight mode of the drone.
         """
