@@ -236,8 +236,11 @@ class FlightController:
             return False
         return True
 
-    def get_flight_mode(self) -> dronekit.VehicleMode:
+    def get_flight_mode(self) -> "tuple[bool, dronekit.VehicleMode | None]":
         """
         Gets the current flight mode of the drone.
         """
-        return self.drone.mode
+        flight_mode = self.drone.mode
+        if flight_mode is None:
+            return False, None
+        return True, flight_mode
