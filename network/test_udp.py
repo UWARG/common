@@ -17,7 +17,7 @@ from network.modules.UDP.client_socket import UdpClientSocket
 # Since the socket may be using either IPv4 or IPv6, do not specify 127.0.0.1 or ::1.
 # Instead, use localhost if wanting to test on same the machine.
 SERVER_PORT = 8080
-ROOT_DIR = Path("D:/", "WARG", "common")  # Replace with directory to common, module root dir
+ROOT_DIR = Path(__file__).parent.parent
 
 
 @pytest.fixture
