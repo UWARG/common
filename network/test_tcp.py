@@ -25,7 +25,6 @@ def test_messages() -> "Generator[bytes]":
     """
     Test messages to send to server.
     """
-
     yield [
         b"Hello world!",
         np.random.bytes(4096),
