@@ -21,12 +21,11 @@ class UdpServerSocket(UdpSocket):
 
         assert class_private_create_key is UdpServerSocket.__create_key, "Use create() method"
         super().__init__(socket_instance=socket_instance)
-        self.__socket = socket_instance
         self.server_address = server_address
 
     @classmethod
     def create(
-        cls, host: str = "", port: int = 5000, connection_timeout: float = 10.0
+        cls, host: str = "", port: int = 5000, connection_timeout: float = 60.0
     ) -> "tuple[bool, UdpServerSocket | None]":
         """
         Creates a UDP server socket bound to the provided host and port.
@@ -58,6 +57,12 @@ class UdpServerSocket(UdpSocket):
             socket_instance.settimeout(connection_timeout)
             server_address = (host, port)
             socket_instance.bind(server_address)
+
+            if host == "":
+                print(f"Listening for external data on port {port}")
+            else:
+                print(f"Listening for internal data on {host}:{port}")
+
             return True, UdpServerSocket(cls.__create_key, socket_instance, server_address)
 
         except TimeoutError as e:

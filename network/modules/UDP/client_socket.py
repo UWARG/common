@@ -20,12 +20,12 @@ class UdpClientSocket(UdpSocket):
         """
 
         assert class_private_create_key is UdpClientSocket.__create_key
-        self.__socket = socket_instance
+        super().__init__(socket_instance=socket_instance)
         self.server_address = server_address
 
     @classmethod
     def create(
-        cls, host: str = "localhost", port: int = 5000, connection_timeout: float = 10.0
+        cls, host: str = "localhost", port: int = 5000, connection_timeout: float = 60.0
     ) -> "tuple[bool, UdpClientSocket | None]":
         """
         Initializes UDP client socket with the appropriate server address.

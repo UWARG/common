@@ -3,13 +3,12 @@ Test socket operations by sending images over client sockets.
 """
 
 import struct
-from pathlib import Path
+
 import numpy as np
 
 from network.modules.TCP.client_socket import TcpClientSocket
 
 
-IMAGE_PATH = Path(__file__).resolve().parent
 SOCKET_ADDRESS = "localhost"
 SOCKET_PORT = 8080
 
@@ -19,7 +18,7 @@ IMAGE_ENCODE_EXT = ".png"
 
 def start_sender(host: str, port: int) -> int:
     """
-    Client will send landing pad images to the server, and the server will send them back.
+    Client will send messages to the server, and the server will send them back.
     """
 
     test_messages = [

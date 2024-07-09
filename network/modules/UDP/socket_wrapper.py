@@ -1,7 +1,8 @@
 import socket
-import struct
+import time
 
-CHUNK_SIZE = 4096
+CHUNK_SIZE = 2**15  # 32 kb, may need to be shrunk on pi becasue its buffer may not be as large
+SEND_DELAY = 1e-4  # Delay in seconds in between sends to avoid filling socket buffer
 
 
 class UdpSocket:
@@ -17,13 +18,8 @@ class UdpSocket:
             For initializing Socket with an existing socket object.
         """
 
-        if socket_instance is None:
-            self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self.__socket.settimeout(10.0)
-        else:
-            self.__socket = socket_instance
+        self.__socket = socket_instance
 
-    @classmethod
     def send_to(self, data: bytes, host: str = "", port: int = 5000) -> bool:
         """
         Sends data to specified address
@@ -57,6 +53,8 @@ class UdpSocket:
             except socket.error as e:
                 print(f"Could not send data: {e}")
                 return False
+
+            time.sleep(SEND_DELAY)
 
         return True
 
@@ -96,35 +94,6 @@ class UdpSocket:
                 return False, None
 
         return True, data
-
-    def close(self) -> bool:
-        """
-        Closes the socket object. All future operations on the socket object will fail.
-
-        Returns
-        -------
-        bool: If the socket was closed successfully.
-        """
-
-        try:
-            self.__socket.close()
-        except socket.error as e:
-            print(f"Could not close socket: {e}")
-            return False
-
-        return False
-
-    def address(self) -> "tuple[str, int]":
-        """
-        Retrieves the address that the socket is listening on.
-
-        Returns
-        -------
-        tuple[str, int]
-            The address in the format (ip address, port).
-        """
-
-        return self.__socket.getsockname()
 
     def get_socket(self) -> socket.socket:
         """

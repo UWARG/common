@@ -3,12 +3,13 @@
 
 # Global
 pytest
+pytest-xprocess
 
 # Module camera
 opencv-python
 numpy
 
-# Module image-encoding
+# Module image_encoding
 Pillow
 
 # Module kml

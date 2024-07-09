@@ -28,7 +28,7 @@ class TcpClientSocket(TcpSocket):
         instance: socket.socket = None,
         host: str = "localhost",
         port: int = 5000,
-        connection_timeout: float = 10.0,
+        connection_timeout: float = 60.0,
     ) -> "tuple[bool, TcpClientSocket | None]":
         """
         Establishes socket connection through provided host and port.

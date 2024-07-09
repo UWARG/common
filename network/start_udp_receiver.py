@@ -4,7 +4,7 @@ Test socket operations by receiving images over server sockets.
 
 import struct
 
-from network.modules.TCP.server_socket import TcpServerSocket
+from network.modules.UDP.server_socket import UdpServerSocket
 
 
 # Since the socket may be using either IPv4 or IPv6, do not specify 127.0.0.1 or ::1.
@@ -13,11 +13,12 @@ SOCKET_ADDRESS = ""
 SOCKET_PORT = 8080
 
 
+# pylint: disable=R0801
 def start_server(host: str, port: int) -> int:
     """
-    Starts server listening on host:port that receives images and sends them back to the client.
+    Starts server listening on host:port that receives some messages.
     """
-    result, server_socket = TcpServerSocket.create(host=host, port=port)
+    result, server_socket = UdpServerSocket.create(host=host, port=port)
     assert result, "Server cration failed."
 
     while True:
@@ -31,18 +32,10 @@ def start_server(host: str, port: int) -> int:
         data_len = struct.unpack("!I", data_len)
         print(f"data length: {data_len}")
 
-        result, image_data = server_socket.recv(data_len[0])
+        result, data = server_socket.recv(data_len[0])
         assert result, "Could not receive data from client."
+        assert len(data) == data_len[0], "Data lengths not matching"
         print("Received data from client.")
-
-        result = server_socket.send(image_data)
-        assert result, "Failed to send data back to client."
-        print("Sent data back to client.")
-
-    result = server_socket.close()
-    assert result, "Failed to close connection"
-
-    print("Connection to client closed.")
 
     return 0
 

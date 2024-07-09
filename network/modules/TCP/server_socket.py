@@ -29,7 +29,7 @@ class TcpServerSocket(TcpSocket):
         instance: socket.socket = None,
         host: str = "",
         port: int = 5000,
-        connection_timeout: float = 10.0,
+        connection_timeout: float = 60.0,
     ) -> "tuple[bool, TcpServerSocket | None]":
         """
         Establishes socket connection through provided host and port.
@@ -99,6 +99,7 @@ class TcpServerSocket(TcpSocket):
         else:
             print(f"Listening for internal connections on {host}:{port}")
 
+        server.settimeout(connection_timeout)
         # This is in blocking mode, nothing can happen until this finishes, even keyboard interrupt
         socket_instance, addr = server.accept()
 
