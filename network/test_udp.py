@@ -9,7 +9,7 @@ from typing import Generator
 
 import numpy as np
 import pytest
-from xprocess import ProcessStarter
+from xprocess import ProcessStarter, XProcess
 
 from network.modules.UDP.client_socket import UdpClientSocket
 
@@ -25,6 +25,7 @@ def test_messages() -> "Generator[bytes]":
     """
     Test messages to send to server.
     """
+
     yield [
         b"Hello world!",
         np.random.bytes(4096),
@@ -32,11 +33,13 @@ def test_messages() -> "Generator[bytes]":
     ]
 
 
+# fmt: off
 @pytest.fixture
-def myserver(xprocess):
+def myserver(xprocess: XProcess) -> Generator:
     """
     Starts server.
     """
+
     myenv = os.environ.copy()
     myenv["PYTHONPATH"] = str(ROOT_DIR)
     myenv["PYTHONUNBUFFERED"] = "1"
@@ -45,6 +48,7 @@ def myserver(xprocess):
         """
         xprocess config to start the server as another process.
         """
+
         pattern = f"Listening for external data on port {SERVER_PORT}"
         timeout = 60
         args = ["python", "-m", "network.start_udp_receiver"]
@@ -55,10 +59,11 @@ def myserver(xprocess):
     yield
 
     xprocess.getinfo("myserver").terminate()
+# fmt: on
 
 
 # pylint: disable=W0621,W0613
-def test_client(test_messages, myserver) -> int:
+def test_client(test_messages: "Generator[bytes]", myserver: Generator) -> None:
     """
     Client will send messages to the server.
     We do not know whether they have been received successfully or not, since these are UDP packets
