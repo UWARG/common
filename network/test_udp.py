@@ -16,7 +16,7 @@ from network.modules.UDP.client_socket import UdpClientSocket
 
 # Since the socket may be using either IPv4 or IPv6, do not specify 127.0.0.1 or ::1.
 # Instead, use localhost if wanting to test on same the machine.
-SERVER_PORT = 8080
+SERVER_PORT = 8825
 ROOT_DIR = Path(__file__).parent.parent
 
 
@@ -51,7 +51,7 @@ def myserver(xprocess: XProcess) -> Generator:
 
         pattern = f"Listening for external data on port {SERVER_PORT}"
         timeout = 60
-        args = ["python", "-m", "network.start_udp_receiver"]
+        args = ["python", "-m", "network.start_udp_receiver", SERVER_PORT]
         env = myenv
 
     xprocess.ensure("mysever", Starter)

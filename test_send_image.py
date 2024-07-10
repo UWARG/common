@@ -20,7 +20,7 @@ from network.modules.UDP.client_socket import UdpClientSocket
 
 # Since the socket may be using either IPv4 or IPv6, do not specify 127.0.0.1 or ::1.
 # Instead, use localhost if wanting to test on same the machine
-SERVER_PORT = 8080
+SERVER_PORT = 9145
 ROOT_DIR = Path(__file__).parent
 
 
@@ -54,7 +54,7 @@ def tcp_server(xprocess: XProcess) -> Generator:
 
         pattern = f"Listening for external connections on port {SERVER_PORT}"
         timeout = 60
-        args = ["python", "-m", "network.start_tcp_receiver"]
+        args = ["python", "-m", "network.start_tcp_receiver", SERVER_PORT]
         env = myenv
 
     xprocess.ensure("tcp_sever", Starter)
@@ -112,9 +112,9 @@ def udp_server(xprocess: XProcess) -> Generator:
         xprocess config to start a udp server as another process.
         """
 
-        pattern = f"Listening for external data on port {SERVER_PORT}"
+        pattern = f"Listening for external data on port {SERVER_PORT + 1}"
         timeout = 60
-        args = ["python", "-m", "network.start_udp_receiver"]
+        args = ["python", "-m", "network.start_udp_receiver", SERVER_PORT + 1]
         env = myenv
 
     xprocess.ensure("udp_sever", Starter)
@@ -126,13 +126,13 @@ def udp_server(xprocess: XProcess) -> Generator:
 
 
 # pylint: disable=W0621,W0613
-def test_client(images: "Generator[bytes]", udp_server: Generator) -> None:
+def test_udp_client(images: "Generator[bytes]", udp_server: Generator) -> None:
     """
     Client will send image to the server.
     We do not know whether they have been received successfully or not, since these are UDP packets
     """
 
-    result, client = UdpClientSocket.create(port=SERVER_PORT)
+    result, client = UdpClientSocket.create(port=SERVER_PORT + 1)
     assert result
 
     for image in images:

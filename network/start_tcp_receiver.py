@@ -3,6 +3,7 @@ Test socket operations by receiving images over server sockets.
 """
 
 import struct
+import sys
 
 from network.modules.TCP.server_socket import TcpServerSocket
 
@@ -49,7 +50,10 @@ def start_server(host: str, port: int) -> int:
 
 
 if __name__ == "__main__":
-    RESULT = start_server(SOCKET_ADDRESS, SOCKET_PORT)
+    if len(sys.argv) > 1:
+        RESULT = start_server(SOCKET_ADDRESS, int(sys.argv[1]))
+    else:
+        RESULT = start_server(SOCKET_ADDRESS, SOCKET_PORT)
     if RESULT < 0:
         print(f"ERROR: Status code: {RESULT}")
 
