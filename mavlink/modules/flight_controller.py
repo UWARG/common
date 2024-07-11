@@ -246,12 +246,12 @@ class FlightController:
             return False
         return True
 
-    def get_flight_mode(self) -> "tuple[bool, str | None]":
+    def get_flight_mode(self) -> "tuple[bool, FlightController.FlightMode | None]":
         """
         Gets the current flight mode of the drone.
         """
         flight_mode = self.drone.mode.name
-        
+
         if flight_mode is None:
             return False, None
         if flight_mode == "LOITER":
