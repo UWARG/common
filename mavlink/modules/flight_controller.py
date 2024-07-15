@@ -2,6 +2,7 @@
 Wrapper for the flight controller.
 """
 
+import enum
 import time
 
 import dronekit
@@ -18,6 +19,15 @@ class FlightController:
 
     __MAVLINK_LANDING_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL
     __MAVLINK_LANDING_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_LAND
+
+    class FlightMode(enum.Enum):
+        """
+        Possible drone flight modes.
+        """
+
+        STOPPED = 0
+        MOVING = 1
+        MANUAL = 2
 
     @classmethod
     def create(cls, address: str, baud: int = 57600) -> "tuple[bool, FlightController | None]":
@@ -235,3 +245,17 @@ class FlightController:
             print("ERROR: an unsupported flight mode is set by dronekit.VehicleMode()")
             return False
         return True
+
+    def get_flight_mode(self) -> "tuple[bool, FlightController.FlightMode | None]":
+        """
+        Gets the current flight mode of the drone.
+        """
+        flight_mode = self.drone.mode.name
+
+        if flight_mode is None:
+            return False, None
+        if flight_mode == "LOITER":
+            return True, FlightController.FlightMode.STOPPED
+        if flight_mode == "AUTO":
+            return True, FlightController.FlightMode.MOVING
+        return True, FlightController.FlightMode.MANUAL
