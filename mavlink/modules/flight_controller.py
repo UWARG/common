@@ -69,13 +69,17 @@ class FlightController:
         if not result:
             return False, None
 
+        result, flight_mode = self.get_flight_mode()
+        if not result:
+            return False, None
+
         # Get Pylance to stop complaining
         assert position_data is not None
         assert orientation_data is not None
+        assert flight_mode is not None
 
         result, odometry_data = drone_odometry.DroneOdometry.create(
-            position_data,
-            orientation_data,
+            position_data, orientation_data, flight_mode
         )
         if not result:
             return False, None
