@@ -2,7 +2,6 @@
 Wrapper for the flight controller.
 """
 
-import enum
 import time
 
 import dronekit
@@ -19,15 +18,6 @@ class FlightController:
 
     __MAVLINK_LANDING_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL
     __MAVLINK_LANDING_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_LAND
-
-    class FlightMode(enum.Enum):
-        """
-        Possible drone flight modes.
-        """
-
-        STOPPED = 0
-        MOVING = 1
-        MANUAL = 2
 
     @classmethod
     def create(cls, address: str, baud: int = 57600) -> "tuple[bool, FlightController | None]":
@@ -79,13 +69,17 @@ class FlightController:
         if not result:
             return False, None
 
+        result, flight_mode = self.get_flight_mode()
+        if not result:
+            return False, None
+
         # Get Pylance to stop complaining
         assert position_data is not None
         assert orientation_data is not None
+        assert flight_mode is not None
 
         result, odometry_data = drone_odometry.DroneOdometry.create(
-            position_data,
-            orientation_data,
+            position_data, orientation_data, flight_mode
         )
         if not result:
             return False, None
@@ -246,7 +240,7 @@ class FlightController:
             return False
         return True
 
-    def get_flight_mode(self) -> "tuple[bool, FlightController.FlightMode | None]":
+    def get_flight_mode(self) -> "tuple[bool, drone_odometry.FlightMode | None]":
         """
         Gets the current flight mode of the drone.
         """
@@ -255,7 +249,7 @@ class FlightController:
         if flight_mode is None:
             return False, None
         if flight_mode == "LOITER":
-            return True, FlightController.FlightMode.STOPPED
+            return True, drone_odometry.FlightMode.STOPPED
         if flight_mode == "AUTO":
-            return True, FlightController.FlightMode.MOVING
-        return True, FlightController.FlightMode.MANUAL
+            return True, drone_odometry.FlightMode.MOVING
+        return True, drone_odometry.FlightMode.MANUAL

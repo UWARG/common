@@ -2,6 +2,7 @@
 Position and orientation of drone.
 """
 
+import enum
 import math
 
 
@@ -109,16 +110,26 @@ class DroneOrientation:
         return f"{self.__class__}, yaw: {self.yaw}, pitch: {self.pitch}, roll: {self.roll}"
 
 
+class FlightMode(enum.Enum):
+    """
+    Possible drone flight modes.
+    """
+
+    STOPPED = 0
+    MOVING = 1
+    MANUAL = 2
+
+
 class DroneOdometry:
     """
-    Wrapper for DronePosition and DroneOrientation.
+    Wrapper for DronePosition, DroneOrientation, and FlightMode.
     """
 
     __create_key = object()
 
     @classmethod
     def create(
-        cls, position: DronePosition, orientation: DroneOrientation
+        cls, position: DronePosition, orientation: DroneOrientation, flight_mode: FlightMode
     ) -> "tuple[bool, DroneOdometry | None]":
         """
         Position and orientation in one class.
@@ -129,13 +140,17 @@ class DroneOdometry:
         if orientation is None:
             return False, None
 
-        return True, DroneOdometry(cls.__create_key, position, orientation)
+        if flight_mode is None:
+            return False, None
+
+        return True, DroneOdometry(cls.__create_key, position, orientation, flight_mode)
 
     def __init__(
         self,
         class_private_create_key: object,
         position: DronePosition,
         orientation: DroneOrientation,
+        flight_mode: FlightMode,
     ) -> None:
         """
         Private constructor, use create() method.
@@ -144,9 +159,10 @@ class DroneOdometry:
 
         self.position = position
         self.orientation = orientation
+        self.flight_mode = flight_mode
 
     def __str__(self) -> str:
         """
         To string.
         """
-        return f"{self.__class__}, position: {self.position}, orientation: {self.orientation}"
+        return f"{self.__class__}, position: {self.position}, orientation: {self.orientation}, flight mode: {self.flight_mode}"
