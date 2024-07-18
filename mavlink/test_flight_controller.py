@@ -4,7 +4,7 @@ Test for flight input device by printing to console.
 
 import time
 
-from mavlink.modules import flight_controller
+from modules import flight_controller
 
 
 DELAY_TIME = 0.5  # seconds
@@ -47,6 +47,15 @@ def main() -> int:
 
         time.sleep(DELAY_TIME)
 
+    # Download and print commands
+    commands = controller.download_commands()
+    if commands:
+        print("Downloaded commands:")
+        for command in commands:
+            print(command)
+    else:
+        print("No commands available.")
+    
     result, home = controller.get_home_location(TIMEOUT)
     if not result:
         print("Failed to get home location")

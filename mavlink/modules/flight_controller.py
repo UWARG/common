@@ -253,3 +253,25 @@ class FlightController:
         if flight_mode == "AUTO":
             return True, drone_odometry.FlightMode.MOVING
         return True, drone_odometry.FlightMode.MANUAL
+
+    def download_commands(self) -> "list[dronekit.Command]":
+        """
+        Downloads the current list of commands from the drone.
+
+        Returns
+        -------
+        list[dronekit.Command]
+            The list of commands currently held by the drone.
+        """
+        try:
+            command_sequence = self.drone.commands
+            command_sequence.download()
+            command_sequence.wait_ready()
+            commands = list(command_sequence)
+            return commands
+        except dronekit.TimeoutError:
+            print("ERROR: Download timeout, commands are not being received.")
+            return []
+        except ConnectionResetError:
+            print("ERROR: Connection with drone reset. Unable to download commands.")
+            return []
