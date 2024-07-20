@@ -254,24 +254,26 @@ class FlightController:
             return True, drone_odometry.FlightMode.MOVING
         return True, drone_odometry.FlightMode.MANUAL
 
-    def download_commands(self) -> "list[dronekit.Command]":
+    def download_commands(self) -> "tuple[bool, list[dronekit.Command]]":
         """
         Downloads the current list of commands from the drone.
 
         Returns
         -------
-        list[dronekit.Command]
-            The list of commands currently held by the drone.
+        tuple[bool, list[dronekit.Command]]
+        A tuple where the first element is a boolean indicating success or failure,
+        and the second element is the list of commands currently held by the drone.
         """
         try:
             command_sequence = self.drone.commands
             command_sequence.download()
             command_sequence.wait_ready()
             commands = list(command_sequence)
-            return commands
+            return True, commands
         except dronekit.TimeoutError:
             print("ERROR: Download timeout, commands are not being received.")
-            return []
+            return False, []
         except ConnectionResetError:
             print("ERROR: Connection with drone reset. Unable to download commands.")
-            return []
+            return False, []
+        

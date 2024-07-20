@@ -48,13 +48,13 @@ def main() -> int:
         time.sleep(DELAY_TIME)
 
     # Download and print commands
-    commands = controller.download_commands()
-    if commands:
+    success, commands = controller.download_commands()
+    if success:
         print("Downloaded commands:")
         for command in commands:
             print(command)
     else:
-        print("No commands available.")
+        print("Failed to download commands.")
     
     result, home = controller.get_home_location(TIMEOUT)
     if not result:
