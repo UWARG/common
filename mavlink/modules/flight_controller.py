@@ -276,4 +276,3 @@ class FlightController:
         except ConnectionResetError:
             print("ERROR: Connection with drone reset. Unable to download commands.")
             return False, []
-        
