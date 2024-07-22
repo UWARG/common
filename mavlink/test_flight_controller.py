@@ -55,7 +55,7 @@ def main() -> int:
             print(command)
     else:
         print("Failed to download commands.")
-    
+
     result, home = controller.get_home_location(TIMEOUT)
     if not result:
         print("Failed to get home location")
