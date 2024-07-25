@@ -11,7 +11,7 @@ import numpy as np
 QUALITY = 80  # Quality of JPEG encoding to use (0-100)
 
 
-def encode(image_array: np.ndarray) -> "io.BytesIO | bytes":
+def encode(image_array: np.ndarray) -> "bytes":
     """
     Encodes an image in numpy array form into bytes of a JPEG.
 
@@ -25,4 +25,4 @@ def encode(image_array: np.ndarray) -> "io.BytesIO | bytes":
     buffer = io.BytesIO()
     img.save(buffer, format="JPEG", quality=QUALITY)
 
-    return buffer
+    return buffer.getvalue()

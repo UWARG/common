@@ -3,12 +3,13 @@
 
 # Global
 pytest
+pytest-xprocess
 
 # Module camera
 opencv-python
 numpy
 
-# Module lte
+# Module image_encoding
 Pillow
 
 # Module mavlink
