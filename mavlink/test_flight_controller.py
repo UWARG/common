@@ -59,8 +59,8 @@ def main() -> int:
     result, next_waypoint = controller.get_next_waypoint()
     if result:
         print("next waypoint lat: " + str(next_waypoint.x))
-        print("next waypoint lat: " + str(next_waypoint.y))
-        print("next waypoint lat: " + str(next_waypoint.z))
+        print("next waypoint lon: " + str(next_waypoint.y))
+        print("next waypoint alt: " + str(next_waypoint.z))
     else:
         print("Failed to get next waypoint.")
 

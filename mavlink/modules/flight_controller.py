@@ -18,6 +18,7 @@ class FlightController:
 
     __MAVLINK_LANDING_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL
     __MAVLINK_LANDING_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_LAND
+    __MAVLINK_WAYPOINT_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_WAYPOINT
 
     @classmethod
     def create(cls, address: str, baud: int = 57600) -> "tuple[bool, FlightController | None]":
@@ -291,15 +292,12 @@ class FlightController:
         if not result:
             return False, None
 
-        current_waypoint_index = self.drone.commands.next
-
-        if current_waypoint_index is None:
-            print("No waypoint index found.")
+        next_command_index = self.drone.commands.next
+        if next_command_index >= len(commands):
             return False, None
 
-        if current_waypoint_index >= len(commands):
-            print("Index out of bounds.")
-            return False, None
-
-        current_waypoint = commands[current_waypoint_index]
-        return True, current_waypoint
+        for i in range(next_command_index, len(commands)):
+            command = commands[i]
+            if command.command == self.__MAVLINK_WAYPOINT_COMMAND:
+                return True, command
+        return False, None
