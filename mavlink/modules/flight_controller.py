@@ -276,3 +276,30 @@ class FlightController:
         except ConnectionResetError:
             print("ERROR: Connection with drone reset. Unable to download commands.")
             return False, []
+
+    def get_next_waypoint(self) -> "tuple[bool, dronekit.Command | None]":
+        """
+        Gets the next waypoint.
+
+        Returns
+        -------
+        tuple[bool, dronekit.Command | None]
+        A tuple where the first element is a boolean indicating success or failure,
+        and the second element is the command currently held by the drone.
+        """
+        result, commands = self.download_commands()
+        if not result:
+            return False, None
+
+        current_waypoint_index = self.drone.commands.next
+
+        if current_waypoint_index is None:
+            print("No waypoint index found.")
+            return False, None
+
+        if current_waypoint_index >= len(commands):
+            print("Index out of bounds.")
+            return False, None
+
+        current_waypoint = commands[current_waypoint_index]
+        return True, current_waypoint

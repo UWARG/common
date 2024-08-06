@@ -56,6 +56,14 @@ def main() -> int:
     else:
         print("Failed to download commands.")
 
+    result, next_waypoint = controller.get_next_waypoint()
+    if result:
+        print("next waypoint lat: " + str(next_waypoint.x))
+        print("next waypoint lat: " + str(next_waypoint.y))
+        print("next waypoint lat: " + str(next_waypoint.z))
+    else:
+        print("Failed to get next waypoint.")
+
     result, home = controller.get_home_location(TIMEOUT)
     if not result:
         print("Failed to get home location")
