@@ -296,7 +296,7 @@ class FlightController:
         if next_command_index >= len(commands):
             return False, None
 
-        for command in commands[next_command_index: ]:
+        for command in commands[next_command_index:]:
             if command.command == self.__MAVLINK_WAYPOINT_COMMAND:
                 return drone_odometry.DroneWaypoint.create(command.x, command.y, command.z)
         return False, None

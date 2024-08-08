@@ -109,6 +109,7 @@ class DroneOrientation:
         """
         return f"{self.__class__}, yaw: {self.yaw}, pitch: {self.pitch}, roll: {self.roll}"
 
+
 class DroneWaypoint:
     """
     WGS 84 following ISO 6709 (latitude before longitude).
@@ -155,6 +156,7 @@ class DroneWaypoint:
         To string.
         """
         return f"{self.__class__.__name__}, latitude: {self.latitude}, longitude: {self.longitude}, altitude: {self.altitude}"
+
 
 class FlightMode(enum.Enum):
     """
