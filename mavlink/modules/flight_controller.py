@@ -278,15 +278,15 @@ class FlightController:
             print("ERROR: Connection with drone reset. Unable to download commands.")
             return False, []
 
-    def get_next_waypoint(self) -> "tuple[bool, dronekit.Command | None]":
+    def get_next_waypoint(self) -> "tuple[bool, drone_odometry.DronePosition | None]":
         """
         Gets the next waypoint.
 
         Returns
         -------
-        tuple[bool, dronekit.Command | None]
+        tuple[bool, drone_odometry.DronePosition | None]
         A tuple where the first element is a boolean indicating success or failure,
-        and the second element is the command currently held by the drone.
+        and the second element is the next waypoint currently held by the drone.
         """
         result, commands = self.download_commands()
         if not result:
@@ -298,5 +298,5 @@ class FlightController:
 
         for command in commands[next_command_index:]:
             if command.command == self.__MAVLINK_WAYPOINT_COMMAND:
-                return drone_odometry.DroneWaypoint.create(command.x, command.y, command.z)
+                return drone_odometry.DronePosition.create(command.x, command.y, command.z)
         return False, None
