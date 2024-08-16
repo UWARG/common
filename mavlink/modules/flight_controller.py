@@ -301,7 +301,7 @@ class FlightController:
                 return drone_odometry.DronePosition.create(command.x, command.y, command.z)
         return False, None
 
-    def insert_waypoint(self, index, latitude: float, longitude: float, altitude: float) -> bool:
+    def insert_waypoint(self, index: int, latitude: float, longitude: float, altitude: float) -> bool:
         """
         Insert a waypoint into the current list of commands at a certain index and reupload the list to the drone.
         """
