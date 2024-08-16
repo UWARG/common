@@ -300,3 +300,32 @@ class FlightController:
             if command.command == self.__MAVLINK_WAYPOINT_COMMAND:
                 return drone_odometry.DronePosition.create(command.x, command.y, command.z)
         return False, None
+
+    def insert_waypoint(self, index, latitude: float, longitude: float, altitude: float) -> bool:
+        """
+        Insert a waypoint into the current list of commands at a certain index and reupload the list to the drone.
+        """
+        result, commands = self.download_commands()
+        if not result:
+            return False
+
+        new_waypoint = dronekit.Command(
+            0,
+            0,
+            0,
+            self.__MAVLINK_LANDING_FRAME,
+            self.__MAVLINK_WAYPOINT_COMMAND,
+            0,
+            0,
+            0,  # param1
+            0,
+            0,
+            0,
+            latitude,
+            longitude,
+            altitude,
+        )
+
+        commands.insert(index, new_waypoint)
+
+        return self.upload_commands(commands)
