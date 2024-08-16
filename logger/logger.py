@@ -12,10 +12,10 @@ import os
 # pylint: disable-next=unused-import
 import types
 
-from utilities import yaml
+from .. import yaml
 
 
-CONFIG_FILE_PATH = pathlib.Path("config.yaml")
+CONFIG_FILE_PATH = pathlib.Path("config_logger.yaml")
 
 
 class Logger:
