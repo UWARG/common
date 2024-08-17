@@ -12,7 +12,15 @@ numpy
 Pillow
 
 # Module mavlink
-dronekit
+# dronekit
+
+# (From dronekit-python)
+pymavlink>=2.2.20
+monotonic>=1.3
+# nose>=1.3.7
+# mock>=2.0.0
+# dronekit-sitl==3.2.0
+# sphinx-3dr-theme>=0.4.3
 
 # Module qr
 pyzbar
