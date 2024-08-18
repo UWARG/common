@@ -12,7 +12,7 @@ import os
 # pylint: disable-next=unused-import
 import types
 
-from read_yaml import yaml
+from read_yaml.modules import read_yaml
 
 
 CONFIG_FILE_PATH = pathlib.Path("config_logger.yaml")
@@ -31,7 +31,7 @@ class Logger:
         Create and configure a logger.
         """
         # Configuration settings
-        result, config = yaml.open_config(CONFIG_FILE_PATH)
+        result, config = read_yaml.open_config(CONFIG_FILE_PATH)
         if not result:
             print("ERROR: Failed to load configuration file")
             return False, None
