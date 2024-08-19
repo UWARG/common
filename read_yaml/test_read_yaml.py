@@ -19,7 +19,7 @@ class TestOpenConfig:
         expected = {"config": "no_error"}
 
         result, actual = read_yaml.open_config(
-            pathlib.Path("config_test_files/config_no_error.yaml")
+            pathlib.Path("read_yaml/config_test_files/config_no_error.yaml")
         )
 
         assert result
@@ -32,7 +32,7 @@ class TestOpenConfig:
         expected = None
 
         result, actual = read_yaml.open_config(
-            pathlib.Path("config_test_files/config_nonexistant_file.yaml")
+            pathlib.Path("read_yaml/config_test_files/config_nonexistant_file.yaml")
         )
 
         assert not result
