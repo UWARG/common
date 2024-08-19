@@ -15,7 +15,7 @@ import types
 from read_yaml.modules import read_yaml
 
 
-CONFIG_FILE_PATH = pathlib.Path("config_logger.yaml")
+CONFIG_FILE_PATH = pathlib.Path("./config_logger.yaml")
 
 
 class Logger:
