@@ -12,7 +12,7 @@ from . import logger
 MAIN_LOGGER_NAME = "main"
 
 
-def setup_main_logger(config: "dict") -> "tuple[bool, logger.Logger | None, pathlib.Path | None]":
+def setup_main_logger(config: "dict", main_logger_name: str = MAIN_LOGGER_NAME) -> "tuple[bool, logger.Logger | None, pathlib.Path | None]":
     """
     Setup prerequisites for logging in `main()` .
 
@@ -34,10 +34,10 @@ def setup_main_logger(config: "dict") -> "tuple[bool, logger.Logger | None, path
 
     # Create logging directory
     pathlib.Path(log_directory_path).mkdir(exist_ok=True)
-    logging_path.mkdir()
+    logging_path.mkdir(exist_ok=True)
 
     # Setup logger
-    result, main_logger = logger.Logger.create(MAIN_LOGGER_NAME, True)
+    result, main_logger = logger.Logger.create(main_logger_name, True)
     if not result:
         print("ERROR: Failed to create main logger")
         return False, None, None
