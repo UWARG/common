@@ -12,7 +12,9 @@ from . import logger
 MAIN_LOGGER_NAME = "main"
 
 
-def setup_main_logger(config: "dict", main_logger_name: str = MAIN_LOGGER_NAME) -> "tuple[bool, logger.Logger | None, pathlib.Path | None]":
+def setup_main_logger(
+    config: "dict", main_logger_name: str = MAIN_LOGGER_NAME
+) -> "tuple[bool, logger.Logger | None, pathlib.Path | None]":
     """
     Setup prerequisites for logging in `main()` .
 
