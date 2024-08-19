@@ -15,6 +15,9 @@ ignore-paths = [
 
     # Logging
     "logs/",
+
+    # Submodule dronekit
+    "mavlink/dronekit",
 ]
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
@@ -100,3 +103,4 @@ minversion = "6.0"
 [tool.black]
 line-length = 100
 target-version = ["py311"]
+extend-exclude = "mavlink/dronekit"
