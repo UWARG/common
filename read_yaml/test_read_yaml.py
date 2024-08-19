@@ -12,7 +12,7 @@ class TestOpenConfig:
     Test the open_config function
     """
 
-    def test_open_config(self):
+    def test_open_config(self) -> None:
         """
         Test if the function correctly reads the yaml file
         """
@@ -25,7 +25,7 @@ class TestOpenConfig:
         assert result
         assert actual == expected
 
-    def test_open_config_file_not_found(self):
+    def test_open_config_file_not_found(self) -> None:
         """
         Test if the function handles file not found
         """

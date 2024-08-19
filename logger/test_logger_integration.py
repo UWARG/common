@@ -8,7 +8,7 @@ from logger.modules import logger, logger_setup_main
 from read_yaml.modules import read_yaml
 
 
-def main():
+def main() -> int:
     """
     Main function.
     """
