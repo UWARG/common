@@ -121,6 +121,7 @@ class FlightController:
         Parameters
         ----------
         commands: List of commands.
+        timeout: Seconds (default of 10.0 seconds).
 
         Returns
         -------
@@ -157,6 +158,7 @@ class FlightController:
         ----------
         latitude: Decimal degrees.
         longitude: Decimal degrees.
+        timeout: Seconds.
 
         Returns
         -------
@@ -259,6 +261,10 @@ class FlightController:
         """
         Downloads the current list of commands from the drone.
 
+        Parameters
+        ----------
+        timeout: Seconds (default of 10.0 seconds).
+
         Returns
         -------
         tuple[bool, list[dronekit.Command]]
@@ -283,6 +289,10 @@ class FlightController:
     ) -> "tuple[bool, drone_odometry.DronePosition | None]":
         """
         Gets the next waypoint.
+
+        Parameters
+        ----------
+        timeout: Seconds.
 
         Returns
         -------
