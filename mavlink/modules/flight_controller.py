@@ -278,7 +278,9 @@ class FlightController:
             print("ERROR: Connection with drone reset. Unable to download commands.")
             return False, []
 
-    def get_next_waypoint(self, timeout: float) -> "tuple[bool, drone_odometry.DronePosition | None]":
+    def get_next_waypoint(
+        self, timeout: float
+    ) -> "tuple[bool, drone_odometry.DronePosition | None]":
         """
         Gets the next waypoint.
 
