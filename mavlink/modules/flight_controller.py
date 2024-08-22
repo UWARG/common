@@ -4,7 +4,7 @@ Wrapper for the flight controller.
 
 import time
 
-import dronekit
+from .. import dronekit
 
 from . import drone_odometry
 

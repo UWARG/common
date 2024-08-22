@@ -11,9 +11,6 @@ numpy
 # Module lte
 Pillow
 
-# Module mavlink
-dronekit
-
 # Module qr
 pyzbar
 
