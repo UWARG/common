@@ -16,7 +16,7 @@ TEST_IMG = "test.png"
 RESULT_IMG = "result.jpg"
 
 
-def main() -> int:
+def test_image_encode_decode() -> int:
     """
     Main testing sequence of encoding and decoding an image.
     """
@@ -39,14 +39,3 @@ def main() -> int:
 
     # Note: the following fail since JPEG encoding is lossy
     # assert (raw_data == img_array).all()
-
-    return 0
-
-
-if __name__ == "__main__":
-    result_main = main()
-
-    if result_main < 0:
-        print(f"ERROR: Status code: {result_main}")
-
-    print("Done!")
