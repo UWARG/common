@@ -5,6 +5,7 @@ Test for drone's destination at final waypoint by uploading mission and monitori
 import time
 
 from mavlink import dronekit
+from pymavlink import mavutil
 
 from mavlink.modules import flight_controller
 
@@ -13,10 +14,10 @@ DELAY_TIME = 1.0  # seconds
 MISSION_PLANNER_ADDRESS = "tcp:127.0.0.1:14550"
 TIMEOUT = 1.0  # seconds
 
-MAVLINK_TAKEOFF_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT
-MAVLINK_TAKEOFF_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_TAKEOFF
-MAVLINK_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT
-MAVLINK_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_WAYPOINT
+MAVLINK_TAKEOFF_FRAME = mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT
+MAVLINK_TAKEOFF_COMMAND = mavutil.mavlink.MAV_CMD_NAV_TAKEOFF
+MAVLINK_FRAME = mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT
+MAVLINK_COMMAND = mavutil.mavlink.MAV_CMD_NAV_WAYPOINT
 
 ALTITUDE = 10  # metres
 ACCEPT_RADIUS = 10  # metres

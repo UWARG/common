@@ -8,14 +8,17 @@ pytest
 opencv-python
 numpy
 
-# Module lte
+# Module image-encoding
 Pillow
-
-# Module qr
-pyzbar
 
 # Module kml
 simplekml
+
+# Module mavlink
+pymavlink
+
+# Module qr
+pyzbar
 
 # Linters and formatters are explicitly versioned
 black==24.2.0
