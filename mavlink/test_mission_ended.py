@@ -4,9 +4,9 @@ Test for drone's destination at final waypoint by uploading mission and monitori
 
 import time
 
-from mavlink import dronekit
 from pymavlink import mavutil
 
+from mavlink import dronekit
 from mavlink.modules import flight_controller
 
 

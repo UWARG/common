@@ -4,9 +4,9 @@ Wrapper for the flight controller.
 
 import time
 
-from .. import dronekit
 from pymavlink import mavutil
 
+from .. import dronekit
 from . import drone_odometry
 
 
