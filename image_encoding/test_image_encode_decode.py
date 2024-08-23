@@ -7,8 +7,8 @@ import pathlib
 from PIL import Image
 import numpy as np
 
-from image_encoding.modules import decoder
-from image_encoding.modules import encoder
+from .modules import decoder
+from .modules import encoder
 
 
 ROOT_DIR = "image_encoding"

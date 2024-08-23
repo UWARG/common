@@ -6,7 +6,7 @@ import pathlib
 
 import cv2
 
-from camera.modules.camera_device import CameraDevice
+from .modules.camera_device import CameraDevice
 
 
 IMAGE_LOG_PREFIX = pathlib.Path("logs", "log_image")
@@ -16,7 +16,9 @@ def main() -> int:
     """
     Main function.
     """
-    device = CameraDevice(0, 100, IMAGE_LOG_PREFIX)
+    device = CameraDevice(0, 100, str(IMAGE_LOG_PREFIX))
+
+    IMAGE_LOG_PREFIX.parent.mkdir(parents=True, exist_ok=True)
 
     while True:
         result, image = device.get_image()

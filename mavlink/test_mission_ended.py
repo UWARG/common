@@ -6,8 +6,8 @@ import time
 
 from pymavlink import mavutil
 
-from mavlink import dronekit
-from mavlink.modules import flight_controller
+from . import dronekit
+from .modules import flight_controller
 
 
 DELAY_TIME = 1.0  # seconds

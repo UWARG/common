@@ -6,8 +6,8 @@ import pathlib
 
 import pytest
 
-from kml.modules import ground_locations_to_kml
-from kml.modules import location_ground
+from .modules import ground_locations_to_kml
+from .modules import location_ground
 
 
 PARENT_DIRECTORY = "kml"
