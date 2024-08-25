@@ -19,6 +19,7 @@ RESULT_IMG = "result.jpg"
 def test_image_encode_decode() -> int:
     """
     Main testing sequence of encoding and decoding an image.
+    Note that JPEG is a lossy compression algorithm, so data cannot be recovered.
     """
     # Get test image in numpy form
     im = Image.open(pathlib.Path(ROOT_DIR, TEST_IMG))
@@ -36,6 +37,3 @@ def test_image_encode_decode() -> int:
 
     # Check output shape
     assert img_array.shape == raw_data.shape
-
-    # Note: the following fail since JPEG encoding is lossy
-    # assert (raw_data == img_array).all()
