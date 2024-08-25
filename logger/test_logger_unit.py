@@ -5,7 +5,7 @@ Logger unit tests.
 import inspect
 import pytest
 
-from logger.modules import logger
+from .modules import logger
 
 
 @pytest.fixture

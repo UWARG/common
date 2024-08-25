@@ -12,7 +12,7 @@ import os
 # pylint: disable-next=unused-import
 import types
 
-from read_yaml.modules import read_yaml
+from .read_yaml.modules import read_yaml
 
 
 CONFIG_FILE_PATH = pathlib.Path("config_logger.yaml")

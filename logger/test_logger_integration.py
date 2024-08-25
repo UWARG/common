@@ -4,8 +4,8 @@ Integration tests for the logger.
 
 import inspect
 
-from logger.modules import logger, logger_setup_main
-from read_yaml.modules import read_yaml
+from .modules import logger, logger_setup_main
+from .read_yaml.modules import read_yaml
 
 
 def main() -> int:

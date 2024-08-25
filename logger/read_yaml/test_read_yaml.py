@@ -4,7 +4,7 @@ Test if read_yaml function correctly reads yaml files
 
 import pathlib
 
-from read_yaml.modules import read_yaml
+from .modules import read_yaml
 
 
 class TestOpenConfig:
