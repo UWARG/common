@@ -114,7 +114,7 @@ class FlightController:
 
         return True, location
 
-    def upload_commands(self, commands: "list[dronekit.Command]", timeout: float = 10.0) -> bool:
+    def upload_commands(self, commands: "list[dronekit.Command]", timeout: float = 30.0) -> bool:
         """
         Writes a mission to the drone from a list of commands (will overwrite any previous missions).
 
@@ -257,7 +257,7 @@ class FlightController:
             return True, drone_odometry.FlightMode.MOVING
         return True, drone_odometry.FlightMode.MANUAL
 
-    def download_commands(self, timeout: float = 10.0) -> "tuple[bool, list[dronekit.Command]]":
+    def download_commands(self, timeout: float = 30.0) -> "tuple[bool, list[dronekit.Command]]":
         """
         Downloads the current list of commands from the drone.
 
