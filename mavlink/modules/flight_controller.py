@@ -4,8 +4,9 @@ Wrapper for the flight controller.
 
 import time
 
-from .. import dronekit
+from pymavlink import mavutil
 
+from .. import dronekit
 from . import drone_odometry
 
 
@@ -16,9 +17,9 @@ class FlightController:
 
     __create_key = object()
 
-    __MAVLINK_LANDING_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL
-    __MAVLINK_LANDING_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_LAND
-    __MAVLINK_WAYPOINT_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_WAYPOINT
+    __MAVLINK_LANDING_FRAME = mavutil.mavlink.MAV_FRAME_GLOBAL
+    __MAVLINK_LANDING_COMMAND = mavutil.mavlink.MAV_CMD_NAV_LAND
+    __MAVLINK_WAYPOINT_COMMAND = mavutil.mavlink.MAV_CMD_NAV_WAYPOINT
 
     @classmethod
     def create(cls, address: str, baud: int = 57600) -> "tuple[bool, FlightController | None]":

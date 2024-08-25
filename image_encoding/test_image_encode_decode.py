@@ -7,8 +7,8 @@ import pathlib
 from PIL import Image
 import numpy as np
 
-from image_encoding.modules import decoder
-from image_encoding.modules import encoder
+from .modules import decoder
+from .modules import encoder
 
 
 ROOT_DIR = "image_encoding"
@@ -16,9 +16,10 @@ TEST_IMG = "test.png"
 RESULT_IMG = "result.jpg"
 
 
-def main() -> int:
+def test_image_encode_decode() -> int:
     """
     Main testing sequence of encoding and decoding an image.
+    Note that JPEG is a lossy compression algorithm, so data cannot be recovered.
     """
     # Get test image in numpy form
     im = Image.open(pathlib.Path(ROOT_DIR, TEST_IMG))
@@ -36,17 +37,3 @@ def main() -> int:
 
     # Check output shape
     assert img_array.shape == raw_data.shape
-
-    # Note: the following fail since JPEG encoding is lossy
-    # assert (raw_data == img_array).all()
-
-    return 0
-
-
-if __name__ == "__main__":
-    result_main = main()
-
-    if result_main < 0:
-        print(f"ERROR: Status code: {result_main}")
-
-    print("Done!")

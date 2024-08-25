@@ -6,7 +6,7 @@ import pathlib
 
 import cv2
 
-from qr.modules.qr_scanner import QrScanner
+from .modules.qr_scanner import QrScanner
 
 
 PARENT_DIRECTORY = "qr"
