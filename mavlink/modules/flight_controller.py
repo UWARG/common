@@ -121,7 +121,7 @@ class FlightController:
         Parameters
         ----------
         commands: List of commands.
-        timeout: Seconds (default of 10.0 seconds).
+        timeout: Seconds (default of 30.0 seconds).
 
         Returns
         -------
@@ -263,7 +263,7 @@ class FlightController:
 
         Parameters
         ----------
-        timeout: Seconds (default of 10.0 seconds).
+        timeout: Seconds (default of 30.0 seconds).
 
         Returns
         -------
