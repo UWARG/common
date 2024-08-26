@@ -4,8 +4,9 @@ Logger unit tests.
 
 import inspect
 import pathlib
-import pytest
 import re
+
+import pytest
 
 from .modules import logger, logger_setup_main
 from .read_yaml.modules import read_yaml
@@ -74,6 +75,8 @@ class TestMessageAndMetadata:
         assert actual == expected
 
 
+# Fixtures are used to setup and teardown resources for tests
+# pylint: disable=redefined-outer-name
 class TestLogger:
     """
     Test if logger logs the correct messages to file and stdout
