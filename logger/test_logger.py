@@ -58,7 +58,7 @@ class TestMessageAndMetadata:
         message = "Test message"
         actual = logger.Logger.message_and_metadata(message, frame)
 
-        expected = f"[{__file__} | test_message_and_metadata_with_frame | 58] Test message"
+        expected = f"[{__file__} | test_message_and_metadata_with_frame | 59] Test message"
 
         assert actual == expected
 
