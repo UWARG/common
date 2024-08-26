@@ -82,7 +82,7 @@ class TestLogger:
     def test_log_to_file(
         self,
         main_logger_instance_and_log_file_path: "tuple[logger.Logger | None, pathlib.Path | None]",
-        logger_instance_to_file_enabled,
+        logger_instance_to_file_enabled: logger.Logger,
     ) -> None:
         """
         Test if messages are logged to file
