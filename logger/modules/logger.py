@@ -15,7 +15,7 @@ import types
 from ..read_yaml.modules import read_yaml
 
 
-CONFIG_FILE_PATH = pathlib.Path("config_logger.yaml")
+CONFIG_FILE_PATH = pathlib.Path(os.path.dirname(__file__), "config_logger.yaml")
 
 
 class Logger:
@@ -68,7 +68,7 @@ class Logger:
             entries = os.listdir(log_directory_path)
 
             if len(entries) == 0:
-                print("ERROR: Must create a new log directory for this run before starting logger")
+                print("ERROR: The directory for this log session was not found.")
                 return False, None
 
             log_names = [
