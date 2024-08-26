@@ -5,8 +5,9 @@ Logs debug messages.
 import datetime
 import inspect
 import logging
-import pathlib
 import os
+import pathlib
+import sys
 
 # Used in type annotation of logger parameters
 # pylint: disable-next=unused-import
@@ -58,7 +59,7 @@ class Logger:
         )
 
         # Handles logging to terminal
-        stream_handler = logging.StreamHandler()
+        stream_handler = logging.StreamHandler(sys.stdout)
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
 
