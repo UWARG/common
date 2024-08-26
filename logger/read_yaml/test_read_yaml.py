@@ -10,6 +10,7 @@ from .modules import read_yaml
 
 CURRENT_DIRECTORY = os.path.dirname(__file__)
 
+
 class TestOpenConfig:
     """
     Test the open_config function
