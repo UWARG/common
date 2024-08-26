@@ -20,7 +20,6 @@ def setup_main_logger(
 
     config: The configuration.
 
-    TODO: Remove logger path from return
     Returns: Success, logger, logger path.
     """
     # Get settings
