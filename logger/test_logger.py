@@ -81,6 +81,18 @@ class TestLogger:
     """
     Test if logger logs the correct messages to file and stdout
     """
+    def test_log_with_frame_info(self, caplog: pytest.LogCaptureFixture, logger_instance_to_file_disabled: logger.Logger) -> None:
+        """
+        Test if frame information is logged
+        """
+        test_message = "test message"
+
+        logger_instance_to_file_disabled.debug(test_message, True)
+        actual = caplog.text
+
+        expected_pattern = re.compile(f"[DEBUG]*{__file__} | test_log_with_frame_info | 90] {test_message}\n")
+
+        assert re.search(expected_pattern, actual)
 
     def test_log_to_file(
         self,
@@ -94,18 +106,18 @@ class TestLogger:
         main_logger_instance, log_file_path = main_logger_instance_and_log_file_path
 
         main_message = "main message"
-        main_logger_instance.debug(main_message, None)
-        main_logger_instance.info(main_message, None)
-        main_logger_instance.warning(main_message, None)
-        main_logger_instance.error(main_message, None)
-        main_logger_instance.critical(main_message, None)
+        main_logger_instance.debug(main_message, False)
+        main_logger_instance.info(main_message, False)
+        main_logger_instance.warning(main_message, False)
+        main_logger_instance.error(main_message, False)
+        main_logger_instance.critical(main_message, False)
 
         test_message = "test message"
-        logger_instance_to_file_enabled.debug(test_message, None)
-        logger_instance_to_file_enabled.info(test_message, None)
-        logger_instance_to_file_enabled.warning(test_message, None)
-        logger_instance_to_file_enabled.error(test_message, None)
-        logger_instance_to_file_enabled.critical(test_message, None)
+        logger_instance_to_file_enabled.debug(test_message, False)
+        logger_instance_to_file_enabled.info(test_message, False)
+        logger_instance_to_file_enabled.warning(test_message, False)
+        logger_instance_to_file_enabled.error(test_message, False)
+        logger_instance_to_file_enabled.critical(test_message, False)
 
         main_log_file_path = pathlib.Path(log_file_path, "main.log")
         test_log_file_path = pathlib.Path(log_file_path, "test_logger_to_file_enabled.log")
@@ -132,7 +144,7 @@ class TestLogger:
         """
         test_message = "test message"
 
-        logger_instance_to_file_disabled.debug(test_message, None)
+        logger_instance_to_file_disabled.debug(test_message, False)
         actual = caplog.text
 
         expected_pattern = re.compile(f"[DEBUG]*{test_message}\n")
@@ -147,7 +159,7 @@ class TestLogger:
         """
         test_message = "test message"
 
-        logger_instance_to_file_disabled.info(test_message, None)
+        logger_instance_to_file_disabled.info(test_message, False)
         actual = caplog.text
 
         expected_pattern = re.compile(f"[INFO]*{test_message}\n")
@@ -162,7 +174,7 @@ class TestLogger:
         """
         test_message = "test message"
 
-        logger_instance_to_file_disabled.warning(test_message, None)
+        logger_instance_to_file_disabled.warning(test_message, False)
         actual = caplog.text
 
         expected_pattern = re.compile(f"[WARNING]*{test_message}\n")
@@ -177,7 +189,7 @@ class TestLogger:
         """
         test_message = "test message"
 
-        logger_instance_to_file_disabled.error(test_message, None)
+        logger_instance_to_file_disabled.error(test_message, False)
         actual = caplog.text
 
         expected_pattern = re.compile(f"[ERROR]*{test_message}\n")
@@ -192,7 +204,7 @@ class TestLogger:
         """
         test_message = "test message"
 
-        logger_instance_to_file_disabled.critical(test_message, None)
+        logger_instance_to_file_disabled.critical(test_message, False)
         actual = caplog.text
 
         expected_pattern = re.compile(f"[CRITICAL]*{test_message}\n")
