@@ -28,7 +28,7 @@ def main_logger_instance_and_log_file_path() -> logger.Logger:  # type: ignore
 @pytest.fixture
 def logger_instance_to_file_enabled() -> logger.Logger:  # type: ignore
     """
-    Returns a logger with logging to file disabled.
+    Returns a logger with logging to file enabled.
     """
     result, instance = logger.Logger.create("test_logger_to_file_enabled", True)
     assert result
