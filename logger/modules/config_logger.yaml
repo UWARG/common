@@ -1,5 +1,7 @@
+# Displaying datetime: https://docs.python.org/3/howto/logging.html#displaying-the-date-time-in-messages
+# Changing the format of log messages https://docs.python.org/3/howto/logging.html#changing-the-format-of-displayed-messages
 logger:
     directory_path: "logs"
     file_datetime_format: "%Y-%m-%d_%H-%M-%S"
     format: "%(asctime)s: [%(levelname)s] %(message)s"
-    datetime_format: "%I:%M:%S"
+    log_datetime_format: "%I:%M:%S"

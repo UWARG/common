@@ -44,7 +44,7 @@ class Logger:
             log_directory_path = config["logger"]["directory_path"]
             file_datetime_format = config["logger"]["file_datetime_format"]
             logger_format = config["logger"]["format"]
-            logger_datetime_format = config["logger"]["datetime_format"]
+            logger_datetime_format = config["logger"]["log_datetime_format"]
         except KeyError as exception:
             print(f"Config key(s) not found: {exception}")
             return False, None
