@@ -81,7 +81,10 @@ class TestLogger:
     """
     Test if logger logs the correct messages to file and stdout
     """
-    def test_log_with_frame_info(self, caplog: pytest.LogCaptureFixture, logger_instance_to_file_disabled: logger.Logger) -> None:
+
+    def test_log_with_frame_info(
+        self, caplog: pytest.LogCaptureFixture, logger_instance_to_file_disabled: logger.Logger
+    ) -> None:
         """
         Test if frame information is logged
         """
@@ -90,7 +93,9 @@ class TestLogger:
         logger_instance_to_file_disabled.debug(test_message, True)
         actual = caplog.text
 
-        expected_pattern = re.compile(f"[DEBUG]*{__file__} | test_log_with_frame_info | 90] {test_message}\n")
+        expected_pattern = re.compile(
+            f"[DEBUG]*{__file__} | test_log_with_frame_info | 90] {test_message}\n"
+        )
 
         assert re.search(expected_pattern, actual)
 
