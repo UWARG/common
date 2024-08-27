@@ -85,6 +85,12 @@ class Logger:
             )
 
             filepath = pathlib.Path(log_directory_path, log_path, f"{name}.log")
+            try:
+                file = os.open(filepath, os.O_RDWR | os.O_EXCL | os.O_CREAT)
+                os.close(file)
+            except OSError:
+                print("ERROR: Log file already exists.")
+                return False, None
 
             file_handler = logging.FileHandler(filename=filepath, mode="w")
             file_handler.setFormatter(formatter)
