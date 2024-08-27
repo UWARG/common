@@ -93,7 +93,6 @@ class TestLogger:
         logger_instance_to_file_disabled.debug(test_message, True)
         actual = caplog.text
 
-
         expected_pattern = re.compile(
             r"DEBUG.*\[" + str(__file__) + r" | test_log_with_frame_info | 93\]" + str(test_message)
         )
