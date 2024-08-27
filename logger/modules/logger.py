@@ -117,37 +117,52 @@ class Logger:
 
         return f"[{filename} | {function_name} | {line_number}] {message}"
 
-    def debug(self, message: str, frame: "types.FrameType | None") -> None:
+    def debug(self, message: str, log_with_frame_info: bool) -> None:
         """
         Logs a debug level message.
         """
-        message = self.message_and_metadata(message, frame)
+        if log_with_frame_info:
+            logger_frame = inspect.currentframe()
+            caller_frame = logger_frame.f_back
+            message = self.message_and_metadata(message, caller_frame)
         self.logger.debug(message)
 
-    def info(self, message: str, frame: "types.FrameType | None") -> None:
+    def info(self, message: str, log_with_frame_info: bool) -> None:
         """
         Logs an info level message.
         """
-        message = self.message_and_metadata(message, frame)
+        if log_with_frame_info:
+            logger_frame = inspect.currentframe()
+            caller_frame = logger_frame.f_back
+            message = self.message_and_metadata(message, caller_frame)
         self.logger.info(message)
 
-    def warning(self, message: str, frame: "types.FrameType | None") -> None:
+    def warning(self, message: str, log_with_frame_info: bool) -> None:
         """
         Logs a warning level message.
         """
-        message = self.message_and_metadata(message, frame)
+        if log_with_frame_info:
+            logger_frame = inspect.currentframe()
+            caller_frame = logger_frame.f_back
+            message = self.message_and_metadata(message, caller_frame)
         self.logger.warning(message)
 
-    def error(self, message: str, frame: "types.FrameType | None") -> None:
+    def error(self, message: str, log_with_frame_info: bool) -> None:
         """
         Logs an error level message.
         """
-        message = self.message_and_metadata(message, frame)
+        if log_with_frame_info:
+            logger_frame = inspect.currentframe()
+            caller_frame = logger_frame.f_back
+            message = self.message_and_metadata(message, caller_frame)
         self.logger.error(message)
 
-    def critical(self, message: str, frame: "types.FrameType | None") -> None:
+    def critical(self, message: str, log_with_frame_info: bool) -> None:
         """
         Logs a critical level message.
         """
-        message = self.message_and_metadata(message, frame)
+        if log_with_frame_info:
+            logger_frame = inspect.currentframe()
+            caller_frame = logger_frame.f_back
+            message = self.message_and_metadata(message, caller_frame)
         self.logger.critical(message)
