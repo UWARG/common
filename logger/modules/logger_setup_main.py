@@ -13,7 +13,7 @@ MAIN_LOGGER_NAME = "main"
 
 
 def setup_main_logger(
-    config: "dict", main_logger_name: str = MAIN_LOGGER_NAME
+    config: "dict", main_logger_name: str = MAIN_LOGGER_NAME, enable_log_to_file: bool = True
 ) -> "tuple[bool, logger.Logger | None, pathlib.Path | None]":
     """
     Setup prerequisites for logging in `main()` .
@@ -38,7 +38,7 @@ def setup_main_logger(
     logging_path.mkdir(exist_ok=True)
 
     # Setup logger
-    result, main_logger = logger.Logger.create(main_logger_name, True)
+    result, main_logger = logger.Logger.create(main_logger_name, enable_log_to_file)
     if not result:
         print("ERROR: Failed to create main logger")
         return False, None, None
