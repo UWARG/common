@@ -47,6 +47,6 @@ def setup_main_logger(
     assert main_logger is not None
 
     frame = inspect.currentframe()
-    main_logger.info(f"{MAIN_LOGGER_NAME} logger initialized", frame)
+    main_logger.info(f"{main_logger_name} logger initialized", frame)
 
     return True, main_logger, logging_path
