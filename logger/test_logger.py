@@ -93,11 +93,12 @@ class TestLogger:
         logger_instance_to_file_disabled.debug(test_message, True)
         actual = caplog.text
 
+
         expected_pattern = re.compile(
-            f"[DEBUG]*{__file__} | test_log_with_frame_info | 90] {test_message}\n"
+            r"DEBUG.*\[" + str(__file__) + r" | test_log_with_frame_info | 93\]" + str(test_message)
         )
 
-        assert re.search(expected_pattern, actual)
+        assert re.search(expected_pattern, actual) is not None
 
     def test_log_to_file(
         self,
@@ -152,9 +153,9 @@ class TestLogger:
         logger_instance_to_file_disabled.debug(test_message, False)
         actual = caplog.text
 
-        expected_pattern = re.compile(f"[DEBUG]*{test_message}\n")
+        expected_pattern = re.compile(r"DEBUG.*" + str(test_message))
 
-        assert re.search(expected_pattern, actual)
+        assert re.search(expected_pattern, actual) is not None
 
     def test_debug_log_info_to_stdout(
         self, caplog: pytest.LogCaptureFixture, logger_instance_to_file_disabled: logger.Logger
@@ -167,9 +168,9 @@ class TestLogger:
         logger_instance_to_file_disabled.info(test_message, False)
         actual = caplog.text
 
-        expected_pattern = re.compile(f"[INFO]*{test_message}\n")
+        expected_pattern = re.compile(r"INFO.*" + str(test_message))
 
-        assert re.search(expected_pattern, actual)
+        assert re.search(expected_pattern, actual) is not None
 
     def test_debug_log_warning_to_stdout(
         self, caplog: pytest.LogCaptureFixture, logger_instance_to_file_disabled: logger.Logger
@@ -182,9 +183,9 @@ class TestLogger:
         logger_instance_to_file_disabled.warning(test_message, False)
         actual = caplog.text
 
-        expected_pattern = re.compile(f"[WARNING]*{test_message}\n")
+        expected_pattern = re.compile(r"WARNING.*" + str(test_message))
 
-        assert re.search(expected_pattern, actual)
+        assert re.search(expected_pattern, actual) is not None
 
     def test_debug_log_error_to_stdout(
         self, caplog: pytest.LogCaptureFixture, logger_instance_to_file_disabled: logger.Logger
@@ -197,9 +198,9 @@ class TestLogger:
         logger_instance_to_file_disabled.error(test_message, False)
         actual = caplog.text
 
-        expected_pattern = re.compile(f"[ERROR]*{test_message}\n")
+        expected_pattern = re.compile(r"ERROR.*" + str(test_message))
 
-        assert re.search(expected_pattern, actual)
+        assert re.search(expected_pattern, actual) is not None
 
     def test_debug_log_critical_to_stdout(
         self, caplog: pytest.LogCaptureFixture, logger_instance_to_file_disabled: logger.Logger
@@ -212,6 +213,6 @@ class TestLogger:
         logger_instance_to_file_disabled.critical(test_message, False)
         actual = caplog.text
 
-        expected_pattern = re.compile(f"[CRITICAL]*{test_message}\n")
+        expected_pattern = re.compile(r"CRITICAL.*" + str(test_message))
 
-        assert re.search(expected_pattern, actual)
+        assert re.search(expected_pattern, actual) is not None
