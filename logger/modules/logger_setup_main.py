@@ -3,7 +3,6 @@ Logger setup for `main()` .
 """
 
 import datetime
-import inspect
 import pathlib
 
 from . import logger
@@ -45,7 +44,6 @@ def setup_main_logger(
     # Get Pylance to stop complaining
     assert main_logger is not None
 
-    frame = inspect.currentframe()
     main_logger.info(f"{main_logger_name} logger initialized", True)
 
     return True, main_logger, logging_path
