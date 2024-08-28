@@ -14,11 +14,14 @@ Pillow
 # Module kml
 simplekml
 
-# Module mavlink
-pymavlink
-
 # Module qr
 pyzbar
+
+# Module kml
+simplekml
+
+# Module logger
+pyyaml
 
 # Linters and formatters are explicitly versioned
 black==24.2.0
