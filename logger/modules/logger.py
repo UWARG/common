@@ -123,7 +123,7 @@ class Logger:
 
         return f"[{filename} | {function_name} | {line_number}] {message}"
 
-    def debug(self, message: str, log_with_frame_info: bool) -> None:
+    def debug(self, message: str, log_with_frame_info: bool = True) -> None:
         """
         Logs a debug level message.
         """
@@ -133,7 +133,7 @@ class Logger:
             message = self.message_and_metadata(message, caller_frame)
         self.logger.debug(message)
 
-    def info(self, message: str, log_with_frame_info: bool) -> None:
+    def info(self, message: str, log_with_frame_info: bool = True) -> None:
         """
         Logs an info level message.
         """
@@ -143,7 +143,7 @@ class Logger:
             message = self.message_and_metadata(message, caller_frame)
         self.logger.info(message)
 
-    def warning(self, message: str, log_with_frame_info: bool) -> None:
+    def warning(self, message: str, log_with_frame_info: bool = True) -> None:
         """
         Logs a warning level message.
         """
@@ -153,7 +153,7 @@ class Logger:
             message = self.message_and_metadata(message, caller_frame)
         self.logger.warning(message)
 
-    def error(self, message: str, log_with_frame_info: bool) -> None:
+    def error(self, message: str, log_with_frame_info: bool = True) -> None:
         """
         Logs an error level message.
         """
@@ -163,7 +163,7 @@ class Logger:
             message = self.message_and_metadata(message, caller_frame)
         self.logger.error(message)
 
-    def critical(self, message: str, log_with_frame_info: bool) -> None:
+    def critical(self, message: str, log_with_frame_info: bool = True) -> None:
         """
         Logs a critical level message.
         """

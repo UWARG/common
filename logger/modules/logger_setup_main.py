@@ -34,8 +34,7 @@ def setup_main_logger(
     logging_path = pathlib.Path(log_directory_path, start_time)
 
     # Create logging directory
-    pathlib.Path(log_directory_path).mkdir(exist_ok=True)
-    logging_path.mkdir(exist_ok=True)
+    logging_path.mkdir(exist_ok=True, parents=True)
 
     # Setup logger
     result, main_logger = logger.Logger.create(main_logger_name, enable_log_to_file)
@@ -47,6 +46,6 @@ def setup_main_logger(
     assert main_logger is not None
 
     frame = inspect.currentframe()
-    main_logger.info(f"{main_logger_name} logger initialized", frame)
+    main_logger.info(f"{main_logger_name} logger initialized", True)
 
     return True, main_logger, logging_path
