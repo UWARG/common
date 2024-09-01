@@ -1,5 +1,5 @@
 """
-Wrapper for socket operations.
+Wrapper for a TCP socket.
 """
 
 import socket
@@ -7,7 +7,7 @@ import socket
 
 class TcpSocket:
     """
-    Wrapper for Python's socket module.
+    Wrapper for a TCP socket.
     """
 
     def __init__(self, socket_instance: socket.socket) -> None:

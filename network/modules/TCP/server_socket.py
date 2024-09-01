@@ -1,15 +1,15 @@
 """
-Wrapper for server socket operations.
+Wrapper for TCP server socket operations.
 """
 
 import socket
 
-from network.modules.TCP.socket_wrapper import TcpSocket
+from .socket_wrapper import TcpSocket
 
 
 class TcpServerSocket(TcpSocket):
     """
-    Wrapper for server socket operations.
+    Wrapper for TCP server socket operations.
     """
 
     __create_key = object()

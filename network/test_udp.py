@@ -1,5 +1,5 @@
 """
-Test TCP sockets by sending random data to a server (for Pytest)
+Test UDP sockets by sending random data to a server (for Pytest).
 """
 
 import os
@@ -11,7 +11,7 @@ import numpy as np
 import pytest
 from xprocess import ProcessStarter, XProcess
 
-from network.modules.UDP.client_socket import UdpClientSocket
+from .modules.udp.client_socket import UdpClientSocket
 
 
 # Since the socket may be using either IPv4 or IPv6, do not specify 127.0.0.1 or ::1.

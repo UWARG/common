@@ -1,11 +1,11 @@
 """
-Test socket operations by receiving images over server sockets.
+Test UDP socket operations by receiving images over server sockets.
 """
 
 import sys
 import struct
 
-from network.modules.UDP.server_socket import UdpServerSocket
+from .modules.udp.server_socket import UdpServerSocket
 
 
 # Since the socket may be using either IPv4 or IPv6, do not specify 127.0.0.1 or ::1.

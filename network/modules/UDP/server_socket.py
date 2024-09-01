@@ -1,5 +1,10 @@
+"""
+Wrapper for server socket operations.
+"""
+
 import socket
-from network.modules.UDP.socket_wrapper import UdpSocket
+
+from .socket_wrapper import UdpSocket
 
 
 class UdpServerSocket(UdpSocket):
@@ -49,7 +54,7 @@ class UdpServerSocket(UdpSocket):
         """
 
         if connection_timeout <= 0:
-            print(f"Must provide a positive non-zero value.")
+            print("Must provide a positive non-zero value.")
             return False, None
 
         try:
@@ -65,8 +70,9 @@ class UdpServerSocket(UdpSocket):
 
             return True, UdpServerSocket(cls.__create_key, socket_instance, server_address)
 
-        except TimeoutError as e:
-            print(f"Connection timed out.")
+        except TimeoutError:
+            print("Connection timed out.")
+            return False, None
         except socket.error as e:
             print(f"Could not create socket, error: {e}.")
             return False, None

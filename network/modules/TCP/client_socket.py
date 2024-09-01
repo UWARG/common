@@ -1,15 +1,15 @@
 """
-Wrapper for client socket operations.
+Wrapper for TCP client socket operations.
 """
 
 import socket
 
-from network.modules.TCP.socket_wrapper import TcpSocket
+from .socket_wrapper import TcpSocket
 
 
 class TcpClientSocket(TcpSocket):
     """
-    Wrapper for client socket operations.
+    Wrapper for TCP client socket operations.
     """
 
     __create_key = object()
@@ -64,7 +64,7 @@ class TcpClientSocket(TcpSocket):
         try:
             socket_instance = socket.create_connection((host, port), connection_timeout)
             return True, TcpClientSocket(cls.__create_key, socket_instance)
-        except TimeoutError as e:
+        except TimeoutError:
             print("Connection timed out.")
         except socket.gaierror as e:
             print(

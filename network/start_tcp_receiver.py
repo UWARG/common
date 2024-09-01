@@ -1,11 +1,11 @@
 """
-Test socket operations by receiving images over server sockets.
+Test TCP socket operations by receiving images over server sockets.
 """
 
 import struct
 import sys
 
-from network.modules.TCP.server_socket import TcpServerSocket
+from .modules.tcp.server_socket import TcpServerSocket
 
 
 # Since the socket may be using either IPv4 or IPv6, do not specify 127.0.0.1 or ::1.

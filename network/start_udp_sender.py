@@ -1,12 +1,12 @@
 """
-Test socket operations by sending images over client sockets.
+Test UDP socket operations by sending images over client sockets.
 """
 
 import struct
 
 import numpy as np
 
-from network.modules.UDP.client_socket import UdpClientSocket
+from .modules.udp.client_socket import UdpClientSocket
 
 
 SOCKET_ADDRESS = "localhost"

@@ -13,10 +13,10 @@ from PIL import Image
 import pytest
 from xprocess import ProcessStarter, XProcess
 
-from image_encoding.modules.decoder import decode
-from image_encoding.modules.encoder import encode
-from network.modules.TCP.client_socket import TcpClientSocket
-from network.modules.UDP.client_socket import UdpClientSocket
+from .image_encoding.modules import decoder
+from .image_encoding.modules import encoder
+from .network.modules.tcp.client_socket import TcpClientSocket
+from .network.modules.udp.client_socket import UdpClientSocket
 
 # Since the socket may be using either IPv4 or IPv6, do not specify 127.0.0.1 or ::1.
 # Instead, use localhost if wanting to test on same the machine
@@ -76,7 +76,7 @@ def test_tcp_client(images: "Generator[np.ndarray]", tcp_server: Generator) -> N
 
     for image in images:
         # Encode image (into jpeg)
-        data = encode(image)
+        data = encoder.encode(image)
 
         # Send image length, 4 byte message (unsigned int, network or big-endian format)
         data_len = struct.pack("!I", len(data))
@@ -92,7 +92,7 @@ def test_tcp_client(images: "Generator[np.ndarray]", tcp_server: Generator) -> N
         assert result
 
         # Decode image
-        recv_image = decode(recv_data)
+        recv_image = decoder.decode(recv_data)
         assert image.shape == recv_image.shape
 
 
@@ -137,7 +137,7 @@ def test_udp_client(images: "Generator[bytes]", udp_server: Generator) -> None:
 
     for image in images:
         # Encode image
-        data = encode(image)
+        data = encoder.encode(image)
 
         # Send data length, 4 byte message (unsigned int, network or big-endian format)
         data_len = struct.pack("!I", len(data))

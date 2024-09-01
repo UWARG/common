@@ -1,10 +1,15 @@
+"""
+Wrapper for UDP client socket operations.
+"""
+
 import socket
-from network.modules.UDP.socket_wrapper import UdpSocket
+
+from .socket_wrapper import UdpSocket
 
 
 class UdpClientSocket(UdpSocket):
     """
-    Wrapper for client socket operations
+    Wrapper for UDP client socket operations.
     """
 
     __create_key = object()

@@ -1,12 +1,12 @@
 """
-Test socket operations by sending images over client sockets.
+Test TCP socket operations by sending images over client sockets.
 """
 
 import struct
 
 import numpy as np
 
-from network.modules.TCP.client_socket import TcpClientSocket
+from .modules.tcp.client_socket import TcpClientSocket
 
 
 SOCKET_ADDRESS = "localhost"
