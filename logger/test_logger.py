@@ -94,7 +94,10 @@ class TestLogger:
         actual = caplog.text
 
         expected_pattern = re.compile(
-            r"DEBUG.*\[" + str(__file__) + r" | test_log_with_frame_info | 93\]" + str(test_message)
+            r"DEBUG.*\["
+            + re.escape(__file__)
+            + r" | test_log_with_frame_info | 93\]"
+            + re.escape(test_message)
         )
 
         assert re.search(expected_pattern, actual) is not None
@@ -152,7 +155,7 @@ class TestLogger:
         logger_instance_to_file_disabled.debug(test_message, False)
         actual = caplog.text
 
-        expected_pattern = re.compile(r"DEBUG.*" + str(test_message))
+        expected_pattern = re.compile(r"DEBUG.*" + re.escape(test_message))
 
         assert re.search(expected_pattern, actual) is not None
 
@@ -167,7 +170,7 @@ class TestLogger:
         logger_instance_to_file_disabled.info(test_message, False)
         actual = caplog.text
 
-        expected_pattern = re.compile(r"INFO.*" + str(test_message))
+        expected_pattern = re.compile(r"INFO.*" + re.escape(test_message))
 
         assert re.search(expected_pattern, actual) is not None
 
@@ -182,7 +185,7 @@ class TestLogger:
         logger_instance_to_file_disabled.warning(test_message, False)
         actual = caplog.text
 
-        expected_pattern = re.compile(r"WARNING.*" + str(test_message))
+        expected_pattern = re.compile(r"WARNING.*" + re.escape(test_message))
 
         assert re.search(expected_pattern, actual) is not None
 
@@ -197,7 +200,7 @@ class TestLogger:
         logger_instance_to_file_disabled.error(test_message, False)
         actual = caplog.text
 
-        expected_pattern = re.compile(r"ERROR.*" + str(test_message))
+        expected_pattern = re.compile(r"ERROR.*" + re.escape(test_message))
 
         assert re.search(expected_pattern, actual) is not None
 
@@ -212,6 +215,6 @@ class TestLogger:
         logger_instance_to_file_disabled.critical(test_message, False)
         actual = caplog.text
 
-        expected_pattern = re.compile(r"CRITICAL.*" + str(test_message))
+        expected_pattern = re.compile(r"CRITICAL.*" + re.escape(test_message))
 
         assert re.search(expected_pattern, actual) is not None

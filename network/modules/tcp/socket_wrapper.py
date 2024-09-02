@@ -58,7 +58,7 @@ class TcpSocket:
             - If it is successful, the second parameter will be the data that is read.
         """
 
-        chunks = []
+        message = b""
         bytes_recd = 0
         while bytes_recd < buf_size:
             # 4096 or other low powers of 2 is recommended
@@ -69,10 +69,10 @@ class TcpSocket:
                 print("Socket connection broken")  # When 0 is received, means error
                 return False, None
 
-            chunks.append(chunk)
-            bytes_recd = bytes_recd + len(chunk)
+            message += chunk
+            bytes_recd += len(chunk)
 
-        return True, b"".join(chunks)
+        return True, message
 
     def close(self) -> bool:
         """

@@ -24,7 +24,14 @@ class UdpSocket:
 
         self.__socket = socket_instance
 
-    def send_to(self, data: bytes, host: str = "", port: int = 5000) -> bool:
+    def send_to(
+        self,
+        data: bytes,
+        host: str = "",
+        port: int = 5000,
+        chunk_size: int = CHUNK_SIZE,
+        send_delay: float = SEND_DELAY,
+    ) -> bool:
         """
         Sends data to specified address
 
@@ -46,10 +53,10 @@ class UdpSocket:
         data_size = len(data)
 
         while data_sent < data_size:
-            if data_sent + CHUNK_SIZE > data_size:
+            if data_sent + chunk_size > data_size:
                 chunk = data[data_sent:data_size]
             else:
-                chunk = data[data_sent : data_sent + CHUNK_SIZE]
+                chunk = data[data_sent : data_sent + chunk_size]
 
             try:
                 self.__socket.sendto(chunk, address)
@@ -58,7 +65,7 @@ class UdpSocket:
                 print(f"Could not send data: {e}")
                 return False
 
-            time.sleep(SEND_DELAY)
+            time.sleep(send_delay)
 
         return True
 

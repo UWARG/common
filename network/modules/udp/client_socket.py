@@ -25,8 +25,9 @@ class UdpClientSocket(UdpSocket):
         """
 
         assert class_private_create_key is UdpClientSocket.__create_key
+
         super().__init__(socket_instance=socket_instance)
-        self.server_address = server_address
+        self.__server_address = server_address
 
     @classmethod
     def create(
@@ -41,7 +42,7 @@ class UdpClientSocket(UdpSocket):
             The hostname or IP address of the server.
         port: int (default 5000)
             The port number of the server.
-        connection_timeout: float (default 10.0)
+        connection_timeout: float (default 60.0)
             Timeout for establishing connection, in seconds
 
         Returns
@@ -76,7 +77,7 @@ class UdpClientSocket(UdpSocket):
 
     def send(self, data: bytes) -> bool:
         """
-        Sends data to the specified server address
+        Sends data to the specified server address during this socket's creation.
 
         Parameters
         ----------
@@ -89,7 +90,7 @@ class UdpClientSocket(UdpSocket):
         """
 
         try:
-            host, port = self.server_address
+            host, port = self.__server_address
             super().send_to(data, host, port)
         except socket.error as e:
             print(f"Could not send data: {e}")

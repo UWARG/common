@@ -18,6 +18,7 @@ class TcpClientSocket(TcpSocket):
         """
         Private constructor, use create() method.
         """
+
         assert class_private_create_key is TcpClientSocket.__create_key, "Use create() method"
 
         super().__init__(socket_instance=socket_instance)
@@ -40,7 +41,7 @@ class TcpClientSocket(TcpSocket):
         host: str (default "localhost")
         port: int (default 5000)
             The host combined with the port will form an address (e.g. localhost:5000)
-        connection_timeout: float (default 10.0)
+        connection_timeout: float (default 60.0)
             Timeout for establishing connection, in seconds
 
         Returns

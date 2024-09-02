@@ -20,7 +20,7 @@ def start_server(host: str, port: int) -> int:
     Starts server listening on host:port that receives messages and sends them back to the client.
     """
     result, server_socket = TcpServerSocket.create(host=host, port=port)
-    assert result, "Server cration failed."
+    assert result, "Server creation failed."
 
     while True:
         result, data_len = server_socket.recv(4)
@@ -51,10 +51,10 @@ def start_server(host: str, port: int) -> int:
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        RESULT = start_server(SOCKET_ADDRESS, int(sys.argv[1]))
+        result_main = start_server(SOCKET_ADDRESS, int(sys.argv[1]))
     else:
-        RESULT = start_server(SOCKET_ADDRESS, SOCKET_PORT)
-    if RESULT < 0:
-        print(f"ERROR: Status code: {RESULT}")
+        result_main = start_server(SOCKET_ADDRESS, SOCKET_PORT)
+    if result_main < 0:
+        print(f"ERROR: Status code: {result_main}")
 
     print("Done!")

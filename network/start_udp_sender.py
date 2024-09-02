@@ -46,8 +46,8 @@ def start_sender(host: str, port: int) -> int:
 
 
 if __name__ == "__main__":
-    RESULT = start_sender(SOCKET_ADDRESS, SOCKET_PORT)
-    if RESULT < 0:
-        print(f"ERROR: Status code: {RESULT}")
+    result_main = start_sender(SOCKET_ADDRESS, SOCKET_PORT)
+    if result_main < 0:
+        print(f"ERROR: Status code: {result_main}")
 
     print("Done!")

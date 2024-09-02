@@ -45,7 +45,7 @@ class TcpServerSocket(TcpSocket):
             Could also use socket.gethostname(). (needed to enable other machines to connect)
         port: int (default 5000)
             The host combined with the port will form an address (e.g. localhost:5000)
-        connection_timeout: float (default 10.0)
+        connection_timeout: float (default 60.0)
             Timeout for operations such as recieve
 
         Returns
