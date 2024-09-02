@@ -4,8 +4,8 @@ Camera to QR scanner example
 
 import cv2
 
-from camera.modules import camera_device
-from qr.modules import qr_scanner
+from .camera.modules import camera_device
+from .qr.modules import qr_scanner
 
 
 def main() -> int:

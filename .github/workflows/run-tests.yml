@@ -52,6 +52,6 @@ jobs:
           flake8 .
           pylint .
 
-      # Install dependencies and run tests with PyTest
-      - name: Run PyTest
+      # Run unit tests with PyTest
+      - name: Run unit tests
         run: pytest -vv
