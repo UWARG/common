@@ -48,7 +48,7 @@ def main() -> int:
         time.sleep(DELAY_TIME)
 
     # Download and print commands
-    success, commands = controller.download_commands()
+    success, commands = controller.download_commands(TIMEOUT)
     if success:
         print("Downloaded commands:")
         for command in commands:
@@ -56,7 +56,7 @@ def main() -> int:
     else:
         print("Failed to download commands.")
 
-    result, next_waypoint = controller.get_next_waypoint()
+    result, next_waypoint = controller.get_next_waypoint(TIMEOUT)
     if result:
         print("next waypoint lat: " + str(next_waypoint.latitude))
         print("next waypoint lon: " + str(next_waypoint.longitude))
@@ -70,7 +70,7 @@ def main() -> int:
         return -1
 
     # Create and add land command
-    result = controller.upload_land_command(home.latitude, home.longitude)
+    result = controller.upload_land_command(home.latitude, home.longitude, TIMEOUT)
     if not result:
         print("Could not upload land command.")
         return -1

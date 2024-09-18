@@ -115,13 +115,14 @@ class FlightController:
 
         return True, location
 
-    def upload_commands(self, commands: "list[dronekit.Command]") -> bool:
+    def upload_commands(self, commands: "list[dronekit.Command]", timeout: float = 30.0) -> bool:
         """
         Writes a mission to the drone from a list of commands (will overwrite any previous missions).
 
         Parameters
         ----------
         commands: List of commands.
+        timeout: Seconds (default of 30.0 seconds).
 
         Returns
         -------
@@ -133,7 +134,7 @@ class FlightController:
         try:
             command_sequence = self.drone.commands
             command_sequence.download()
-            command_sequence.wait_ready()
+            command_sequence.wait_ready(timeout)
             command_sequence.clear()
             for command in commands:
                 command_sequence.add(command)
@@ -149,7 +150,7 @@ class FlightController:
 
         return True
 
-    def upload_land_command(self, latitude: float, longitude: float) -> bool:
+    def upload_land_command(self, latitude: float, longitude: float, timeout: float) -> bool:
         """
         Given a target latitude and longitude, overwrite the drone's current mission
         with a corresponding land command.
@@ -158,6 +159,7 @@ class FlightController:
         ----------
         latitude: Decimal degrees.
         longitude: Decimal degrees.
+        timeout: Seconds.
 
         Returns
         -------
@@ -181,7 +183,7 @@ class FlightController:
             0,
         )
 
-        return self.upload_commands([landing_command])
+        return self.upload_commands([landing_command], timeout)
 
     def is_drone_destination_final_waypoint(self) -> "tuple[bool, bool | None]":
         """
@@ -256,9 +258,13 @@ class FlightController:
             return True, drone_odometry.FlightMode.MOVING
         return True, drone_odometry.FlightMode.MANUAL
 
-    def download_commands(self) -> "tuple[bool, list[dronekit.Command]]":
+    def download_commands(self, timeout: float = 30.0) -> "tuple[bool, list[dronekit.Command]]":
         """
         Downloads the current list of commands from the drone.
+
+        Parameters
+        ----------
+        timeout: Seconds (default of 30.0 seconds).
 
         Returns
         -------
@@ -269,7 +275,7 @@ class FlightController:
         try:
             command_sequence = self.drone.commands
             command_sequence.download()
-            command_sequence.wait_ready()
+            command_sequence.wait_ready(timeout)
             commands = list(command_sequence)
             return True, commands
         except dronekit.TimeoutError:
@@ -279,9 +285,15 @@ class FlightController:
             print("ERROR: Connection with drone reset. Unable to download commands.")
             return False, []
 
-    def get_next_waypoint(self) -> "tuple[bool, drone_odometry.DronePosition | None]":
+    def get_next_waypoint(
+        self, timeout: float
+    ) -> "tuple[bool, drone_odometry.DronePosition | None]":
         """
         Gets the next waypoint.
+
+        Parameters
+        ----------
+        timeout: Seconds.
 
         Returns
         -------
@@ -289,7 +301,7 @@ class FlightController:
         A tuple where the first element is a boolean indicating success or failure,
         and the second element is the next waypoint currently held by the drone.
         """
-        result, commands = self.download_commands()
+        result, commands = self.download_commands(timeout)
         if not result:
             return False, None
 
@@ -303,12 +315,12 @@ class FlightController:
         return False, None
 
     def insert_waypoint(
-        self, index: int, latitude: float, longitude: float, altitude: float
+        self, index: int, latitude: float, longitude: float, altitude: float, timeout: float
     ) -> bool:
         """
         Insert a waypoint into the current list of commands at a certain index and reupload the list to the drone.
         """
-        result, commands = self.download_commands()
+        result, commands = self.download_commands(timeout)
         if not result:
             return False
 
@@ -331,4 +343,4 @@ class FlightController:
 
         commands.insert(index, new_waypoint)
 
-        return self.upload_commands(commands)
+        return self.upload_commands(commands, timeout)
