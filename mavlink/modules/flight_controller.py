@@ -235,3 +235,17 @@ class FlightController:
             print("ERROR: an unsupported flight mode is set by dronekit.VehicleMode()")
             return False
         return True
+    
+    def get_current_position(self) -> drone_odometry.DronePosition:
+        """
+        Retrieves the current position of the drone.
+        """
+        location = self.drone.location.global_frame
+        result, position = drone_odometry.DronePosition.create(
+            location.lat,
+            location.lon,
+            location.alt,
+        )
+        if not result or position is None:
+            raise RuntimeError("Failed to get current position")
+        return position
