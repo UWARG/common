@@ -124,9 +124,10 @@ def main() -> int:
         return -1
 
     while True:
-        result, is_drone_destination_final_waypoint = (
-            controller.is_drone_destination_final_waypoint()
-        )
+        (
+            result,
+            is_drone_destination_final_waypoint,
+        ) = controller.is_drone_destination_final_waypoint()
         if not result:
             print("Failed to get if the drone's destination is the final waypoint.")
             return -1
