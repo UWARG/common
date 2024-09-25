@@ -74,7 +74,7 @@ def main() -> int:
     if not result:
         print("Could not upload land command.")
         return -1
-    
+
     # Perform uploaded commands
     controller.set_flight_mode("AUTO")
 
