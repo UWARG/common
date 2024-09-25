@@ -332,3 +332,21 @@ class FlightController:
         commands.insert(index, new_waypoint)
 
         return self.upload_commands(commands)
+
+    def get_current_position(self) -> "tuple[bool, drone_odometry.DronePosition | None]":
+        """
+        Retrieves the current position of the drone.
+
+        Returns:
+            tuple[bool, DronePosition | None]: A tuple containing a boolean indicating success,
+            and the current DronePosition or None.
+        """
+        location = self.drone.location.global_frame
+        result, position = drone_odometry.DronePosition.create(
+            location.lat,
+            location.lon,
+            location.alt,
+        )
+        if not result or position is None:
+            return False, None
+        return True, position
