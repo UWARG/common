@@ -52,6 +52,18 @@ def main() -> int:
         print("Failed to get home location")
         return -1
 
+    # Testing get_current_position()
+    print("\nTesting get_current_position():")
+    for _ in range(5):
+        result, current_position = controller.get_current_position()
+        if result and current_position is not None:
+            print(f"Current Latitude: {current_position.latitude}")
+            print(f"Current Longitude: {current_position.longitude}")
+            print(f"Current Altitude: {current_position.altitude}")
+        else:
+            print("Failed to get current position")
+        time.sleep(DELAY_TIME)
+
     # Create and add land command
     result = controller.upload_land_command(home.latitude, home.longitude)
     if not result:
