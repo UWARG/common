@@ -3,22 +3,26 @@
 
 # Global
 pytest
+pytest-xprocess
 
 # Module camera
 opencv-python
 numpy
 
-# Module lte
+# Module image_encoding
 Pillow
-
-# Module mavlink
-dronekit
-
-# Module qr
-pyzbar
 
 # Module kml
 simplekml
+
+# Module logger
+pyyaml
+
+# Module mavlink
+pymavlink
+
+# Module qr
+pyzbar
 
 # Linters and formatters are explicitly versioned
 black==24.2.0

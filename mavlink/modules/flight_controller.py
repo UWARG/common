@@ -4,8 +4,9 @@ Wrapper for the flight controller.
 
 import time
 
-import dronekit
+from pymavlink import mavutil
 
+from .. import dronekit
 from . import drone_odometry
 
 
@@ -16,8 +17,9 @@ class FlightController:
 
     __create_key = object()
 
-    __MAVLINK_LANDING_FRAME = dronekit.mavutil.mavlink.MAV_FRAME_GLOBAL
-    __MAVLINK_LANDING_COMMAND = dronekit.mavutil.mavlink.MAV_CMD_NAV_LAND
+    __MAVLINK_LANDING_FRAME = mavutil.mavlink.MAV_FRAME_GLOBAL
+    __MAVLINK_LANDING_COMMAND = mavutil.mavlink.MAV_CMD_NAV_LAND
+    __MAVLINK_WAYPOINT_COMMAND = mavutil.mavlink.MAV_CMD_NAV_WAYPOINT
 
     @classmethod
     def create(cls, address: str, baud: int = 57600) -> "tuple[bool, FlightController | None]":
@@ -69,13 +71,17 @@ class FlightController:
         if not result:
             return False, None
 
+        result, flight_mode = self.get_flight_mode()
+        if not result:
+            return False, None
+
         # Get Pylance to stop complaining
         assert position_data is not None
         assert orientation_data is not None
+        assert flight_mode is not None
 
         result, odometry_data = drone_odometry.DroneOdometry.create(
-            position_data,
-            orientation_data,
+            position_data, orientation_data, flight_mode
         )
         if not result:
             return False, None
@@ -249,3 +255,94 @@ class FlightController:
         if not result or position is None:
             raise RuntimeError("Failed to get current position")
         return position
+
+    def get_flight_mode(self) -> "tuple[bool, drone_odometry.FlightMode | None]":
+        """
+        Gets the current flight mode of the drone.
+        """
+        flight_mode = self.drone.mode.name
+
+        if flight_mode is None:
+            return False, None
+        if flight_mode == "LOITER":
+            return True, drone_odometry.FlightMode.STOPPED
+        if flight_mode == "AUTO":
+            return True, drone_odometry.FlightMode.MOVING
+        return True, drone_odometry.FlightMode.MANUAL
+
+    def download_commands(self) -> "tuple[bool, list[dronekit.Command]]":
+        """
+        Downloads the current list of commands from the drone.
+
+        Returns
+        -------
+        tuple[bool, list[dronekit.Command]]
+        A tuple where the first element is a boolean indicating success or failure,
+        and the second element is the list of commands currently held by the drone.
+        """
+        try:
+            command_sequence = self.drone.commands
+            command_sequence.download()
+            command_sequence.wait_ready()
+            commands = list(command_sequence)
+            return True, commands
+        except dronekit.TimeoutError:
+            print("ERROR: Download timeout, commands are not being received.")
+            return False, []
+        except ConnectionResetError:
+            print("ERROR: Connection with drone reset. Unable to download commands.")
+            return False, []
+
+    def get_next_waypoint(self) -> "tuple[bool, drone_odometry.DronePosition | None]":
+        """
+        Gets the next waypoint.
+
+        Returns
+        -------
+        tuple[bool, drone_odometry.DronePosition | None]
+        A tuple where the first element is a boolean indicating success or failure,
+        and the second element is the next waypoint currently held by the drone.
+        """
+        result, commands = self.download_commands()
+        if not result:
+            return False, None
+
+        next_command_index = self.drone.commands.next
+        if next_command_index >= len(commands):
+            return False, None
+
+        for command in commands[next_command_index:]:
+            if command.command == self.__MAVLINK_WAYPOINT_COMMAND:
+                return drone_odometry.DronePosition.create(command.x, command.y, command.z)
+        return False, None
+
+    def insert_waypoint(
+        self, index: int, latitude: float, longitude: float, altitude: float
+    ) -> bool:
+        """
+        Insert a waypoint into the current list of commands at a certain index and reupload the list to the drone.
+        """
+        result, commands = self.download_commands()
+        if not result:
+            return False
+
+        new_waypoint = dronekit.Command(
+            0,
+            0,
+            0,
+            self.__MAVLINK_LANDING_FRAME,
+            self.__MAVLINK_WAYPOINT_COMMAND,
+            0,
+            0,
+            0,  # param1
+            0,
+            0,
+            0,
+            latitude,
+            longitude,
+            altitude,
+        )
+
+        commands.insert(index, new_waypoint)
+
+        return self.upload_commands(commands)
