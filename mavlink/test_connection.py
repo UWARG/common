@@ -25,28 +25,28 @@ def check_heartbeats():
         connection.mav.heartbeat_send(mavutil.mavlink.MAV_TYPE_GCS, mavutil.mavlink.MAV_AUTOPILOT_INVALID, 0, 0, 0)
         time.sleep(DELAY_TIME)
 
-def main2():
+def check_connection():
     result, fc = flight_controller.FlightController.create(CONNECTION_ADDRESS)
     counter = 0
-    check1 = True
-    check2 = True
+    check1 = True  # Since dronekit saves state, you will get the old state
+    check2 = True  # So use these to skip checking the old state
     while True:
-        if counter % 2 == 0:
-            result = fc.set_flight_mode("AUTO")
+        if check1 and counter % 2 == 0:
+            result = fc.set_flight_mode("AUTO")  # Note: the GPS will beep every time it switches
             time.sleep(0.5)
             result, flight_mode = fc.get_flight_mode()
-            if check1 and result and flight_mode == drone_odometry.FlightMode.MOVING:
+            if result and flight_mode == drone_odometry.FlightMode.MOVING:
                 print("Pixhawk recieved flightmode change message")
                 check2 = True
             else:
                 print("Pixhawk is not reciving flightmode change message")
                 check2 = False
                 check1 = True
-        else:
+        elif check2:
             result = fc.set_flight_mode("LOITER")
             time.sleep(0.5)
             result, flight_mode = fc.get_flight_mode()
-            if check2 and result and flight_mode == drone_odometry.FlightMode.STOPPED:
+            if result and flight_mode == drone_odometry.FlightMode.STOPPED:
                 print("Pixhawk recieved flightmode change message")
                 check1 = True
             else:
@@ -58,4 +58,5 @@ def main2():
         time.sleep(DELAY_TIME)
 
 if __name__ == "__main__":
-    main2()
+    # check_heartbeats()
+    check_connection()

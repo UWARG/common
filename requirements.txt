@@ -20,6 +20,9 @@ pyyaml
 
 # Module mavlink
 pymavlink
+# On the Raspberry Pi, pymavlink and dronekit don't have this as a import dependency
+# This is because to connect to pixhawk using serial requires this
+pyserial
 
 # Module qr
 pyzbar
