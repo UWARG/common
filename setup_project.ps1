@@ -7,13 +7,12 @@ if($?) {
     # If successfully activated venv
     "Installing project dependencies..."
     pip install -r requirements.txt
-    
+
     ""
     "Installing submodules and their dependencies..."
     git submodule update --init --remote --recursive
     git submodule foreach --recursive "pip install -r requirements.txt"
-    
-    deactivate
+
     ""
     "Seutp complete!"
 } else {
