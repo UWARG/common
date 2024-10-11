@@ -15,6 +15,8 @@ MERGED_LOGS_FILENAME = "merged_logs"
 def merge_log_files(log_file_directory: str) -> None:
     """
     Reads, sorts, and writes log files in the specified directory.
+
+    log_file_directory: The directory containing the log files to be merged.
     """
     # Read log files
     log_files = [
@@ -38,7 +40,7 @@ def merge_log_files(log_file_directory: str) -> None:
 
 def get_current_run_directory() -> str:
     """
-    Gets directory of current run.
+    Returns directory of current run.
     """
     # Configuration settings
     result, config = read_yaml.open_config(CONFIG_FILE_PATH)

@@ -14,7 +14,7 @@ from .modules import log_file_merger
 @pytest.fixture(name="dummy_logs")
 def fixture_dummy_logs() -> str:  # type: ignore
     """
-    Creates a temporary directory with dummy log files.
+    Returns the path to a temporary directory with dummy log files.
     """
     temp_directory = tempfile.mkdtemp()
     subdirectory = os.path.join(temp_directory, "subdirectory")
