@@ -22,17 +22,7 @@ UNSORTED_LOG_ENTRIES = [
     "13:00:12: [ERROR] [foo3.py | foo3 | 30] Foo3 could not be created\n",
     "13:00:30: [ERROR] [foo3.py | foo3 | 49] Foo3 failed to create class object\n",
 ]
-SORTED_LOG_ENTRIES = [
-    "12:59:28: [INFO] [foo1.py | foo1 | 43] Foo1 initialized\n",
-    "12:59:40: [INFO] [foo2.py | foo2 | 43] Foo2 initialized\n",
-    "12:59:59: [INFO] [foo3.py | foo3 | 43] Foo3 initialized\n",
-    "13:00:04: [ERROR] [foo1.py | foo1 | 30] Foo1 could not be created\n",
-    "13:00:06: [ERROR] [foo2.py | foo2 | 30] Foo2 could not be created\n",
-    "13:00:09: [ERROR] [foo2.py | foo2 | 49] Foo2 failed to create class object\n",
-    "13:00:12: [ERROR] [foo3.py | foo3 | 30] Foo3 could not be created\n",
-    "13:00:22: [ERROR] [foo1.py | foo1 | 49] Foo1 failed to create class object\n",
-    "13:00:30: [ERROR] [foo3.py | foo3 | 49] Foo3 failed to create class object\n",
-]
+SORTED_LOG_ENTRIES = sorted(UNSORTED_LOG_ENTRIES)
 
 
 @pytest.fixture(name="temp_path")
@@ -116,7 +106,7 @@ class TestLogFileMerger:
         assert success
         assert current_run_directory == temp_logs_path / "2024-10-11_10-00-00"
 
-    def test_read_log_files(self, dummy_logs: "list[str]") -> None:
+    def test_read_log_files(self, dummy_logs: pathlib.Path) -> None:
         """
         Test correct reading of log files.
         """
@@ -124,7 +114,10 @@ class TestLogFileMerger:
         result, log_entries = log_file_merger.read_log_files(dummy_logs)
 
         assert result
-        assert log_entries == UNSORTED_LOG_ENTRIES
+
+        # Assert that the sorted lists are equal
+        # Lists are sorted to ensure that tests pass regardless of the order the files are read
+        assert sorted(log_entries) == sorted(UNSORTED_LOG_ENTRIES)
 
     def test_sort_log_files(self) -> None:
         """
