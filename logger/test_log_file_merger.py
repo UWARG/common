@@ -25,6 +25,13 @@ LOG_ENRIES_3 = [
     "13:00:12: [ERROR] [foo3.py | foo3 | 30] Foo3 could not be created\n",
     "13:00:30: [ERROR] [foo3.py | foo3 | 49] Foo3 failed to create class object\n",
 ]
+# Invalid lines should be ignored by function
+LOG_ENRIES_4 = [
+    "",
+    "\n",
+    "[INFO] [foo1.py | foo1 | 43] Foo1 initialized\n",
+    "invalid line\n",
+]
 UNSORTED_LOG_ENTRIES = LOG_ENRIES_1 + LOG_ENRIES_2 + LOG_ENRIES_3
 SORTED_LOG_ENTRIES = sorted(UNSORTED_LOG_ENTRIES)
 
@@ -69,8 +76,7 @@ def fixture_dummy_logs(tmp_path: pathlib.Path) -> pathlib.Path:  # type: ignore
         encoding="utf-8",
     )
     log_file_4.write_text(
-        # Invalid lines should be ignored by function
-        "" "\n" "[INFO] [foo1.py | foo1 | 43] Foo1 initialized\n" "invalid line\n",
+        "".join(LOG_ENRIES_4),
         encoding="utf-8",
     )
 
