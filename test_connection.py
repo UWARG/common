@@ -3,6 +3,8 @@ Test for connection to flight controller by printing to console.
 Verifies if the Rpi can send messages to the flight controller.
 """
 
+from datetime import datetime
+import pathlib
 import time
 
 from pymavlink import mavutil
@@ -12,6 +14,8 @@ DELAY_TIME = 1.0  # seconds
 # /dev/ttyAMA0 for drone, tcp:127.0.0.1:14550 for mission planner simulator
 CONNECTION_ADDRESS = "tcp:127.0.0.1:14550"
 TIMEOUT = 1.0  # seconds
+LOG_FILE_PATH = pathlib.Path("logs", f"mavlink_connection_{time.time_ns()}.log")
+DATETIME_FMT = "%Y-%m-%d_%H-%M-%S"
 
 
 def req_msg(connection) -> bool:  # noqa: ANN001
@@ -49,6 +53,10 @@ if __name__ == "__main__":
     while True:
         if req_msg(vehicle):
             print("CONNECTED, MESSAGE SENT TO PIXHAWK - Pixhawk recieved invalid command request")
+            with open(LOG_FILE_PATH, "w", encoding="utf-8") as log_file:
+                log_file.write(f"{datetime.now().strftime(DATETIME_FMT)}  -  CONNECTED")
         else:
             print("DISCONNECTED, MESSAGE NOT RECIEVED - Pixhawk did not recieve any commands")
+            with open(LOG_FILE_PATH, "w", encoding="utf-8") as log_file:
+                log_file.write(f"{datetime.now().strftime(DATETIME_FMT)}  -  DISCONNECTED")
         time.sleep(DELAY_TIME)
