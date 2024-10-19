@@ -3,13 +3,21 @@ Log file merger unit tests.
 """
 
 import pathlib
+
 import pytest
 
 from .modules import log_file_merger_helpers
 
 
+# Test functions use test fixture signature names and access class privates
+# No enable
+# pylint: disable=protected-access, redefined-outer-name
+
+
 FILE_DATETIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
 LOG_DATETIME_FORMAT = "%H:%M:%S"
+MERGED_LOGS_FILENAME = "merged_logs.log"
+LOG_FILE_SUFFIX = ".log"
 LOG_ENRIES_1 = [
     "12:59:28: [INFO] [foo1.py | foo1 | 43] Foo1 initialized\n",
     "13:00:04: [ERROR] [foo1.py | foo1 | 30] Foo1 could not be created\n",
@@ -25,8 +33,7 @@ LOG_ENRIES_3 = [
     "13:00:12: [ERROR] [foo3.py | foo3 | 30] Foo3 could not be created\n",
     "13:00:30: [ERROR] [foo3.py | foo3 | 49] Foo3 failed to create class object\n",
 ]
-# Invalid lines should be ignored by function
-LOG_ENRIES_4 = [
+INVALID_LOG_ENTRIES = [
     "",
     "\n",
     "[INFO] [foo1.py | foo1 | 43] Foo1 initialized\n",
@@ -36,8 +43,8 @@ UNSORTED_LOG_ENTRIES = LOG_ENRIES_1 + LOG_ENRIES_2 + LOG_ENRIES_3
 SORTED_LOG_ENTRIES = sorted(UNSORTED_LOG_ENTRIES)
 
 
-@pytest.fixture(name="temp_log_directory")
-def fixture_temp_log_directories(tmp_path: pathlib.Path) -> pathlib.Path:  # type: ignore
+@pytest.fixture
+def temp_log_directory(tmp_path: pathlib.Path) -> pathlib.Path:  # type: ignore
     """
     Returns the path to a temporary log directory with dummy log subdirectories.
     """
@@ -45,22 +52,22 @@ def fixture_temp_log_directories(tmp_path: pathlib.Path) -> pathlib.Path:  # typ
     pathlib.Path(tmp_path, "2024-10-10_10-00-00").mkdir(parents=True, exist_ok=True)
     pathlib.Path(tmp_path, "2024-10-09_10-00-00").mkdir(parents=True, exist_ok=True)
     pathlib.Path(tmp_path, "2024-10-08_10-00-00").mkdir(parents=True, exist_ok=True)
-    # Invalid directory should be ignored by function
+    # Invalid directory that does not follow timestamp name convention
     pathlib.Path(tmp_path, "invalid-directory").mkdir(parents=True, exist_ok=True)
 
     yield tmp_path
 
 
-@pytest.fixture(name="dummy_logs")
-def fixture_dummy_logs(tmp_path: pathlib.Path) -> pathlib.Path:  # type: ignore
+@pytest.fixture
+def dummy_logs(tmp_path: pathlib.Path) -> pathlib.Path:  # type: ignore
     """
     Returns the path to a temporary log directory with dummy log files.
     """
     # Create dummy log files
-    log_file_1 = pathlib.Path(tmp_path, "log1.log")
-    log_file_2 = pathlib.Path(tmp_path, "log2.log")
-    log_file_3 = pathlib.Path(tmp_path, "log3.log")
-    log_file_4 = pathlib.Path(tmp_path, "log4.log")
+    log_file_1 = pathlib.Path(tmp_path, f"log1{LOG_FILE_SUFFIX}")
+    log_file_2 = pathlib.Path(tmp_path, f"log2{LOG_FILE_SUFFIX}")
+    log_file_3 = pathlib.Path(tmp_path, f"log3{LOG_FILE_SUFFIX}")
+    log_file_4 = pathlib.Path(tmp_path, f"log4{LOG_FILE_SUFFIX}")
 
     # Write to dummy log files
     log_file_1.write_text(
@@ -76,130 +83,296 @@ def fixture_dummy_logs(tmp_path: pathlib.Path) -> pathlib.Path:  # type: ignore
         encoding="utf-8",
     )
     log_file_4.write_text(
-        "".join(LOG_ENRIES_4),
+        "".join(INVALID_LOG_ENTRIES),
         encoding="utf-8",
     )
+
+    # Confirm that data was written (i.e. the file size is non-zero)
+    assert log_file_1.stat().st_size > 0, f"ERROR: Failed to write to {log_file_1}"
+    assert log_file_2.stat().st_size > 0, f"ERROR: Failed to write to {log_file_2}"
+    assert log_file_3.stat().st_size > 0, f"ERROR: Failed to write to {log_file_3}"
+    assert log_file_4.stat().st_size > 0, f"ERROR: Failed to write to {log_file_4}"
 
     yield tmp_path
 
 
-class TestLogFileMerger:
+class TestGetDirectoryOfSpecifiedRun:
     """
-    Test suite for the log file merger.
+    Test suite for get_directory_of_specified_run.
     """
 
-    def test_get_current_log_directory(self, temp_log_directory: pathlib.Path) -> None:
+    def test_get_specified_log_directory(self, temp_log_directory: pathlib.Path) -> None:
+        """
+        Test successful retrieval of a specified run directory.
+        """
+        # Expected output
+        specified_name = "2024-10-09_10-00-00"
+        expected = pathlib.Path(temp_log_directory, specified_name)
+
+        # Call the function and get the result
+        result, actual = log_file_merger_helpers.get_directory_of_specified_run(
+            temp_log_directory, specified_name
+        )
+
+        # Assertions
+        assert result
+        assert actual is not None
+        assert actual == expected
+
+    def test_get_specified_log_directory_empty_directory(self, tmp_path: pathlib.Path) -> None:
+        """
+        Test get_directory_of_specific_run in an empty directory.
+        """
+        specified_name = "2024-10-09_10-00-00"
+
+        # Call the function and get the result
+        result, actual = log_file_merger_helpers.get_directory_of_specified_run(
+            tmp_path, specified_name
+        )
+
+        # Assertions
+        assert not result
+        assert actual is None
+
+    def test_get_directory_of_specified_run_non_existent_directory(
+        self, tmp_path: pathlib.Path
+    ) -> None:
+        """
+        Test get_directory_of_specified_run in a non-existent log directory.
+        """
+        specified_name = "2024-10-09_10-00-00"
+
+        # Create a path to a non-existent directory.
+        non_existent_directory = pathlib.Path(tmp_path, "non_existent_directory")
+
+        # Call the function with an empty temporary directory as an argument
+        result, actual = log_file_merger_helpers.get_directory_of_specified_run(
+            non_existent_directory, specified_name
+        )
+
+        # Assertions
+        assert not result
+        assert actual is None
+
+    def test_get_directory_of_specified_run_non_existent_run_directory(
+        self, temp_log_directory: pathlib.Path
+    ) -> None:
+        """
+        Test get_directory_of_specified_run with the name of a non-existent run directory.
+        """
+        specified_name = "2024-10-07_10-00-00"
+
+        # Call the function with an empty temporary directory as an argument
+        result, actual = log_file_merger_helpers.get_directory_of_specified_run(
+            temp_log_directory, specified_name
+        )
+
+        # Assertions
+        assert not result
+        assert actual is None
+
+
+class TestGetDirectoryOfLatestRun:
+    """
+    Test suite for get_directory_of_latest_run.
+    """
+
+    def test_get_latest_log_directory(self, temp_log_directory: pathlib.Path) -> None:
         """
         Test successful retrieval of the most recent run directory.
         """
         # Expected output
-        actual_directory = pathlib.Path(temp_log_directory, "2024-10-10_10-00-00")
+        expected = pathlib.Path(temp_log_directory, "2024-10-10_10-00-00")
 
         # Call the function and get the result
-        result, current_run_directory = log_file_merger_helpers.get_directory_of_latest_run(
+        result, actual = log_file_merger_helpers.get_directory_of_latest_run(
             temp_log_directory, FILE_DATETIME_FORMAT
         )
 
         # Assertions
         assert result
-        assert current_run_directory is not None
-        assert current_run_directory == actual_directory
+        assert actual is not None
+        assert actual == expected
 
     def test_get_directory_of_latest_run_empty_directory(self, tmp_path: pathlib.Path) -> None:
         """
         Test get_directory_of_latest_run in an empty directory.
         """
         # Call the function with an empty temporary directory as an argument
-        result, latest_run_directory = log_file_merger_helpers.get_directory_of_latest_run(
+        result, actual = log_file_merger_helpers.get_directory_of_latest_run(
             tmp_path, FILE_DATETIME_FORMAT
         )
 
         # Assertions
         assert not result
-        assert latest_run_directory is None
+        assert actual is None
+
+    def test_get_directory_of_latest_run_non_existent_directory(
+        self, tmp_path: pathlib.Path
+    ) -> None:
+        """
+        Test get_directory_of_latest_run in a non-existent directory.
+        """
+        # Create a path to a non-existent directory.
+        non_existent_directory = pathlib.Path(tmp_path, "non_existent_directory")
+
+        # Call the function with an empty temporary directory as an argument
+        result, actual = log_file_merger_helpers.get_directory_of_latest_run(
+            non_existent_directory, FILE_DATETIME_FORMAT
+        )
+
+        # Assertions
+        assert not result
+        assert actual is None
+
+
+class TestReadLogFiles:
+    """
+    Test suite for read_log_files.
+    """
 
     def test_read_log_files(self, dummy_logs: pathlib.Path) -> None:
         """
         Test correct reading of log files.
         """
         # Read log files in subdirectory and get the combined, unsorted list of log entries
-        result, log_entries = log_file_merger_helpers.read_log_files(
-            dummy_logs, LOG_DATETIME_FORMAT
-        )
+        result, actual = log_file_merger_helpers.read_log_files(dummy_logs, LOG_DATETIME_FORMAT)
 
         # Assertions
         assert result
-        assert log_entries is not None
-        assert log_entries == UNSORTED_LOG_ENTRIES
+        assert actual is not None
+        assert actual == UNSORTED_LOG_ENTRIES
 
     def test_read_log_files_empty_directory(self, tmp_path: pathlib.Path) -> None:
         """
         Test read_log_files in an empty directory.
         """
         # Call the function and get the result
-        result, log_entries = log_file_merger_helpers.read_log_files(tmp_path, LOG_DATETIME_FORMAT)
+        result, actual = log_file_merger_helpers.read_log_files(tmp_path, LOG_DATETIME_FORMAT)
 
         # Assertions
         assert not result
-        assert log_entries is None
+        assert actual is None
+
+    def test_read_log_files_non_existent_directory(self, tmp_path: pathlib.Path) -> None:
+        """
+        Test read_log_files in an non-existent directory.
+        """
+        # Create a path to a non-existent directory.
+        non_existent_directory = pathlib.Path(tmp_path, "non_existent_directory")
+
+        # Call the function and get the result
+        result, actual = log_file_merger_helpers.read_log_files(
+            non_existent_directory, LOG_DATETIME_FORMAT
+        )
+
+        # Assertions
+        assert not result
+        assert actual is None
 
     def test_read_log_files_empty_log_files(self, tmp_path: pathlib.Path) -> None:
         """
         Test read_log_files with empty log files.
         """
         # Create an empty log file in the temp directory
-        log_file = pathlib.Path(tmp_path, "log.log")
+        log_file = pathlib.Path(tmp_path, f"log{LOG_FILE_SUFFIX}")
         log_file.write_text("", encoding="utf-8")
 
         # Call the function and get the result
-        result, log_entries = log_file_merger_helpers.read_log_files(tmp_path, LOG_DATETIME_FORMAT)
+        result, actual = log_file_merger_helpers.read_log_files(tmp_path, LOG_DATETIME_FORMAT)
 
         # Assertions
         assert not result
-        assert log_entries is None
+        assert actual is None
+
+    def test_read_log_files_ignore_merged_logs(self, tmp_path: pathlib.Path) -> None:
+        """
+        Test read_log_files with merged_logs file in directory.
+        """
+        # Create a merged_logs file in the temp directory
+        merged_log_file = pathlib.Path(tmp_path, MERGED_LOGS_FILENAME)
+        merged_log_file.write_text("".join(SORTED_LOG_ENTRIES), encoding="utf-8")
+
+        # Call the function and get the result
+        result, actual = log_file_merger_helpers.read_log_files(tmp_path, LOG_DATETIME_FORMAT)
+
+        # Assertions
+        assert not result
+        assert actual is None
+
+    def test_read_log_files_ignore_invalid_files(self, tmp_path: pathlib.Path) -> None:
+        """
+        Test read_log_files with invalid files.
+        """
+        # Create invalid log files in the temp directory
+        invalid_log_file_1 = pathlib.Path(tmp_path, "log")
+        invalid_log_file_1.write_text("".join(LOG_ENRIES_1), encoding="utf-8")
+        invalid_log_file_2 = pathlib.Path(tmp_path, "log.txt")
+        invalid_log_file_2.write_text("".join(LOG_ENRIES_2), encoding="utf-8")
+
+        # Call the function and get the result
+        result, actual = log_file_merger_helpers.read_log_files(tmp_path, LOG_DATETIME_FORMAT)
+
+        # Assertions
+        assert not result
+        assert actual is None
+
+
+class TestSortLogEntries:
+    """
+    Test suite for sort_log_entries.
+    """
 
     def test_sort_log_files(self) -> None:
         """
         Test correct sorting of log files.
         """
         # Read log files in subdirectory and get the combined, unsorted list of log entries
-        result, sorted_log_entries = log_file_merger_helpers.sort_log_entries(
+        result, actual = log_file_merger_helpers.sort_log_entries(
             UNSORTED_LOG_ENTRIES, LOG_DATETIME_FORMAT
         )
 
         # Assertions
         assert result
-        assert sorted_log_entries is not None
-        assert sorted_log_entries == SORTED_LOG_ENTRIES
+        assert actual is not None
+        assert actual == SORTED_LOG_ENTRIES
 
     def test_sort_log_entries_empty_input(self) -> None:
         """
         Test sort_log_entries with empty input list.
         """
+        empty_logs = []
+
         # Call the function with an empty list as an argument
-        result, sorted_log_entries = log_file_merger_helpers.sort_log_entries(
-            [], LOG_DATETIME_FORMAT
-        )
+        result, actual = log_file_merger_helpers.sort_log_entries(empty_logs, LOG_DATETIME_FORMAT)
 
         # Assertions
         assert not result
-        assert sorted_log_entries is None
+        assert actual is None
+
+
+class TestWriteMergedLogs:
+    """
+    Test suite for write_merged_logs.
+    """
 
     def test_write_merged_logs(self, tmp_path: pathlib.Path) -> None:
         """
         Test writing the sorted log entries into the merged log file.
         """
         # Expected output
-        actual_merged_log_file_contents = "".join(SORTED_LOG_ENTRIES)
+        expected_contents = "".join(SORTED_LOG_ENTRIES)
 
         # Write the sorted log entries to the output file
-        result, merged_log_file = log_file_merger_helpers.write_merged_logs(
+        result, actual_file = log_file_merger_helpers.write_merged_logs(
             SORTED_LOG_ENTRIES, tmp_path
         )
-        merged_log_file_contents = merged_log_file.read_text(encoding="utf-8")
 
         # Assertions
         assert result
-        assert merged_log_file is not None
-        assert merged_log_file.exists()
-        assert merged_log_file_contents == actual_merged_log_file_contents
+        assert actual_file is not None
+        assert actual_file.exists()
+
+        # Compare contents of file to expected
+        actual_contents = actual_file.read_text(encoding="utf-8")
+        assert actual_contents == expected_contents
