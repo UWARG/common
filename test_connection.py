@@ -9,11 +9,16 @@ from pymavlink import mavutil
 
 
 DELAY_TIME = 1.0  # seconds
-CONNECTION_ADDRESS = "tcp:127.0.0.1:14550"  # /dev/ttyAMA0 for drone, tcp:127.0.0.1:14550 for mission planner simulator
+# /dev/ttyAMA0 for drone, tcp:127.0.0.1:14550 for mission planner simulator
+CONNECTION_ADDRESS = "tcp:127.0.0.1:14550"
 TIMEOUT = 1.0  # seconds
 
 
-def req_msg(connection) -> bool:
+def req_msg(connection) -> bool:  # noqa: ANN001
+    """
+    Request the flight controller to send a non-existant message to the Rpi
+    """
+
     message = connection.mav.command_long_encode(
         connection.target_system,
         connection.target_component,
@@ -25,7 +30,7 @@ def req_msg(connection) -> bool:
         0,
         0,
         0,
-        0
+        0,
     )
 
     connection.mav.send(message)
@@ -35,13 +40,14 @@ def req_msg(connection) -> bool:
         # print(response)
         # print(response.command)  # Seems to return 512 when the command doesn't exist
         return True
-    
+
     return False
 
+
 if __name__ == "__main__":
-    connection = mavutil.mavlink_connection(CONNECTION_ADDRESS, baud=57600)
+    vehicle = mavutil.mavlink_connection(CONNECTION_ADDRESS, baud=57600)
     while True:
-        if req_msg(connection):
+        if req_msg(vehicle):
             print("CONNECTED, MESSAGE SENT TO PIXHAWK - Pixhawk recieved invalid command request")
         else:
             print("DISCONNECTED, MESSAGE NOT RECIEVED - Pixhawk did not recieve any commands")
