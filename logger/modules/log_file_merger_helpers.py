@@ -8,7 +8,7 @@ from datetime import datetime
 from ..read_yaml.modules import read_yaml
 
 
-MERGED_LOGS_FILENAME = "merged_logs"
+MERGED_LOGS_FILENAME = "merged_logs.log"
 LOG_FILE_SUFFIX = ".log"
 
 
@@ -25,13 +25,14 @@ def read_configuration(
     # Open configuration settings
     result, config = read_yaml.open_config(config_file_path)
     if not result:
-        print("ERROR: Failed to load configuration file")
+        print(f"ERROR: Failed to load configuration file: {config_file_path}")
         return False, None, None, None
 
     # Extract log directory path and file datetime format from configuration dictionary
     try:
+        log_directory_path_config = config["logger"]["directory_path"]
         # Convert the directory_path string to a Path object
-        log_directory_path = pathlib.Path(config["logger"]["directory_path"])
+        log_directory_path = pathlib.Path(log_directory_path_config)
         file_datetime_format = config["logger"]["file_datetime_format"]
         log_datetime_format = config["logger"]["log_datetime_format"]
     except KeyError as exception:
@@ -46,6 +47,35 @@ def read_configuration(
     return True, log_directory_path, file_datetime_format, log_datetime_format
 
 
+def get_directory_of_specified_run(
+    log_directory_path: pathlib.Path, specified_directory_name: str
+) -> "tuple[bool, pathlib.Path | None]":
+    """
+    Retrieves the directory for a specified run.
+
+    log_directory_path: Path to the log directory.
+    specified_directory_name: Name of directory for a specified run.
+
+    Returns: Success, path of the log directory of the specified run.
+    """
+    # Check if log directory exists
+    if not log_directory_path.exists():
+        return False, None
+
+    # Construct the full path to the specified directory
+    specified_directory_path = pathlib.Path(log_directory_path, specified_directory_name)
+
+    # Check if the path exists
+    if not specified_directory_path.exists():
+        return False, None
+
+    # Check if the path is a directory
+    if not specified_directory_path.is_dir():
+        return False, None
+
+    return True, specified_directory_path
+
+
 def get_directory_of_latest_run(
     log_directory_path: pathlib.Path, file_datetime_format: str
 ) -> "tuple[bool, pathlib.Path | None]":
@@ -57,6 +87,10 @@ def get_directory_of_latest_run(
 
     Returns: Success, path of the log directory of the latest run.
     """
+    # Check if log directory exists
+    if not log_directory_path.exists():
+        return False, None
+
     # Creates a list of timestamped log directories in the root log directory
     log_directories = []
     for entry in log_directory_path.iterdir():
@@ -68,6 +102,7 @@ def get_directory_of_latest_run(
             except ValueError:
                 # Skip directories with invalid datetime format
                 print(f"Skipping directory with invalid format: {entry.name}")
+
     if len(log_directories) == 0:
         print(f"ERROR: There are no log directories in: {log_directory_path}")
         return False, None
@@ -93,13 +128,18 @@ def read_log_files(
 
     Returns: Success, list of log entries.
     """
+    # Check if log directory exists
+    if not log_file_directory.exists():
+        return False, None
+
     # Get list of log files excluding merged logs
     # List is sorted to ensure they are always read in the same order
     log_files = sorted(
         file
         for file in log_file_directory.iterdir()
-        if file.suffix == LOG_FILE_SUFFIX and file.stem != MERGED_LOGS_FILENAME
+        if file.suffix == LOG_FILE_SUFFIX and file.name != MERGED_LOGS_FILENAME
     )
+
     if len(log_files) == 0:
         print(f"ERROR: No log files in directory: {log_file_directory}")
         return False, None
@@ -107,15 +147,20 @@ def read_log_files(
     # Read log entries from all log files
     log_entries = []
     for log_file in log_files:
-        with log_file.open("r", encoding="utf-8") as file:
-            for line in file:
-                try:
-                    # Attempt to parse the timestamp to ensure it matches the format
-                    datetime.strptime(line.split(": ")[0], log_datetime_format)
-                    log_entries.append(line)
-                except ValueError:
-                    # Skip lines that do not match the format
-                    print(f"WARNING: Skipping invalid log entry: {line.strip()}")
+        try:
+            with log_file.open("r", encoding="utf-8") as file:
+                for line in file:
+                    try:
+                        # Attempt to parse the timestamp to ensure it matches the format
+                        datetime.strptime(line.split(": ")[0], log_datetime_format)
+                        log_entries.append(line)
+                    except ValueError:
+                        # Skip lines that do not match the format
+                        print(f"WARNING: Skipping invalid log entry: {line.strip()}")
+        except OSError:
+            # Skip files that cannot be opened
+            print(f"ERROR: Failed to read log file: {log_file}")
+
     if len(log_entries) == 0:
         print(f"ERROR: No log entries found in any log files in directory: {log_file_directory}")
         return False, None
@@ -134,11 +179,17 @@ def sort_log_entries(
 
     Returns: Success, sorted list of log entries.
     """
+    # Check that log entries is not empty
+    if len(log_entries) == 0:
+        print("ERROR: No log entries passed to sort function")
+        return False, None
+
     # Sort the log entries based on the timestamp at the beginning of each entry
     # The lambda function extracts the timestamp from each entry and converts it to a datetime object for comparison
     sorted_log_entries = sorted(
         log_entries, key=lambda entry: datetime.strptime(entry.split(": ")[0], log_datetime_format)
     )
+
     if len(sorted_log_entries) == 0:
         print("ERROR: Failed to sort log entries")
         return False, None
@@ -157,12 +208,18 @@ def write_merged_logs(
 
     Returns: Success, path to merged log file.
     """
+    # Check that sorted log entries is not empty
+    if len(sorted_log_entries) == 0:
+        print("ERROR: No log entries passed to write function")
+        return False, None
+
     # Create the merged log file path
-    merged_log_file = pathlib.Path(log_file_directory, f"{MERGED_LOGS_FILENAME}.log")
+    merged_log_file = pathlib.Path(log_file_directory, MERGED_LOGS_FILENAME)
 
     # Write the log entries to the merged file
     with merged_log_file.open("w", encoding="utf-8") as file:
         file.writelines(sorted_log_entries)
+
     if not merged_log_file.exists():
         print(f"ERROR: Failed to create the merged log file: {merged_log_file}")
         return False, None
