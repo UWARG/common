@@ -11,17 +11,22 @@ TIMEOUT = 3.0  # seconds
 
 
 def get_voltage_status() -> None:
-    # Should be in the format "throttled=0x1"
-    # https://forums.raspberrypi.com/viewtopic.php?p=1570562&sid=e34c4c7122b8e7d232fb0673415135a3
+    """
+    Get voltage status of the Rpi
+
+    `vcgencmd get_throttled` should be in the format `throttled=0x1`
+    https://forums.raspberrypi.com/viewtopic.php?p=1570562&sid=e34c4c7122b8e7d232fb0673415135a3
+    """
     try:
         result = subprocess.run(
-            ['vcgencmd', 'get_throttled'],
+            ["vcgencmd", "get_throttled"],
             capture_output=True,
-            encoding='utf-8',
-            timeout=TIMEOUT
+            check=True,
+            encoding="utf-8",
+            timeout=TIMEOUT,
         )
         if result.stdout:
-            bitmap = int(result.stdout.split('=')[1], base=0)
+            bitmap = int(result.stdout.split("=")[1], base=0)
             if bitmap & (1 << 0) != 0:
                 print("currently undervolted")
             if bitmap & (1 << 1) != 0:
@@ -43,8 +48,6 @@ def get_voltage_status() -> None:
             print("Error:", result.stderr)
     except subprocess.TimeoutExpired:
         print("Timeout")
-    except Exception as e:
-        print("Unexpected error:", e)
 
 
 if __name__ == "__main__":
