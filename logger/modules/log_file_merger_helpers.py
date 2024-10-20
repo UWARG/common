@@ -22,7 +22,6 @@ def read_configuration(
 
     Returns: Success, log directory path, file datetime format, log datetime format.
     """
-    # Open configuration settings
     result, config = read_yaml.open_config(config_file_path)
     if not result:
         print(f"ERROR: Failed to load configuration file: {config_file_path}")
@@ -39,7 +38,6 @@ def read_configuration(
         print(f"Config key(s) not found: {exception}")
         return False, None, None, None
 
-    # Check if the log directory exists
     if not log_directory_path.exists():
         print(f"No log directory exists at: {log_directory_path}")
         return False, None, None, None
@@ -47,74 +45,45 @@ def read_configuration(
     return True, log_directory_path, file_datetime_format, log_datetime_format
 
 
-def get_directory_of_specified_run(
-    log_directory_path: pathlib.Path, specified_directory_name: str
-) -> "tuple[bool, pathlib.Path | None]":
+def get_log_run_directories(
+    log_directory_path: pathlib.Path, file_datetime_format: str, override: bool
+) -> "tuple[bool, list[pathlib.Path] | None]":
     """
-    Retrieves the directory for a specified run.
-
-    log_directory_path: Path to the log directory.
-    specified_directory_name: Name of directory for a specified run.
-
-    Returns: Success, path of the log directory of the specified run.
-    """
-    # Check if log directory exists
-    if not log_directory_path.exists():
-        return False, None
-
-    # Construct the full path to the specified directory
-    specified_directory_path = pathlib.Path(log_directory_path, specified_directory_name)
-
-    # Check if the path exists
-    if not specified_directory_path.exists():
-        return False, None
-
-    # Check if the path is a directory
-    if not specified_directory_path.is_dir():
-        return False, None
-
-    return True, specified_directory_path
-
-
-def get_directory_of_latest_run(
-    log_directory_path: pathlib.Path, file_datetime_format: str
-) -> "tuple[bool, pathlib.Path | None]":
-    """
-    Retrieves the directory for the latest log run, based on the most recent timestamped folder.
+    Retrieves the paths of log run directories.
 
     log_directory_path: Path to the log directory.
     file_datetime_format: Datetime format in the filename.
+    override: Overwrite merged_logs files.
 
-    Returns: Success, path of the log directory of the latest run.
+    Returns: Success, list of paths of log run directories.
     """
-    # Check if log directory exists
     if not log_directory_path.exists():
         return False, None
 
-    # Creates a list of timestamped log directories in the root log directory
-    log_directories = []
+    log_run_directories = []
     for entry in log_directory_path.iterdir():
         if entry.is_dir():
             try:
                 # Try to parse the directory name as a date using the given format
                 datetime.strptime(entry.name, file_datetime_format)
-                log_directories.append(entry)
+
+                # Check for the presence of merged logs
+                merged_log_file = pathlib.Path(entry, MERGED_LOGS_FILENAME)
+                if override or not merged_log_file.exists():
+                    log_run_directories.append(entry)
+                else:
+                    print(f"Excluding directory with existing merged logs file: {entry.name}")
             except ValueError:
                 # Skip directories with invalid datetime format
                 print(f"Skipping directory with invalid format: {entry.name}")
 
-    if len(log_directories) == 0:
+    if len(log_run_directories) == 0:
         print(f"ERROR: There are no log directories in: {log_directory_path}")
         return False, None
 
-    # Find the most recent log directory based on the timestamp in the directory name
-    # The lambda function extracts the timestamp from the name of each directory and converts it to a datetime object
-    # The max function returns the directory with the latest timestamp (latest timestamp > earlier timestamp)
-    latest_run_directory = max(
-        log_directories, key=lambda entry: datetime.strptime(entry.name, file_datetime_format)
-    )
+    log_run_directories.sort()
 
-    return True, latest_run_directory
+    return True, log_run_directories
 
 
 def read_log_files(
@@ -128,7 +97,6 @@ def read_log_files(
 
     Returns: Success, list of log entries.
     """
-    # Check if log directory exists
     if not log_file_directory.exists():
         return False, None
 
@@ -179,7 +147,6 @@ def sort_log_entries(
 
     Returns: Success, sorted list of log entries.
     """
-    # Check that log entries is not empty
     if len(log_entries) == 0:
         print("ERROR: No log entries passed to sort function")
         return False, None
@@ -208,15 +175,12 @@ def write_merged_logs(
 
     Returns: Success, path to merged log file.
     """
-    # Check that sorted log entries is not empty
     if len(sorted_log_entries) == 0:
         print("ERROR: No log entries passed to write function")
         return False, None
 
-    # Create the merged log file path
     merged_log_file = pathlib.Path(log_file_directory, MERGED_LOGS_FILENAME)
 
-    # Write the log entries to the merged file
     with merged_log_file.open("w", encoding="utf-8") as file:
         file.writelines(sorted_log_entries)
 
@@ -224,5 +188,4 @@ def write_merged_logs(
         print(f"ERROR: Failed to create the merged log file: {merged_log_file}")
         return False, None
 
-    # Return the path of the created merged log file
     return True, merged_log_file

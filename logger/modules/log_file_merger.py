@@ -18,7 +18,7 @@ def main() -> int:
     # Set up argument parser for the optional folder_name argument
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--folder-name", type=str, help="option to specifiy folder to merge log files in"
+        "--override", action="store_true", help="option to overwrite existing merged log files"
     )
     args = parser.parse_args()
 
@@ -30,50 +30,42 @@ def main() -> int:
         print(f"ERROR: Failed to read config file: {CONFIG_FILE_PATH}")
         return -1
 
-    # Get log run directory
-    log_run_directory = None
-    if args.folder_name:
-        # Get log directory for specified folder
-        result, log_run_directory = log_file_merger_helpers.get_directory_of_specified_run(
-            log_directory_path, args.folder_name
+    # Get log run directories
+    result, log_run_directories = log_file_merger_helpers.get_log_run_directories(
+        log_directory_path, file_datetime_format, args.override
+    )
+    if not result:
+        print(f"ERROR: Failed to get log run directories in: {log_directory_path}")
+        return -1
+
+    # Read, sort and write for each log run directory
+    for log_run_directory in log_run_directories:
+        # Read log files in the log run directories
+        result, log_entries = log_file_merger_helpers.read_log_files(
+            log_run_directory, log_datetime_format
         )
         if not result:
-            print(f"ERROR: Failed to get log run directory at: {args.folder_name}")
+            print(f"ERROR: Failed to read log files in: {log_run_directory}")
             return -1
-    else:
-        # Get log directory for the latest run
-        result, log_run_directory = log_file_merger_helpers.get_directory_of_latest_run(
-            log_directory_path, file_datetime_format
+
+        # Sort log entries
+        result, sorted_log_entries = log_file_merger_helpers.sort_log_entries(
+            log_entries, log_datetime_format
         )
         if not result:
-            print(f"ERROR: Failed to get latest run directory in: {log_directory_path}")
+            print("ERROR: Failed to sort log files")
             return -1
 
-    # Read log files in the directory
-    result, log_entries = log_file_merger_helpers.read_log_files(
-        log_run_directory, log_datetime_format
-    )
-    if not result:
-        print(f"ERROR: Failed to read log files in: {log_run_directory}")
-        return -1
+        # Write merged log file
+        result, merged_file_path = log_file_merger_helpers.write_merged_logs(
+            sorted_log_entries, log_run_directory
+        )
+        if not result:
+            print("ERROR: Failed to write merged log file")
+            return -1
 
-    # Sort log entries
-    result, sorted_log_entries = log_file_merger_helpers.sort_log_entries(
-        log_entries, log_datetime_format
-    )
-    if not result:
-        print("ERROR: Failed to sort log files")
-        return -1
+        print(f"Wrote merged logs to: {merged_file_path}")
 
-    # Write merged log file
-    result, merged_file_path = log_file_merger_helpers.write_merged_logs(
-        sorted_log_entries, log_run_directory
-    )
-    if not result:
-        print("ERROR: Failed to write merged log file")
-        return -1
-
-    print(f"Wrote merged logs to: {merged_file_path}")
     return 0
 
 
