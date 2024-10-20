@@ -9,11 +9,6 @@ import pytest
 from .modules import log_file_merger_helpers
 
 
-# Test functions use test fixture signature names and access class privates
-# No enable
-# pylint: disable=protected-access, redefined-outer-name
-
-
 FILE_DATETIME_FORMAT = "%Y-%m-%d_%H-%M-%S"
 LOG_DATETIME_FORMAT = "%H:%M:%S"
 MERGED_LOGS_FILENAME = "merged_logs.log"
@@ -43,17 +38,31 @@ UNSORTED_LOG_ENTRIES = LOG_ENRIES_1 + LOG_ENRIES_2 + LOG_ENRIES_3
 SORTED_LOG_ENTRIES = sorted(UNSORTED_LOG_ENTRIES)
 
 
+# Test functions use test fixture signature names and access class privates
+# No enable
+# pylint: disable=protected-access, redefined-outer-name
+
+
 @pytest.fixture
 def temp_log_directory(tmp_path: pathlib.Path) -> pathlib.Path:  # type: ignore
     """
-    Returns the path to a temporary log directory with dummy log subdirectories.
+    Returns the path to a temporary log directory with dummy log subdirectories with some containing dummy merged log files.
     """
     # Create sample directories with timestamped names
-    pathlib.Path(tmp_path, "2024-10-10_10-00-00").mkdir(parents=True, exist_ok=True)
-    pathlib.Path(tmp_path, "2024-10-09_10-00-00").mkdir(parents=True, exist_ok=True)
-    pathlib.Path(tmp_path, "2024-10-08_10-00-00").mkdir(parents=True, exist_ok=True)
-    # Invalid directory that does not follow timestamp name convention
-    pathlib.Path(tmp_path, "invalid-directory").mkdir(parents=True, exist_ok=True)
+    directory_1 = pathlib.Path(tmp_path, "2024-10-08_10-00-00")
+    directory_2 = pathlib.Path(tmp_path, "2024-10-09_10-00-00")
+    directory_3 = pathlib.Path(tmp_path, "2024-10-10_10-00-00")
+    # Directory that does not follow timestamp name convention
+    directory_4 = pathlib.Path(tmp_path, "invalid-directory")
+
+    directory_1.mkdir(parents=True, exist_ok=True)
+    directory_2.mkdir(parents=True, exist_ok=True)
+    directory_3.mkdir(parents=True, exist_ok=True)
+    directory_4.mkdir(parents=True, exist_ok=True)
+
+    # Create dummy merged_logs.log files in some directories
+    pathlib.Path(directory_2, MERGED_LOGS_FILENAME).touch()
+    pathlib.Path(directory_3, MERGED_LOGS_FILENAME).touch()
 
     yield tmp_path
 
@@ -63,13 +72,11 @@ def dummy_logs(tmp_path: pathlib.Path) -> pathlib.Path:  # type: ignore
     """
     Returns the path to a temporary log directory with dummy log files.
     """
-    # Create dummy log files
     log_file_1 = pathlib.Path(tmp_path, f"log1{LOG_FILE_SUFFIX}")
     log_file_2 = pathlib.Path(tmp_path, f"log2{LOG_FILE_SUFFIX}")
     log_file_3 = pathlib.Path(tmp_path, f"log3{LOG_FILE_SUFFIX}")
     log_file_4 = pathlib.Path(tmp_path, f"log4{LOG_FILE_SUFFIX}")
 
-    # Write to dummy log files
     log_file_1.write_text(
         "".join(LOG_ENRIES_1),
         encoding="utf-8",
@@ -96,22 +103,25 @@ def dummy_logs(tmp_path: pathlib.Path) -> pathlib.Path:  # type: ignore
     yield tmp_path
 
 
-class TestGetDirectoryOfSpecifiedRun:
+class TestGetLogRunDirectories:
     """
-    Test suite for get_directory_of_specified_run.
+    Test suite for get_log_run_directories.
     """
 
-    def test_get_specified_log_directory(self, temp_log_directory: pathlib.Path) -> None:
+    def test_get_log_run_directories(self, temp_log_directory: pathlib.Path) -> None:
         """
-        Test successful retrieval of a specified run directory.
+        Test successful retrieval of log directories.
         """
         # Expected output
-        specified_name = "2024-10-09_10-00-00"
-        expected = pathlib.Path(temp_log_directory, specified_name)
+        expected = [
+            pathlib.Path(temp_log_directory, "2024-10-08_10-00-00"),
+        ]
+
+        override = False
 
         # Call the function and get the result
-        result, actual = log_file_merger_helpers.get_directory_of_specified_run(
-            temp_log_directory, specified_name
+        result, actual = log_file_merger_helpers.get_log_run_directories(
+            temp_log_directory, FILE_DATETIME_FORMAT, override
         )
 
         # Assertions
@@ -119,74 +129,22 @@ class TestGetDirectoryOfSpecifiedRun:
         assert actual is not None
         assert actual == expected
 
-    def test_get_specified_log_directory_empty_directory(self, tmp_path: pathlib.Path) -> None:
+    def test_get_log_run_directories_override(self, temp_log_directory: pathlib.Path) -> None:
         """
-        Test get_directory_of_specific_run in an empty directory.
-        """
-        specified_name = "2024-10-09_10-00-00"
-
-        # Call the function and get the result
-        result, actual = log_file_merger_helpers.get_directory_of_specified_run(
-            tmp_path, specified_name
-        )
-
-        # Assertions
-        assert not result
-        assert actual is None
-
-    def test_get_directory_of_specified_run_non_existent_directory(
-        self, tmp_path: pathlib.Path
-    ) -> None:
-        """
-        Test get_directory_of_specified_run in a non-existent log directory.
-        """
-        specified_name = "2024-10-09_10-00-00"
-
-        # Create a path to a non-existent directory.
-        non_existent_directory = pathlib.Path(tmp_path, "non_existent_directory")
-
-        # Call the function with an empty temporary directory as an argument
-        result, actual = log_file_merger_helpers.get_directory_of_specified_run(
-            non_existent_directory, specified_name
-        )
-
-        # Assertions
-        assert not result
-        assert actual is None
-
-    def test_get_directory_of_specified_run_non_existent_run_directory(
-        self, temp_log_directory: pathlib.Path
-    ) -> None:
-        """
-        Test get_directory_of_specified_run with the name of a non-existent run directory.
-        """
-        specified_name = "2024-10-07_10-00-00"
-
-        # Call the function with an empty temporary directory as an argument
-        result, actual = log_file_merger_helpers.get_directory_of_specified_run(
-            temp_log_directory, specified_name
-        )
-
-        # Assertions
-        assert not result
-        assert actual is None
-
-
-class TestGetDirectoryOfLatestRun:
-    """
-    Test suite for get_directory_of_latest_run.
-    """
-
-    def test_get_latest_log_directory(self, temp_log_directory: pathlib.Path) -> None:
-        """
-        Test successful retrieval of the most recent run directory.
+        Test successful override of get_log_run_directories.
         """
         # Expected output
-        expected = pathlib.Path(temp_log_directory, "2024-10-10_10-00-00")
+        expected = [
+            pathlib.Path(temp_log_directory, "2024-10-08_10-00-00"),
+            pathlib.Path(temp_log_directory, "2024-10-09_10-00-00"),
+            pathlib.Path(temp_log_directory, "2024-10-10_10-00-00"),
+        ]
+
+        override = True
 
         # Call the function and get the result
-        result, actual = log_file_merger_helpers.get_directory_of_latest_run(
-            temp_log_directory, FILE_DATETIME_FORMAT
+        result, actual = log_file_merger_helpers.get_log_run_directories(
+            temp_log_directory, FILE_DATETIME_FORMAT, override
         )
 
         # Assertions
@@ -194,31 +152,32 @@ class TestGetDirectoryOfLatestRun:
         assert actual is not None
         assert actual == expected
 
-    def test_get_directory_of_latest_run_empty_directory(self, tmp_path: pathlib.Path) -> None:
+    def test_get_log_run_directories_empty_directory(self, tmp_path: pathlib.Path) -> None:
         """
-        Test get_directory_of_latest_run in an empty directory.
+        Test get_log_run_directories in an empty directory.
         """
+        override = False
+
         # Call the function with an empty temporary directory as an argument
-        result, actual = log_file_merger_helpers.get_directory_of_latest_run(
-            tmp_path, FILE_DATETIME_FORMAT
+        result, actual = log_file_merger_helpers.get_log_run_directories(
+            tmp_path, FILE_DATETIME_FORMAT, override
         )
 
         # Assertions
         assert not result
         assert actual is None
 
-    def test_get_directory_of_latest_run_non_existent_directory(
-        self, tmp_path: pathlib.Path
-    ) -> None:
+    def test_get_log_run_directories_non_existent_directory(self, tmp_path: pathlib.Path) -> None:
         """
-        Test get_directory_of_latest_run in a non-existent directory.
+        Test get_log_run_directories in a non-existent directory.
         """
-        # Create a path to a non-existent directory.
+        override = False
+
         non_existent_directory = pathlib.Path(tmp_path, "non_existent_directory")
 
-        # Call the function with an empty temporary directory as an argument
-        result, actual = log_file_merger_helpers.get_directory_of_latest_run(
-            non_existent_directory, FILE_DATETIME_FORMAT
+        # Call the function with a non-existent directory as an argument
+        result, actual = log_file_merger_helpers.get_log_run_directories(
+            non_existent_directory, FILE_DATETIME_FORMAT, override
         )
 
         # Assertions
@@ -258,7 +217,6 @@ class TestReadLogFiles:
         """
         Test read_log_files in an non-existent directory.
         """
-        # Create a path to a non-existent directory.
         non_existent_directory = pathlib.Path(tmp_path, "non_existent_directory")
 
         # Call the function and get the result
@@ -373,6 +331,6 @@ class TestWriteMergedLogs:
         assert actual_file is not None
         assert actual_file.exists()
 
-        # Compare contents of file to expected
+        # Compare contents of file
         actual_contents = actual_file.read_text(encoding="utf-8")
         assert actual_contents == expected_contents
