@@ -14,6 +14,9 @@ LOG_FILE_PATH = pathlib.Path("logs", f"undervoltage_{time.time_ns()}.log")
 DATETIME_FMT = "%Y-%m-%d_%H-%M-%S"
 
 
+LOG_FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+
 def get_voltage_status() -> None:
     """
     Get voltage status of the Rpi
@@ -33,27 +36,27 @@ def get_voltage_status() -> None:
             bitmap = int(result.stdout.split("=")[1], base=0)
             if bitmap & (1 << 0) != 0:
                 print("currently undervolted")
-                with open(LOG_FILE_PATH, "w", encoding="utf-8") as log_file:
+                with open(LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
                     log_file.write(
-                        f"{datetime.now().strftime(DATETIME_FMT)}  -  currently undervolted"
+                        f"{datetime.now().strftime(DATETIME_FMT)}  -  currently undervolted\n"
                     )
             if bitmap & (1 << 1) != 0:
                 print("ARM frequency currently capped")
-                with open(LOG_FILE_PATH, "w", encoding="utf-8") as log_file:
+                with open(LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
                     log_file.write(
-                        f"{datetime.now().strftime(DATETIME_FMT)}  -  ARM frequency currently capped"
+                        f"{datetime.now().strftime(DATETIME_FMT)}  -  ARM frequency currently capped\n"
                     )
             if bitmap & (1 << 2) != 0:
                 print("currently throttled")
-                with open(LOG_FILE_PATH, "w", encoding="utf-8") as log_file:
+                with open(LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
                     log_file.write(
-                        f"{datetime.now().strftime(DATETIME_FMT)}  -  currently throttled"
+                        f"{datetime.now().strftime(DATETIME_FMT)}  -  currently throttled\n"
                     )
             if bitmap & (1 << 3) != 0:
                 print("soft temperature limit reached")
-                with open(LOG_FILE_PATH, "w", encoding="utf-8") as log_file:
+                with open(LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
                     log_file.write(
-                        f"{datetime.now().strftime(DATETIME_FMT)}  -  soft temperature limit reached"
+                        f"{datetime.now().strftime(DATETIME_FMT)}  -  soft temperature limit reached\n"
                     )
             if bitmap & (1 << 16) != 0:
                 print("under-voltage has occurred since last reboot")

@@ -18,6 +18,9 @@ LOG_FILE_PATH = pathlib.Path("logs", f"mavlink_connection_{time.time_ns()}.log")
 DATETIME_FMT = "%Y-%m-%d_%H-%M-%S"
 
 
+LOG_FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+
 def req_msg(connection) -> bool:  # noqa: ANN001
     """
     Request the flight controller to send a non-existant message to the Rpi
@@ -53,10 +56,10 @@ if __name__ == "__main__":
     while True:
         if req_msg(vehicle):
             print("CONNECTED, MESSAGE SENT TO PIXHAWK - Pixhawk recieved invalid command request")
-            with open(LOG_FILE_PATH, "w", encoding="utf-8") as log_file:
-                log_file.write(f"{datetime.now().strftime(DATETIME_FMT)}  -  CONNECTED")
+            with open(LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
+                log_file.write(f"{datetime.now().strftime(DATETIME_FMT)}  -  CONNECTED\n")
         else:
             print("DISCONNECTED, MESSAGE NOT RECIEVED - Pixhawk did not recieve any commands")
-            with open(LOG_FILE_PATH, "w", encoding="utf-8") as log_file:
-                log_file.write(f"{datetime.now().strftime(DATETIME_FMT)}  -  DISCONNECTED")
+            with open(LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
+                log_file.write(f"{datetime.now().strftime(DATETIME_FMT)}  -  DISCONNECTED\n")
         time.sleep(DELAY_TIME)
