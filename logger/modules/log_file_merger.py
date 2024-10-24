@@ -18,7 +18,7 @@ def main() -> int:
     # Set up argument parser for the optional folder_name argument
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--override", action="store_true", help="option to overwrite existing merged log files"
+        "--overwrite", action="store_true", help="option to overwrite existing merged log files"
     )
     args = parser.parse_args()
 
@@ -32,14 +32,21 @@ def main() -> int:
 
     # Get log run directories
     result, log_run_directories = log_file_merger_helpers.get_log_run_directories(
-        log_directory_path, file_datetime_format, args.override
+        log_directory_path, file_datetime_format, args.overwrite
     )
     if not result:
         print(f"ERROR: Failed to get log run directories in: {log_directory_path}")
         return -1
 
+    log_run_directories_count = len(log_run_directories)
+    print(f"Writing merged logs in {log_run_directories_count} directories")
+
     # Read, sort and write for each log run directory
-    for log_run_directory in log_run_directories:
+    for index, log_run_directory in enumerate(log_run_directories):
+        print(
+            f"Writing merged logs for {log_run_directory} ({index + 1}/{log_run_directories_count})"
+        )
+
         # Read log files in the log run directories
         result, log_entries = log_file_merger_helpers.read_log_files(
             log_run_directory, log_datetime_format

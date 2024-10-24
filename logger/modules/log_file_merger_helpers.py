@@ -46,18 +46,21 @@ def read_configuration(
 
 
 def get_log_run_directories(
-    log_directory_path: pathlib.Path, file_datetime_format: str, override: bool
+    log_directory_path: pathlib.Path,
+    file_datetime_format: str,
+    include_directories_with_merged_logs: bool,
 ) -> "tuple[bool, list[pathlib.Path] | None]":
     """
     Retrieves the paths of log run directories.
 
     log_directory_path: Path to the log directory.
     file_datetime_format: Datetime format in the filename.
-    override: Overwrite merged_logs files.
+    include_directories_with_merged_logs: Includes directories that have merged log files.
 
     Returns: Success, list of paths of log run directories.
     """
     if not log_directory_path.exists():
+        print(f"ERROR: Log directory does not exist: {log_directory_path}")
         return False, None
 
     log_run_directories = []
@@ -66,19 +69,20 @@ def get_log_run_directories(
             try:
                 # Try to parse the directory name as a date using the given format
                 datetime.strptime(entry.name, file_datetime_format)
-
-                # Check for the presence of merged logs
-                merged_log_file = pathlib.Path(entry, MERGED_LOGS_FILENAME)
-                if override or not merged_log_file.exists():
-                    log_run_directories.append(entry)
-                else:
-                    print(f"Excluding directory with existing merged logs file: {entry.name}")
             except ValueError:
                 # Skip directories with invalid datetime format
                 print(f"Skipping directory with invalid format: {entry.name}")
+                continue
+
+            # Check for the presence of merged logs
+            merged_log_file_path = pathlib.Path(entry, MERGED_LOGS_FILENAME)
+            if include_directories_with_merged_logs or not merged_log_file_path.exists():
+                log_run_directories.append(entry)
+            else:
+                print(f"Excluding directory with existing merged logs file: {entry.name}")
 
     if len(log_run_directories) == 0:
-        print(f"ERROR: There are no log directories in: {log_directory_path}")
+        print(f"ERROR: There are no eligible log directories in: {log_directory_path}")
         return False, None
 
     log_run_directories.sort()
@@ -98,6 +102,7 @@ def read_log_files(
     Returns: Success, list of log entries.
     """
     if not log_file_directory.exists():
+        print(f"ERROR: Log file directory does not exist: {log_file_directory}")
         return False, None
 
     # Get list of log files excluding merged logs
@@ -105,7 +110,7 @@ def read_log_files(
     log_files = sorted(
         file
         for file in log_file_directory.iterdir()
-        if file.suffix == LOG_FILE_SUFFIX and file.name != MERGED_LOGS_FILENAME
+        if file.is_file() and file.suffix == LOG_FILE_SUFFIX and file.name != MERGED_LOGS_FILENAME
     )
 
     if len(log_files) == 0:
@@ -125,9 +130,9 @@ def read_log_files(
                     except ValueError:
                         # Skip lines that do not match the format
                         print(f"WARNING: Skipping invalid log entry: {line.strip()}")
-        except OSError:
+        except (IOError, OSError, FileNotFoundError, PermissionError) as e:
             # Skip files that cannot be opened
-            print(f"ERROR: Failed to read log file: {log_file}")
+            print(f"ERROR: Failed to read log file: {log_file}, error: {e}")
 
     if len(log_entries) == 0:
         print(f"ERROR: No log entries found in any log files in directory: {log_file_directory}")
@@ -179,10 +184,18 @@ def write_merged_logs(
         print("ERROR: No log entries passed to write function")
         return False, None
 
+    if not log_file_directory.exists():
+        print(f"ERROR: Log file directory does not exist: {log_file_directory}")
+        return False, None
+
     merged_log_file = pathlib.Path(log_file_directory, MERGED_LOGS_FILENAME)
 
-    with merged_log_file.open("w", encoding="utf-8") as file:
-        file.writelines(sorted_log_entries)
+    try:
+        with merged_log_file.open("w", encoding="utf-8") as file:
+            file.writelines(sorted_log_entries)
+    except (IOError, OSError, FileNotFoundError, PermissionError) as e:
+        print(f"ERROR: Failed to create the merged log file: {merged_log_file}, error: {e}")
+        return False, None
 
     if not merged_log_file.exists():
         print(f"ERROR: Failed to create the merged log file: {merged_log_file}")
