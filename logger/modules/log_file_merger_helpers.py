@@ -130,7 +130,6 @@ def read_log_files(
                     except ValueError:
                         # Skip lines that do not match the format
                         print(f"WARNING: Skipping invalid log entry: {line.strip()}")
-
         # Catching all exceptions for library call
         # pylint: disable-next=broad-exception-caught
         except Exception as exception:
@@ -196,7 +195,6 @@ def write_merged_logs(
     try:
         with merged_log_file.open("w", encoding="utf-8") as file:
             file.writelines(sorted_log_entries)
-
     # Catching all exceptions for library call
     # pylint: disable-next=broad-exception-caught
     except Exception as exception:
