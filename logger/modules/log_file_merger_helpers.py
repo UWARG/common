@@ -130,9 +130,12 @@ def read_log_files(
                     except ValueError:
                         # Skip lines that do not match the format
                         print(f"WARNING: Skipping invalid log entry: {line.strip()}")
-        except (IOError, OSError, FileNotFoundError, PermissionError) as e:
+
+        # Catching all exceptions for library call
+        # pylint: disable-next=broad-exception-caught
+        except Exception as exception:
             # Skip files that cannot be opened
-            print(f"ERROR: Failed to read log file: {log_file}, error: {e}")
+            print(f"ERROR: Failed to read log file: {log_file}, exception: {exception}")
 
     if len(log_entries) == 0:
         print(f"ERROR: No log entries found in any log files in directory: {log_file_directory}")
@@ -193,8 +196,13 @@ def write_merged_logs(
     try:
         with merged_log_file.open("w", encoding="utf-8") as file:
             file.writelines(sorted_log_entries)
-    except (IOError, OSError, FileNotFoundError, PermissionError) as e:
-        print(f"ERROR: Failed to create the merged log file: {merged_log_file}, error: {e}")
+
+    # Catching all exceptions for library call
+    # pylint: disable-next=broad-exception-caught
+    except Exception as exception:
+        print(
+            f"ERROR: Failed to create the merged log file: {merged_log_file}, exception: {exception}"
+        )
         return False, None
 
     if not merged_log_file.exists():
