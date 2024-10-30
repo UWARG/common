@@ -5,7 +5,7 @@ Conversion between local and global space.
 import pymap3d as pm
 
 from . import drone_odometry_local
-from . import drone_odometry
+from ...mavlink.modules import drone_odometry
 
 
 def drone_position_global_from_local(
