@@ -18,6 +18,9 @@ simplekml
 # Module logger
 pyyaml
 
+# Coordinate conversions
+pymap3d
+
 # Module mavlink
 pymavlink
 # On the Raspberry Pi, pymavlink and dronekit don't have this as a import dependency
