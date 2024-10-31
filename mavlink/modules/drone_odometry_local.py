@@ -2,7 +2,7 @@
 Drone odometry in local space (origin at home location).
 """
 
-from ...mavlink.modules import drone_odometry
+from . import drone_odometry
 
 
 class DronePositionLocal:
