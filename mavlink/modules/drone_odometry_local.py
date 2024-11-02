@@ -39,6 +39,12 @@ class DronePositionLocal:
         """
         return f"DronePositionLocal (NED): {self.north}, {self.east}, {self.down}"
 
+    def __repr__(self) -> str:
+        """
+        For collections (e.g. list).
+        """
+        return str(self)
+
 
 class DroneOrientationLocal:
     """
@@ -89,6 +95,12 @@ class DroneOrientationLocal:
         # TODO: Update common
         return f"DroneOrientationLocal (YPR rad): {self.orientation.yaw}, {self.orientation.pitch}, {self.orientation.roll}"
 
+    def __repr__(self) -> str:
+        """
+        For collections (e.g. list).
+        """
+        return str(self)
+
 
 class DroneOdometryLocal:
     """
@@ -131,3 +143,9 @@ class DroneOdometryLocal:
         To string.
         """
         return f"DroneOdometryLocal: {self.position}, {self.orientation}"
+
+    def __repr__(self) -> str:
+        """
+        For collections (e.g. list).
+        """
+        return str(self)
