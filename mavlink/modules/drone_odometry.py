@@ -53,6 +53,12 @@ class DronePosition:
         """
         return f"{self.__class__}, latitude: {self.latitude}, longitude: {self.longitude}, altitude: {self.altitude}"
 
+    def __repr__(self) -> str:
+        """
+        For collections (e.g. list).
+        """
+        return str(self)
+
 
 class DroneOrientation:
     """
@@ -108,6 +114,12 @@ class DroneOrientation:
         To string.
         """
         return f"{self.__class__}, yaw: {self.yaw}, pitch: {self.pitch}, roll: {self.roll}"
+
+    def __repr__(self) -> str:
+        """
+        For collections (e.g. list).
+        """
+        return str(self)
 
 
 class FlightMode(enum.Enum):
@@ -166,3 +178,9 @@ class DroneOdometry:
         To string.
         """
         return f"{self.__class__}, position: {self.position}, orientation: {self.orientation}, flight mode: {self.flight_mode}"
+
+    def __repr__(self) -> str:
+        """
+        For collections (e.g. list).
+        """
+        return str(self)
