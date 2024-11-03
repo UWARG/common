@@ -37,13 +37,13 @@ def main() -> int:
         else:
             print("Failed to get odometry")
 
-        result, home = controller.get_home_location(TIMEOUT)
+        result, home = controller.get_home_position(TIMEOUT)
         if result:
             print("lat: " + str(home.latitude))
             print("lon: " + str(home.longitude))
             print("alt: " + str(home.altitude))
         else:
-            print("Failed to get home location")
+            print("Failed to get home position")
 
         time.sleep(DELAY_TIME)
 
@@ -64,9 +64,9 @@ def main() -> int:
     else:
         print("Failed to get next waypoint.")
 
-    result, home = controller.get_home_location(TIMEOUT)
+    result, home = controller.get_home_position(TIMEOUT)
     if not result:
-        print("Failed to get home location")
+        print("Failed to get home position")
         return -1
 
     # Create and add land command
@@ -80,7 +80,7 @@ def main() -> int:
 
 if __name__ == "__main__":
     result_main = main()
-    if result_main < 0:
+    if result_main != 0:
         print(f"ERROR: Status code: {result_main}")
 
     print("Done!")
