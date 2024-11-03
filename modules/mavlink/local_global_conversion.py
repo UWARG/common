@@ -4,7 +4,7 @@ Conversion between local and global space.
 
 import pymap3d as pm
 
-from . import drone_odometry
+from . import drone_odometry_global
 from . import drone_odometry_local
 from .. import location_local
 from .. import position_global
@@ -98,7 +98,7 @@ def position_local_from_position_global(
 
 def drone_odometry_local_from_global(
     home_position: position_global.PositionGlobal,
-    odometry_global: drone_odometry.DroneOdometry,
+    odometry_global: drone_odometry_global.DroneOdometryGlobal,
 ) -> tuple[bool, drone_odometry_local.DroneOdometryLocal] | tuple[False, None]:
     """
     Converts global odometry to local.
@@ -115,13 +115,7 @@ def drone_odometry_local_from_global(
     if not result:
         return False, None
 
-    result, drone_orientation_local = drone_odometry_local.DroneOrientationLocal.create_wrap(
-        odometry_global.orientation,
-    )
-    if not result:
-        return False, None
-
     return drone_odometry_local.DroneOdometryLocal.create(
         drone_position_local,
-        drone_orientation_local,
+        odometry_global.orientation,
     )

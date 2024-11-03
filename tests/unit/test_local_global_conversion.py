@@ -4,10 +4,11 @@ Test calls only, not conversion correctness as that is handled by the library.
 
 import pytest
 
+from modules import location_local
+from modules import orientation
 from modules import position_global
 from modules import position_local
-from modules import location_local
-from modules.mavlink import drone_odometry
+from modules.mavlink import drone_odometry_global
 from modules.mavlink import drone_odometry_local
 from modules.mavlink import local_global_conversion
 
@@ -94,16 +95,16 @@ def test_drone_odometry_local_from_global(home_position: position_global.Positio
     Normal.
     """
     # Setup
-    result, position = position_global.PositionGlobal.create(0.0, 0.0, 0.0)
+    result, drone_position = position_global.PositionGlobal.create(0.0, 0.0, 0.0)
     assert result
-    assert position is not None
+    assert drone_position is not None
 
-    result, orientation = drone_odometry.DroneOrientation.create(0.0, 0.0, 0.0)
+    result, drone_orientation = orientation.Orientation.create(0.0, 0.0, 0.0)
     assert result
-    assert orientation is not None
+    assert drone_orientation is not None
 
-    result, odometry = drone_odometry.DroneOdometry.create(
-        position, orientation, drone_odometry.FlightMode.MANUAL
+    result, odometry = drone_odometry_global.DroneOdometryGlobal.create(
+        drone_position, drone_orientation, drone_odometry_global.FlightMode.MANUAL
     )
     assert result
     assert odometry is not None

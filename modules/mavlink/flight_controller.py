@@ -6,8 +6,9 @@ import time
 
 from pymavlink import mavutil
 
-from . import drone_odometry
+from . import drone_odometry_global
 from . import dronekit
+from .. import orientation
 from .. import position_global
 
 
@@ -50,7 +51,7 @@ class FlightController:
 
         self.drone = vehicle
 
-    def get_odometry(self) -> "tuple[bool, drone_odometry.DroneOdometry | None]":
+    def get_odometry(self) -> "tuple[bool, drone_odometry_global.DroneOdometryGlobal | None]":
         """
         Returns odometry data from the drone.
         """
@@ -58,7 +59,10 @@ class FlightController:
         if attitude_info is None:
             return False, None
 
-        result, orientation_data = drone_odometry.DroneOrientation.create(
+        if attitude_info.yaw is None or attitude_info.pitch is None or attitude_info.roll is None:
+            return False, None
+
+        result, orientation_data = orientation.Orientation.create(
             attitude_info.yaw,
             attitude_info.pitch,
             attitude_info.roll,
@@ -68,6 +72,17 @@ class FlightController:
 
         location_info = self.drone.location
         if location_info is None:
+            return False, None
+
+        location_info_global = location_info.global_frame
+        if location_info_global is None:
+            return False, None
+
+        if (
+            location_info_global.lat is None
+            or location_info_global.lon is None
+            or location_info_global.alt is None
+        ):
             return False, None
 
         result, position_data = position_global.PositionGlobal.create(
@@ -87,7 +102,7 @@ class FlightController:
         assert orientation_data is not None
         assert flight_mode is not None
 
-        result, odometry_data = drone_odometry.DroneOdometry.create(
+        result, odometry_data = drone_odometry_global.DroneOdometryGlobal.create(
             position_data, orientation_data, flight_mode
         )
         if not result:
@@ -249,7 +264,7 @@ class FlightController:
             return False
         return True
 
-    def get_flight_mode(self) -> "tuple[bool, drone_odometry.FlightMode | None]":
+    def get_flight_mode(self) -> "tuple[bool, drone_odometry_global.FlightMode | None]":
         """
         Gets the current flight mode of the drone.
         """
@@ -258,10 +273,10 @@ class FlightController:
         if flight_mode is None:
             return False, None
         if flight_mode == "LOITER":
-            return True, drone_odometry.FlightMode.STOPPED
+            return True, drone_odometry_global.FlightMode.STOPPED
         if flight_mode == "AUTO":
-            return True, drone_odometry.FlightMode.MOVING
-        return True, drone_odometry.FlightMode.MANUAL
+            return True, drone_odometry_global.FlightMode.MOVING
+        return True, drone_odometry_global.FlightMode.MANUAL
 
     def download_commands(self) -> "tuple[bool, list[dronekit.Command]]":
         """
