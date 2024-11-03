@@ -5,59 +5,7 @@ Position and orientation of drone.
 import enum
 import math
 
-
-class DronePosition:
-    """
-    WGS 84 following ISO 6709 (latitude before longitude).
-    """
-
-    __create_key = object()
-
-    @classmethod
-    def create(
-        cls, latitude: "float | None", longitude: "float | None", altitude: "float | None"
-    ) -> "tuple[bool, DronePosition | None]":
-        """
-        latitude, longitude in decimal degrees.
-        altitude in metres.
-        """
-        if latitude is None:
-            return False, None
-
-        if longitude is None:
-            return False, None
-
-        if altitude is None:
-            return False, None
-
-        if altitude <= 0.0:
-            return False, None
-
-        return True, DronePosition(cls.__create_key, latitude, longitude, altitude)
-
-    def __init__(
-        self, class_private_create_key: object, latitude: float, longitude: float, altitude: float
-    ) -> None:
-        """
-        Private constructor, use create() method.
-        """
-        assert class_private_create_key is DronePosition.__create_key, "Use create() method"
-
-        self.latitude = latitude
-        self.longitude = longitude
-        self.altitude = altitude
-
-    def __str__(self) -> str:
-        """
-        To string.
-        """
-        return f"{self.__class__}, latitude: {self.latitude}, longitude: {self.longitude}, altitude: {self.altitude}"
-
-    def __repr__(self) -> str:
-        """
-        For collections (e.g. list).
-        """
-        return str(self)
+from .. import position_global
 
 
 class DroneOrientation:
@@ -69,11 +17,9 @@ class DroneOrientation:
     __create_key = object()
 
     @classmethod
-    # Required for checks
-    # pylint: disable-next=too-many-return-statements
     def create(
         cls, yaw: "float | None", pitch: "float | None", roll: "float | None"
-    ) -> "tuple[bool, DroneOrientation | None]":
+    ) -> "tuple[bool, DroneOrientation] | tuple[False, None]":
         """
         yaw, pitch, roll in radians.
         """
@@ -103,7 +49,7 @@ class DroneOrientation:
         """
         Private constructor, use create() method.
         """
-        assert class_private_create_key is DroneOrientation.__create_key, "Use create() method"
+        assert class_private_create_key is DroneOrientation.__create_key, "Use create() method."
 
         self.yaw = yaw
         self.pitch = pitch
@@ -113,7 +59,7 @@ class DroneOrientation:
         """
         To string.
         """
-        return f"{self.__class__}, yaw: {self.yaw}, pitch: {self.pitch}, roll: {self.roll}"
+        return f"{self.__class__} YPR radians: {self.yaw}, {self.pitch}, {self.roll}"
 
     def __repr__(self) -> str:
         """
@@ -141,8 +87,11 @@ class DroneOdometry:
 
     @classmethod
     def create(
-        cls, position: DronePosition, orientation: DroneOrientation, flight_mode: FlightMode
-    ) -> "tuple[bool, DroneOdometry | None]":
+        cls,
+        position: position_global.PositionGlobal,
+        orientation: DroneOrientation,
+        flight_mode: FlightMode,
+    ) -> "tuple[bool, DroneOdometry] | tuple[False, None]":
         """
         Position and orientation in one class.
         """
@@ -160,14 +109,14 @@ class DroneOdometry:
     def __init__(
         self,
         class_private_create_key: object,
-        position: DronePosition,
+        position: position_global.PositionGlobal,
         orientation: DroneOrientation,
         flight_mode: FlightMode,
     ) -> None:
         """
         Private constructor, use create() method.
         """
-        assert class_private_create_key is DroneOdometry.__create_key, "Use create() method"
+        assert class_private_create_key is DroneOdometry.__create_key, "Use create() method."
 
         self.position = position
         self.orientation = orientation

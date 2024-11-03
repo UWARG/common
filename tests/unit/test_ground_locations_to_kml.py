@@ -7,7 +7,7 @@ import pathlib
 import pytest
 
 from modules.kml import ground_locations_to_kml
-from modules.kml import location_ground
+from modules.kml import named_location_global
 
 
 PARENT_DIRECTORY = pathlib.Path("tests", "unit", "kml_documents")
@@ -20,19 +20,37 @@ EXPECTED_KML_DOCUMENT_PATH = pathlib.Path(PARENT_DIRECTORY, "expected_document.k
 
 
 @pytest.fixture
-def locations() -> "list[location_ground.LocationGround]":  # type: ignore
+def locations() -> "list[named_location_global.NamedLocationGlobal]":  # type: ignore
     """
     List of LocationGround.
     """
+    result, location_san_francisco = named_location_global.NamedLocationGlobal.create(
+        "San Francisco", 37.7749, -122.4194
+    )
+    assert result
+    assert location_san_francisco is not None
+
+    result, location_los_angeles = named_location_global.NamedLocationGlobal.create(
+        "Los Angeles", 34.0522, -118.2437
+    )
+    assert result
+    assert location_los_angeles is not None
+
+    result, location_new_york_city = named_location_global.NamedLocationGlobal.create(
+        "New York City", 40.7128, -74.0060
+    )
+    assert result
+    assert location_new_york_city is not None
+
     yield [
-        location_ground.LocationGround("San Francisco", 37.7749, -122.4194),
-        location_ground.LocationGround("Los Angeles", 34.0522, -118.2437),
-        location_ground.LocationGround("New York City", 40.7128, -74.0060),
+        location_san_francisco,
+        location_los_angeles,
+        location_new_york_city,
     ]
 
 
 def test_locations_to_kml_with_save_path(
-    locations: "list[location_ground.LocationGround]", tmp_path: pathlib.Path
+    locations: "list[named_location_global.NamedLocationGlobal]", tmp_path: pathlib.Path
 ) -> None:
     """
     Basic test case to save KML to the correct path when provided.

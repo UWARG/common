@@ -8,6 +8,7 @@ from pymavlink import mavutil
 
 from . import drone_odometry
 from . import dronekit
+from .. import position_global
 
 
 class FlightController:
@@ -54,6 +55,9 @@ class FlightController:
         Returns odometry data from the drone.
         """
         attitude_info = self.drone.attitude
+        if attitude_info is None:
+            return False, None
+
         result, orientation_data = drone_odometry.DroneOrientation.create(
             attitude_info.yaw,
             attitude_info.pitch,
@@ -63,7 +67,10 @@ class FlightController:
             return False, None
 
         location_info = self.drone.location
-        result, position_data = drone_odometry.DronePosition.create(
+        if location_info is None:
+            return False, None
+
+        result, position_data = position_global.PositionGlobal.create(
             location_info.global_frame.lat,
             location_info.global_frame.lon,
             location_info.global_frame.alt,
@@ -88,11 +95,11 @@ class FlightController:
 
         return True, odometry_data
 
-    def get_home_location(
+    def get_home_position(
         self, timeout: float
-    ) -> "tuple[bool, drone_odometry.DronePosition | None]":
+    ) -> "tuple[bool, position_global.PositionGlobal | None]":
         """
-        Attempts to get the drone's home location until timeout.
+        Attempts to get the drone's home position until timeout.
         timeout: Seconds.
         """
         start_time = time.time()
@@ -105,7 +112,7 @@ class FlightController:
         if self.drone.home_location is None:
             return False, None
 
-        result, location = drone_odometry.DronePosition.create(
+        result, position = position_global.PositionGlobal.create(
             self.drone.home_location.lat,
             self.drone.home_location.lon,
             self.drone.home_location.alt,
@@ -113,7 +120,7 @@ class FlightController:
         if not result:
             return False, None
 
-        return True, location
+        return True, position
 
     def upload_commands(self, commands: "list[dronekit.Command]") -> bool:
         """
@@ -208,7 +215,7 @@ class FlightController:
 
         return True, (current_waypoint == waypoint_count)
 
-    def move_to_position(self, position: drone_odometry.DronePosition) -> bool:
+    def move_to_position(self, position: position_global.PositionGlobal) -> bool:
         """
         Commands the drone to move to a specified position in 3D space.
         There is no check to verify that the specified altitude is above ground.
@@ -279,15 +286,11 @@ class FlightController:
             print("ERROR: Connection with drone reset. Unable to download commands.")
             return False, []
 
-    def get_next_waypoint(self) -> "tuple[bool, drone_odometry.DronePosition | None]":
+    def get_next_waypoint(self) -> "tuple[bool, position_global.PositionGlobal | None]":
         """
         Gets the next waypoint.
 
-        Returns
-        -------
-        tuple[bool, drone_odometry.DronePosition | None]
-        A tuple where the first element is a boolean indicating success or failure,
-        and the second element is the next waypoint currently held by the drone.
+        Return: Success, waypoint position.
         """
         result, commands = self.download_commands()
         if not result:
@@ -299,7 +302,8 @@ class FlightController:
 
         for command in commands[next_command_index:]:
             if command.command == self.__MAVLINK_WAYPOINT_COMMAND:
-                return drone_odometry.DronePosition.create(command.x, command.y, command.z)
+                return position_global.PositionGlobal.create(command.x, command.y, command.z)
+
         return False, None
 
     def insert_waypoint(
