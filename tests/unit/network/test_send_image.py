@@ -25,8 +25,8 @@ SERVER_PORT = 9145
 ROOT_DIR = Path(__file__).parent
 
 
-# TODO: This test is hangs. Disable for now.
-pytestmark = pytest.mark.skipif(True, reason="This test is hangs. Disable for now.")
+# TODO: This test hangs. Disable for now.
+pytestmark = pytest.mark.skipif(True, reason="This test hangs. Disable for now.")
 
 
 @pytest.fixture

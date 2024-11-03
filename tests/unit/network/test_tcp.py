@@ -25,6 +25,10 @@ pytestmark = pytest.mark.skipif(
     True, reason="This file requires a server so it is not a unit test!"
 )
 
+# Both tests have similar setup
+# No enable
+# pylint: disable=duplicate-code
+
 
 @pytest.fixture
 def test_messages() -> "Generator[bytes]":
