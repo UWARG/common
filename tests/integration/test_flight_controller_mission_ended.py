@@ -6,6 +6,7 @@ import time
 
 from pymavlink import mavutil
 
+from modules import position_global_relative_altitude
 from modules.mavlink import dronekit
 from modules.mavlink import flight_controller
 
@@ -26,23 +27,16 @@ ACCEPT_RADIUS = 10  # metres
 # TODO: This function is to be removed when Dronekit-Python interfaces are
 # moved from pathing repository.
 def upload_mission(
-    controller: flight_controller.FlightController, waypoints: "list[tuple[float, float, float]]"
+    controller: flight_controller.FlightController, waypoints: list[position_global_relative_altitude.PositionGlobalRelativeAltitude]
 ) -> bool:
     """
     Add a takeoff command and waypoint following commands to the drone's
     command sequence, and upload them.
 
-    Parameters
-    ----------
-    controller: "flight_controller.FlightController"
-    waypoints: "list[tuple[float, float, float]]"
-        The three values in the tuple represent latitude (decimal degrees),
-        longitude (decimal degrees), and altitude (metres) respectively.
+    controller: Flight controller.
+    waypoints: List of waypoints.
 
-    Returns
-    -------
-    bool
-        Returns if the mission is successfully uploaded or not.
+    Return: If the mission is successfully uploaded or not.
     """
     # Clear existing mission
     controller.drone.commands.download()
@@ -70,7 +64,7 @@ def upload_mission(
     controller.drone.commands.add(takeoff_command)
 
     # Add waypoints to the mission
-    for point in waypoints:
+    for waypoint in waypoints:
         command = dronekit.Command(
             0,
             0,
@@ -83,9 +77,9 @@ def upload_mission(
             ACCEPT_RADIUS,
             0,
             0,
-            point[0],
-            point[1],
-            point[2],
+            waypoint.latitude,
+            waypoint.longitude,
+            waypoint.relative_altitude,
         )
 
         controller.drone.commands.add(command)
@@ -93,9 +87,12 @@ def upload_mission(
     # Upload the mission to the drone
     try:
         controller.drone.commands.upload()
-        return True
     except dronekit.TimeoutError:
         return False
+
+    print("Mission uploaded.")
+
+    return True
 
 
 def main() -> int:
@@ -111,11 +108,43 @@ def main() -> int:
     assert controller is not None
 
     # List of waypoints for the drone to travel
+    result, waypoint_1 = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(43.4731, -80.5419, ALTITUDE)
+    if not result:
+        print("Failed to create waypoint.")
+        return -1
+
+    # Get Pylance to stop complaining
+    assert waypoint_1 is not None
+
+    result, waypoint_2 = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(43.4723, -80.5380, ALTITUDE)
+    if not result:
+        print("Failed to create waypoint.")
+        return -1
+
+    # Get Pylance to stop complaining
+    assert waypoint_2 is not None
+
+    result, waypoint_3 = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(43.4735, -80.5371, ALTITUDE)
+    if not result:
+        print("Failed to create waypoint.")
+        return -1
+
+    # Get Pylance to stop complaining
+    assert waypoint_3 is not None
+
+    result, waypoint_4 = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(43.4743, -80.5400, ALTITUDE)
+    if not result:
+        print("Failed to create waypoint.")
+        return -1
+
+    # Get Pylance to stop complaining
+    assert waypoint_4 is not None
+
     waypoints = [
-        (43.4731, -80.5419, ALTITUDE),
-        (43.4723, -80.5380, ALTITUDE),
-        (43.4735, -80.5371, ALTITUDE),
-        (43.4743, -80.5400, ALTITUDE),
+        waypoint_1,
+        waypoint_2,
+        waypoint_3,
+        waypoint_4
     ]
 
     # Upload mission
