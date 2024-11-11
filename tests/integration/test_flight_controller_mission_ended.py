@@ -27,7 +27,8 @@ ACCEPT_RADIUS = 10  # metres
 # TODO: This function is to be removed when Dronekit-Python interfaces are
 # moved from pathing repository.
 def upload_mission(
-    controller: flight_controller.FlightController, waypoints: list[position_global_relative_altitude.PositionGlobalRelativeAltitude]
+    controller: flight_controller.FlightController,
+    waypoints: list[position_global_relative_altitude.PositionGlobalRelativeAltitude],
 ) -> bool:
     """
     Add a takeoff command and waypoint following commands to the drone's
@@ -108,7 +109,9 @@ def main() -> int:
     assert controller is not None
 
     # List of waypoints for the drone to travel
-    result, waypoint_1 = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(43.4731, -80.5419, ALTITUDE)
+    result, waypoint_1 = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(
+        43.4731, -80.5419, ALTITUDE
+    )
     if not result:
         print("Failed to create waypoint.")
         return -1
@@ -116,7 +119,9 @@ def main() -> int:
     # Get Pylance to stop complaining
     assert waypoint_1 is not None
 
-    result, waypoint_2 = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(43.4723, -80.5380, ALTITUDE)
+    result, waypoint_2 = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(
+        43.4723, -80.5380, ALTITUDE
+    )
     if not result:
         print("Failed to create waypoint.")
         return -1
@@ -124,7 +129,9 @@ def main() -> int:
     # Get Pylance to stop complaining
     assert waypoint_2 is not None
 
-    result, waypoint_3 = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(43.4735, -80.5371, ALTITUDE)
+    result, waypoint_3 = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(
+        43.4735, -80.5371, ALTITUDE
+    )
     if not result:
         print("Failed to create waypoint.")
         return -1
@@ -132,7 +139,9 @@ def main() -> int:
     # Get Pylance to stop complaining
     assert waypoint_3 is not None
 
-    result, waypoint_4 = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(43.4743, -80.5400, ALTITUDE)
+    result, waypoint_4 = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(
+        43.4743, -80.5400, ALTITUDE
+    )
     if not result:
         print("Failed to create waypoint.")
         return -1
@@ -140,12 +149,7 @@ def main() -> int:
     # Get Pylance to stop complaining
     assert waypoint_4 is not None
 
-    waypoints = [
-        waypoint_1,
-        waypoint_2,
-        waypoint_3,
-        waypoint_4
-    ]
+    waypoints = [waypoint_1, waypoint_2, waypoint_3, waypoint_4]
 
     # Upload mission
     result = upload_mission(controller, waypoints)

@@ -68,7 +68,9 @@ class NamedLocationGlobal(LocationGlobal):
         """
         return True, NamedLocationGlobal(cls.__create_key, name, latitude, longitude)
 
-    def __init__(self, class_private_create_key: object, name: str, latitude: float, longitude: float) -> None:
+    def __init__(
+        self, class_private_create_key: object, name: str, latitude: float, longitude: float
+    ) -> None:
         """
         Private constructor, use create() method.
         """

@@ -25,15 +25,23 @@ class PositionGlobalRelativeAltitude:
 
         Return: Success, object.
         """
-        return True, PositionGlobalRelativeAltitude(cls.__create_key, latitude, longitude, relative_altitude)
+        return True, PositionGlobalRelativeAltitude(
+            cls.__create_key, latitude, longitude, relative_altitude
+        )
 
     def __init__(
-        self, class_private_create_key: object, latitude: float, longitude: float, relative_altitude: float
+        self,
+        class_private_create_key: object,
+        latitude: float,
+        longitude: float,
+        relative_altitude: float,
     ) -> None:
         """
         Private constructor, use create() method.
         """
-        assert class_private_create_key is PositionGlobalRelativeAltitude.__create_key, "Use create() method."
+        assert (
+            class_private_create_key is PositionGlobalRelativeAltitude.__create_key
+        ), "Use create() method."
 
         self.latitude = latitude
         self.longitude = longitude
@@ -63,7 +71,11 @@ class NamedPositionGlobalRelativeAltitude(PositionGlobalRelativeAltitude):
     # Additional argument for name
     # pylint: disable-next=arguments-differ
     def create(
-        cls, name: str, latitude: float, longitude: float, relative_altitude: float,
+        cls,
+        name: str,
+        latitude: float,
+        longitude: float,
+        relative_altitude: float,
     ) -> "tuple[True, NamedPositionGlobalRelativeAltitude] | tuple[False, None]":
         """
         name: Can be empty.
@@ -73,15 +85,28 @@ class NamedPositionGlobalRelativeAltitude(PositionGlobalRelativeAltitude):
 
         Return: Success, object.
         """
-        return True, NamedPositionGlobalRelativeAltitude(cls.__create_key, name, latitude, longitude, relative_altitude)
+        return True, NamedPositionGlobalRelativeAltitude(
+            cls.__create_key, name, latitude, longitude, relative_altitude
+        )
 
-    def __init__(self, class_private_create_key: object, name: str, latitude: float, longitude: float, relative_altitude: float) -> None:
+    def __init__(
+        self,
+        class_private_create_key: object,
+        name: str,
+        latitude: float,
+        longitude: float,
+        relative_altitude: float,
+    ) -> None:
         """
         Private constructor, use create() method.
         """
-        assert class_private_create_key is NamedPositionGlobalRelativeAltitude.__create_key, "Use create() method."
+        assert (
+            class_private_create_key is NamedPositionGlobalRelativeAltitude.__create_key
+        ), "Use create() method."
 
-        super().__init__(super()._PositionGlobal__create_key, latitude, longitude, relative_altitude)
+        super().__init__(
+            super()._PositionGlobal__create_key, latitude, longitude, relative_altitude
+        )
 
         self.name = name
 

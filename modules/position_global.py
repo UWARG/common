@@ -61,7 +61,11 @@ class NamedPositionGlobal(PositionGlobal):
     # Additional argument for name
     # pylint: disable-next=arguments-differ
     def create(
-        cls, name: str, latitude: float, longitude: float, altitude: float,
+        cls,
+        name: str,
+        latitude: float,
+        longitude: float,
+        altitude: float,
     ) -> "tuple[True, NamedPositionGlobal] | tuple[False, None]":
         """
         name: Can be empty.
@@ -73,7 +77,14 @@ class NamedPositionGlobal(PositionGlobal):
         """
         return True, NamedPositionGlobal(cls.__create_key, name, latitude, longitude, altitude)
 
-    def __init__(self, class_private_create_key: object, name: str, latitude: float, longitude: float, altitude: float) -> None:
+    def __init__(
+        self,
+        class_private_create_key: object,
+        name: str,
+        latitude: float,
+        longitude: float,
+        altitude: float,
+    ) -> None:
         """
         Private constructor, use create() method.
         """

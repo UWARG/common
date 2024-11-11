@@ -66,7 +66,9 @@ class NamedLocationLocal(LocationLocal):
         """
         return True, NamedLocationLocal(cls.__create_key, name, north, east)
 
-    def __init__(self, class_private_create_key: object, name: str, north: float, east: float) -> None:
+    def __init__(
+        self, class_private_create_key: object, name: str, north: float, east: float
+    ) -> None:
         """
         Private constructor, use create() method.
         """

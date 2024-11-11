@@ -59,7 +59,11 @@ class NamedPositionLocal(PositionLocal):
     # Additional argument for name
     # pylint: disable-next=arguments-differ
     def create(
-        cls, name: str, north: float, east: float, down: float,
+        cls,
+        name: str,
+        north: float,
+        east: float,
+        down: float,
     ) -> "tuple[True, NamedPositionLocal] | tuple[False, None]":
         """
         name: Can be empty.
@@ -71,7 +75,9 @@ class NamedPositionLocal(PositionLocal):
         """
         return True, NamedPositionLocal(cls.__create_key, name, north, east, down)
 
-    def __init__(self, class_private_create_key: object, name: str, north: float, east: float, down: float) -> None:
+    def __init__(
+        self, class_private_create_key: object, name: str, north: float, east: float, down: float
+    ) -> None:
         """
         Private constructor, use create() method.
         """
