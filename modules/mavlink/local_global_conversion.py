@@ -6,6 +6,7 @@ import pymap3d as pm
 
 from . import drone_odometry_global
 from . import drone_odometry_local
+from .. import location_global
 from .. import location_local
 from .. import position_global
 from .. import position_local
@@ -94,6 +95,27 @@ def position_local_from_position_global(
         return False, None
 
     return True, local_position
+
+
+def position_local_from_location_global(
+    home_position: position_global.PositionGlobal,
+    global_location: location_global.LocationGlobal,
+) -> tuple[True, position_local.PositionLocal] | tuple[False, None]:
+    """
+    Global coordinates to local coordinates.
+
+    home_position: Global.
+    global_location: Global.
+
+    Return: Local.
+    """
+    result, global_position = position_global.PositionGlobal.create(
+        global_location.latitude, global_location.longitude, home_position.altitude
+    )
+    if not result:
+        return False, None
+
+    return position_local_from_position_global(home_position, global_position)
 
 
 def drone_odometry_local_from_global(

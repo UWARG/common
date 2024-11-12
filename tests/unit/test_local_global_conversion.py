@@ -4,6 +4,7 @@ Test calls only, not conversion correctness as that is handled by the library.
 
 import pytest
 
+from modules import location_global
 from modules import location_local
 from modules import orientation
 from modules import position_global
@@ -75,7 +76,7 @@ def test_position_local_from_position_global(home_position: position_global.Posi
     Normal.
     """
     # Setup
-    result, position = position_global.PositionGlobal.create(0.0, 0.0, 0.0)
+    result, position = position_global.PositionGlobal.create(43.472978, -80.540103, 336.0)
     assert result
     assert position is not None
 
@@ -90,12 +91,32 @@ def test_position_local_from_position_global(home_position: position_global.Posi
     assert isinstance(actual, position_local.PositionLocal)
 
 
+def test_position_local_from_location_global(home_position: position_global.PositionGlobal) -> None:
+    """
+    Normal.
+    """
+    # Setup
+    result, location = location_global.LocationGlobal.create(43.472978, -80.540103)
+    assert result
+    assert location is not None
+
+    # Run
+    result, actual = local_global_conversion.position_local_from_location_global(
+        home_position, location
+    )
+
+    # Check
+    assert result
+    assert actual is not None
+    assert isinstance(actual, position_local.PositionLocal)
+
+
 def test_drone_odometry_local_from_global(home_position: position_global.PositionGlobal) -> None:
     """
     Normal.
     """
     # Setup
-    result, drone_position = position_global.PositionGlobal.create(0.0, 0.0, 0.0)
+    result, drone_position = position_global.PositionGlobal.create(43.472978, -80.540103, 336.0)
     assert result
     assert drone_position is not None
 
