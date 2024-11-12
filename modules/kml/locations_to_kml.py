@@ -7,14 +7,14 @@ import time
 
 import simplekml
 
-from . import named_location_global
+from .. import location_global
 
 
-def ground_locations_to_kml(
-    ground_locations: list[named_location_global.NamedLocationGlobal],
+def named_locations_to_kml(
+    named_locations: list[location_global.NamedLocationGlobal],
     document_name_prefix: str,
     save_directory: pathlib.Path,
-) -> "tuple[bool, pathlib.Path | None]":
+) -> tuple[True, pathlib.Path] | tuple[False, None]:
     """
     Generates a KML file from a list of ground locations.
 
@@ -26,10 +26,10 @@ def ground_locations_to_kml(
     """
     kml = simplekml.Kml()
 
-    for i, ground_location in enumerate(ground_locations):
-        ground_location_name = f"Point {i + 1}: {ground_location.name}"
-        latitude = ground_location.location.latitude
-        longitude = ground_location.location.longitude
+    for i, named_location in enumerate(named_locations):
+        ground_location_name = f"Point {i + 1}: {named_location.name}"
+        latitude = named_location.latitude
+        longitude = named_location.longitude
 
         # Coordinates are in the order: longitude, latitude, optional height
         kml.newpoint(name=ground_location_name, coords=[(longitude, latitude)])
@@ -39,9 +39,10 @@ def ground_locations_to_kml(
 
     try:
         kml.save(str(kml_file_path))
-        return True, kml_file_path
     # Required for catching library exceptions
     # pylint: disable-next=broad-exception-caught
     except Exception as exception:
         print(f"Error while saving KML file: {exception}")
         return False, None
+
+    return True, kml_file_path

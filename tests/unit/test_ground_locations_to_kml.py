@@ -6,8 +6,8 @@ import pathlib
 
 import pytest
 
-from modules.kml import ground_locations_to_kml
-from modules.kml import named_location_global
+from modules import location_global
+from modules.kml import locations_to_kml
 
 
 PARENT_DIRECTORY = pathlib.Path("tests", "unit", "kml_documents")
@@ -20,37 +20,37 @@ EXPECTED_KML_DOCUMENT_PATH = pathlib.Path(PARENT_DIRECTORY, "expected_document.k
 
 
 @pytest.fixture
-def locations() -> "list[named_location_global.NamedLocationGlobal]":  # type: ignore
+def locations() -> list[location_global.NamedLocationGlobal]:  # type: ignore
     """
     List of LocationGround.
     """
-    result, location_san_francisco = named_location_global.NamedLocationGlobal.create(
+    result, waypoint_san_francisco = location_global.NamedLocationGlobal.create(
         "San Francisco", 37.7749, -122.4194
     )
     assert result
-    assert location_san_francisco is not None
+    assert waypoint_san_francisco is not None
 
-    result, location_los_angeles = named_location_global.NamedLocationGlobal.create(
+    result, waypoint_los_angeles = location_global.NamedLocationGlobal.create(
         "Los Angeles", 34.0522, -118.2437
     )
     assert result
-    assert location_los_angeles is not None
+    assert waypoint_los_angeles is not None
 
-    result, location_new_york_city = named_location_global.NamedLocationGlobal.create(
+    result, waypoint_new_york_city = location_global.NamedLocationGlobal.create(
         "New York City", 40.7128, -74.0060
     )
     assert result
-    assert location_new_york_city is not None
+    assert waypoint_new_york_city is not None
 
     yield [
-        location_san_francisco,
-        location_los_angeles,
-        location_new_york_city,
+        waypoint_san_francisco,
+        waypoint_los_angeles,
+        waypoint_new_york_city,
     ]
 
 
 def test_locations_to_kml_with_save_path(
-    locations: "list[named_location_global.NamedLocationGlobal]", tmp_path: pathlib.Path
+    locations: list[location_global.NamedLocationGlobal], tmp_path: pathlib.Path
 ) -> None:
     """
     Basic test case to save KML to the correct path when provided.
@@ -61,7 +61,7 @@ def test_locations_to_kml_with_save_path(
     # the KML files are cleaned after the tests are run
     tmp_path.mkdir(parents=True, exist_ok=True)
 
-    result, actual_kml_file_path = ground_locations_to_kml.ground_locations_to_kml(
+    result, actual_kml_file_path = locations_to_kml.named_locations_to_kml(
         locations,
         actual_kml_document_name,
         tmp_path,
