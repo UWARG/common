@@ -8,7 +8,10 @@ import time
 import cv2
 import numpy as np
 
-import picamera2
+try:
+    import picamera2
+except ImportError:
+    pass
 
 
 class CameraDevice:
@@ -17,18 +20,25 @@ class CameraDevice:
     """
 
     def __init__(
-        self, name: "int | str", save_nth_image: int = 0, save_name: str = "", use_pc2: bool = False
+        self, use_picamera: bool, name: "int | str", save_nth_image: int = 0, save_name: str = ""
     ) -> None:
         """
-        name: Device name or index (e.g. /dev/video0 ).
+        use_pc2: Use picamera2 implementation instead of opencv impl
+        (optional) name: Device name or index (e.g. /dev/video0 ).
         (optional) save_nth_image: For debugging, saves every nth image.
             A value of 0 indicates no images should be saved
         (optional) save_name: For debugging, file name for saved images.
-        (optional) use_pc2: Use picamera2 implementation instead of opencv impl
         """
-        self.__using_pc2 = use_pc2
-        if self.__using_pc2:
+        self.__using_picamera = use_picamera
+        if self.__using_picamera:
             self.__camera = picamera2.Picamera2()
+            # maybe use create_still_configuration()
+            # if format is bad, use RGB 888 for [B, G, R] layout. BGR888 uses [R, G, B] layout
+            # see section 4.2.2.2 bottom warning for explanation
+            config = self.__camera.create_preview_configuration(
+                {"size": (1920, 1080), "format": "BGR888"}
+            )
+            self.__camera.configure(config)
             self.__camera.start(show_preview=False)
         else:
             self.__camera = cv2.VideoCapture(name)
@@ -46,7 +56,9 @@ class CameraDevice:
         """
         Destructor.
         """
-        if not self.__using_pc2:
+        if self.__using_picamera:
+            self.__camera.stop()  # see https://github.com/raspberrypi/picamera2/blob/main/examples/opencv_mertens_merge.py
+        else:
             self.__camera.release()
 
     def get_image(self) -> "tuple[bool, np.ndarray]":
@@ -54,7 +66,9 @@ class CameraDevice:
         Take a picture with the camera
         """
 
-        result, image = self.__camera.capture_array() if self.__using_pc2 else self.__camera.read()
+        result, image = (
+            self.__camera.capture_array() if self.__using_picamera else self.__camera.read()
+        )
         if not result:
             return False, None
 
