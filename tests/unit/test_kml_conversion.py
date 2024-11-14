@@ -8,7 +8,7 @@ import pytest
 
 from modules import location_global
 from modules import position_global_relative_altitude
-from modules.kml import locations_to_kml
+from modules.kml import kml_conversion
 
 
 PARENT_DIRECTORY = pathlib.Path("tests", "unit", "kml_documents")
@@ -141,7 +141,7 @@ def test_named_locations_to_kml_with_save_path(
     tmp_path.mkdir(parents=True, exist_ok=True)
 
     # Run
-    result, actual_kml_file_path = locations_to_kml.named_locations_to_kml(
+    result, actual_kml_file_path = kml_conversion.named_locations_to_kml(
         named_locations,
         actual_kml_document_name,
         tmp_path,
@@ -171,7 +171,7 @@ def test_locations_to_kml(
     tmp_path.mkdir(parents=True, exist_ok=True)
 
     # Run
-    result, actual_kml_file_path = locations_to_kml.locations_to_kml(
+    result, actual_kml_file_path = kml_conversion.locations_to_kml(
         locations,
         actual_kml_document_name,
         tmp_path,
@@ -202,7 +202,7 @@ def test_named_positions_to_kml_with_save_path(
     tmp_path.mkdir(parents=True, exist_ok=True)
 
     # Run
-    result, actual_kml_file_path = locations_to_kml.named_positions_to_kml(
+    result, actual_kml_file_path = kml_conversion.named_positions_to_kml(
         named_positions,
         actual_kml_document_name,
         tmp_path,
@@ -233,7 +233,7 @@ def test_positions_to_kml_with_save_path(
     tmp_path.mkdir(parents=True, exist_ok=True)
 
     # Run
-    result, actual_kml_file_path = locations_to_kml.positions_to_kml(
+    result, actual_kml_file_path = kml_conversion.positions_to_kml(
         positions,
         actual_kml_document_name,
         tmp_path,
