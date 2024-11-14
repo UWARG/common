@@ -1,10 +1,12 @@
 """
 Picamera2 implementation of the camera wrapper
 """
-
-from . import base_camera
-import picamera2
+try:
+    import picamera2
+except ImportError:
+    pass
 import numpy as np
+from . import base_camera
 
 
 class CameraPiCamera2(base_camera.BaseCameraDevice):

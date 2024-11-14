@@ -2,9 +2,9 @@
 OpenCV implementation of the camera wrapper
 """
 
-from . import base_camera
 import cv2
 import numpy as np
+from . import base_camera
 
 
 class CameraOpenCV(base_camera.BaseCameraDevice):
