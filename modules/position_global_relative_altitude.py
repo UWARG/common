@@ -105,7 +105,10 @@ class NamedPositionGlobalRelativeAltitude(PositionGlobalRelativeAltitude):
         ), "Use create() method."
 
         super().__init__(
-            super()._PositionGlobalRelativeAltitude__create_key, latitude, longitude, relative_altitude
+            super()._PositionGlobalRelativeAltitude__create_key,
+            latitude,
+            longitude,
+            relative_altitude,
         )
 
         self.name = name

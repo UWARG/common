@@ -11,7 +11,9 @@ from .. import location_global
 from .. import position_global_relative_altitude
 
 
-def __save_kml_file(kml: simplekml.Kml, document_name_prefix: str, save_directory: pathlib.Path) -> tuple[True, pathlib.Path] | tuple[False, None]:
+def __save_kml_file(
+    kml: simplekml.Kml, document_name_prefix: str, save_directory: pathlib.Path
+) -> tuple[True, pathlib.Path] | tuple[False, None]:
     """
     Save KML to the directory.
     """
@@ -27,7 +29,6 @@ def __save_kml_file(kml: simplekml.Kml, document_name_prefix: str, save_director
         return False, None
 
     return True, kml_file_path
-
 
 
 def locations_to_kml(
@@ -103,8 +104,10 @@ def positions_to_kml(
     """
     named_positions = []
     for i, position in enumerate(positions):
-        result, named_position = position_global_relative_altitude.NamedPositionGlobalRelativeAltitude.create(
-            str(i), position.latitude, position.longitude, position.relative_altitude
+        result, named_position = (
+            position_global_relative_altitude.NamedPositionGlobalRelativeAltitude.create(
+                str(i), position.latitude, position.longitude, position.relative_altitude
+            )
         )
         if not result:
             return False, None

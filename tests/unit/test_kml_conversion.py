@@ -79,15 +79,21 @@ def positions() -> list[position_global_relative_altitude.PositionGlobalRelative
     """
     List of locations.
     """
-    result, san_francisco = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(37.7749, -122.4194, 0.0)
+    result, san_francisco = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(
+        37.7749, -122.4194, 0.0
+    )
     assert result
     assert san_francisco is not None
 
-    result, los_angeles = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(34.0522, -118.2437, 0.0)
+    result, los_angeles = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(
+        34.0522, -118.2437, 0.0
+    )
     assert result
     assert los_angeles is not None
 
-    result, new_york_city = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(40.7128, -74.0060, 0.0)
+    result, new_york_city = position_global_relative_altitude.PositionGlobalRelativeAltitude.create(
+        40.7128, -74.0060, 0.0
+    )
     assert result
     assert new_york_city is not None
 
@@ -103,20 +109,26 @@ def named_positions() -> list[position_global_relative_altitude.NamedPositionGlo
     """
     List of named locations.
     """
-    result, san_francisco = position_global_relative_altitude.NamedPositionGlobalRelativeAltitude.create(
-        "San Francisco", 37.7749, -122.4194, 0.0
+    result, san_francisco = (
+        position_global_relative_altitude.NamedPositionGlobalRelativeAltitude.create(
+            "San Francisco", 37.7749, -122.4194, 0.0
+        )
     )
     assert result
     assert san_francisco is not None
 
-    result, los_angeles = position_global_relative_altitude.NamedPositionGlobalRelativeAltitude.create(
-        "Los Angeles", 34.0522, -118.2437, 0.0
+    result, los_angeles = (
+        position_global_relative_altitude.NamedPositionGlobalRelativeAltitude.create(
+            "Los Angeles", 34.0522, -118.2437, 0.0
+        )
     )
     assert result
     assert los_angeles is not None
 
-    result, new_york_city = position_global_relative_altitude.NamedPositionGlobalRelativeAltitude.create(
-        "New York City", 40.7128, -74.0060, 0.0
+    result, new_york_city = (
+        position_global_relative_altitude.NamedPositionGlobalRelativeAltitude.create(
+            "New York City", 40.7128, -74.0060, 0.0
+        )
     )
     assert result
     assert new_york_city is not None
@@ -190,7 +202,8 @@ def test_locations_to_kml(
 
 
 def test_named_positions_to_kml_with_save_path(
-    named_positions: list[position_global_relative_altitude.NamedPositionGlobalRelativeAltitude], tmp_path: pathlib.Path
+    named_positions: list[position_global_relative_altitude.NamedPositionGlobalRelativeAltitude],
+    tmp_path: pathlib.Path,
 ) -> None:
     """
     Basic test case to save KML to the correct path when provided.
@@ -221,7 +234,8 @@ def test_named_positions_to_kml_with_save_path(
 
 
 def test_positions_to_kml_with_save_path(
-    positions: list[position_global_relative_altitude.PositionGlobalRelativeAltitude], tmp_path: pathlib.Path
+    positions: list[position_global_relative_altitude.PositionGlobalRelativeAltitude],
+    tmp_path: pathlib.Path,
 ) -> None:
     """
     Basic test case to save KML to the correct path when provided.
