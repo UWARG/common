@@ -1,6 +1,7 @@
 """
 Picamera2 implementation of the camera wrapper
 """
+
 try:
     import picamera2
 except ImportError:
