@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-class BaseCameraDevice:
+class BaseCameraDevice(ABC):
     """
     Abstract class for camera device implementations.
     TODO: could leverage the abc library's tags more (required properties/methods/etc.)
