@@ -3,6 +3,7 @@
 
 # Global
 pytest
+pytest-mock
 pytest-xprocess
 
 # Module camera
