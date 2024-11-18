@@ -1,5 +1,5 @@
 """
-Picamera2 implementation of the camera wrapper
+Picamera2 implementation of the camera wrapper.
 """
 
 try:
@@ -7,24 +7,24 @@ try:
 except ImportError:
     pass
 import numpy as np
+
 from . import base_camera
 
 
 class CameraPiCamera2(base_camera.BaseCameraDevice):
     """
-    Class for the opencv implementation of the camera
-    See camera_factory.py for instatiation
+    Class for the opencv implementation of the camera.
+    TODO: ADD LINK TO MANUAL HERE
     """
 
     def __init__(self, width: int, height: int) -> None:
         """
-        width: width of the camera
-        height: height of the camera
+        width: width of the camera.
+        height: height of the camera.
         """
         self.__camera = picamera2.Picamera2()
-        # maybe use create_still_configuration(), difference is speed
-        # if format is bad, use 'RGB888' for [B, G, R] layout. 'BGR888' uses [R, G, B] layout
-        # see section 4.2.2.2 bottom warning for explanation
+        # Unintuitively, "RGB888" is layout BGR
+        # See section 4.2.2.2 of the manual
         config = self.__camera.create_preview_configuation(
             {"size": (width, height), "format": "BGR888"}
         )
@@ -35,13 +35,15 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
 
     def __del__(self) -> None:
         """
-        Destructor to clean up Picamera2 object
+        Destructor to clean up Picamera2 object.
         """
-        self.__camera.stop()  # stop Picamera2
+        self.__camera.stop()
 
     def get_camera_data(self) -> tuple[bool, np.ndarray | None]:
         """
-        Take picture with picamera2 and return data
+        Takes a picture with picamera2 camera.
+
+        Return: Success, image with shape (height, width, channels in BGR).
         """
         result, image_data = self.__camera.capture_array()
         # not sure what picamera2 does to fail the capture_array()
@@ -49,4 +51,4 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
         if not result:
             return False, None
 
-        return result, image_data
+        return True, image_data

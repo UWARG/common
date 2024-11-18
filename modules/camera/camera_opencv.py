@@ -1,22 +1,22 @@
 """
-OpenCV implementation of the camera wrapper
+OpenCV implementation of the camera wrapper.
 """
 
 import cv2
 import numpy as np
+
 from . import base_camera
 
 
 class CameraOpenCV(base_camera.BaseCameraDevice):
     """
-    Class for the opencv implementation of the camera
-    See camera_factory.py for instatiation
+    Class for the opencv implementation of the camera.
     """
 
     def __init__(self, width: int, height: int) -> None:
         """
-        width: width of the camera
-        height: height of the camera
+        width: width of the camera.
+        height: height of the camera.
 
         TODO: How do we know the camera would support this resolution?
         """
@@ -28,19 +28,18 @@ class CameraOpenCV(base_camera.BaseCameraDevice):
 
     def __del__(self) -> None:
         """
-        Destructor to clean up VideoCapture object
+        Destructor. Release hardware resources.
         """
-        self.__camera.release()  # stop VideoCapture
+        self.__camera.release()
 
     def get_camera_data(self) -> tuple[bool, np.ndarray | None]:
         """
-        Take picture and return data with opencv
-        """
-        # capture data from "main" (the stream name)
-        # straight up don't know if this is faillible, so hardcoding True for now
-        result, image_data = self.__camera.read()
+        Takes a picture with opencv camera.
 
+        Return: Success, image with shape (height, width, channels in BGR).
+        """
+        result, image_data = self.__camera.read()
         if not result:
             return False, None
 
-        return result, image_data
+        return True, image_data

@@ -1,28 +1,32 @@
 """
-Base class for camera device
+Base class for camera device.
 """
 
-from abc import ABC, abstractmethod
+import abc
+
 import numpy as np
 
-
-class BaseCameraDevice(ABC):
+class BaseCameraDevice(abc.ABC):
     """
     Abstract class for camera device implementations.
-    TODO: could leverage the abc library's tags more (required properties/methods/etc.)
     """
+    
+    @abc.abstractmethod
+    def __init__(self) -> None:
+        pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def __del__(self) -> None:
         """
-        Destructor, make sure to stop the camera object e.g. for opencv, VideoCapture.stop()
+        Destructor. Release hardware resources.
         """
         return NotImplementedError
 
-    @abstractmethod
-    def get_camera_data(self) -> tuple[bool, np.ndarray | None]:
+    @abc.abstractmethod
+    def run(self) -> tuple[True, np.ndarray] | tuple[False, None]:
         """
-        Takes a picture with the camera and returns an numpy ndarray
-        Should not save the data
+        Takes a picture with camera device.
+
+        Return: Success, image with shape (height, width, channels in BGR).
         """
         return NotImplementedError
