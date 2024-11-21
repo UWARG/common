@@ -15,6 +15,7 @@ class CameraOpenCV(base_camera.BaseCameraDevice):
 
     __create_key = object()
 
+    @classmethod
     def create(cls, width: int, height: int) -> "tuple[True, CameraOpenCV] | tuple[False, None]":
         """
         OpenCV Camera.

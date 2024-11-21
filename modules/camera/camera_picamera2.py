@@ -2,6 +2,10 @@
 Picamera2 implementation of the camera wrapper.
 """
 
+import numpy as np
+
+from . import base_camera
+
 PICAM2_PRESENT = False
 
 # The picamera2 module might not exist on the machine
@@ -11,9 +15,6 @@ try:
     PICAM2_PRESENT = True
 except ImportError:
     pass
-import numpy as np
-
-from . import base_camera
 
 
 class CameraPiCamera2(base_camera.BaseCameraDevice):
@@ -23,6 +24,7 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
 
     __create_key = object()
 
+    @classmethod
     def create(cls, width: int, height: int) -> "tuple[True, CameraPiCamera2] | tuple[False, None]":
         """
         Picamera2 Camera.
