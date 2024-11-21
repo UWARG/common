@@ -47,7 +47,7 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
         except RuntimeError:
             return False, None
 
-    def __init__(self, class_private_create_key: object, camera: Picamera2) -> None:
+    def __init__(self, class_private_create_key: object, camera: picamera2.Picamera2) -> None:
         """
         Private constructor, use create() method.
         """
