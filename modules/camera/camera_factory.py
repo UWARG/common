@@ -28,8 +28,8 @@ def create_camera(
     # TODO: create() method for clas
     match camera_option:
         case CameraOption.OPENCV:
-            return True, camera_opencv.CameraOpenCV(width, height)
+            return camera_opencv.CameraOpenCV.create(width, height)
         case CameraOption.PICAM2:
-            return True, camera_picamera2.CameraPiCamera2(width, height)
-        
+            return camera_picamera2.CameraPiCamera2.create(width, height)
+
     return False, None

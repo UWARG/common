@@ -6,11 +6,19 @@ import abc
 
 import numpy as np
 
+
 class BaseCameraDevice(abc.ABC):
     """
     Abstract class for camera device implementations.
     """
-    
+
+    @classmethod
+    @abc.abstractmethod
+    def create(
+        cls, width: int, height: int
+    ) -> "tuple[True, BaseCameraDevice] | tuple[False, None]":
+        pass
+
     @abc.abstractmethod
     def __init__(self) -> None:
         pass
