@@ -20,8 +20,8 @@ class CameraOpenCV(base_camera.BaseCameraDevice):
         """
         OpenCV Camera.
 
-        width: width of the camera.
-        height: height of the camera.
+        width: Width of the camera.
+        height: Height of the camera.
 
         Return: Success, camera object.
         """

@@ -4,6 +4,7 @@ Picamera2 implementation of the camera wrapper.
 
 import numpy as np
 
+# picamera2 module may not exist
 try:
     import picamera2
 except ImportError:
@@ -24,8 +25,8 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
         """
         Picamera2 Camera.
 
-        width: width of the camera.
-        height: height of the camera.
+        width: Width of the camera.
+        height: Height of the camera.
 
         Return: Success, camera object.
         """

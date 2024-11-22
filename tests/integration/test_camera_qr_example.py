@@ -13,7 +13,6 @@ def main() -> int:
     Main function.
     """
     result, camera = camera_factory.create_camera(camera_factory.CameraOption.OPENCV, 640, 480)
-
     if not result:
         print("OpenCV camera creation error.")
         return -1

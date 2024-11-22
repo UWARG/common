@@ -20,15 +20,17 @@ class BaseCameraDevice(abc.ABC):
         """
         Abstract create method.
 
-        width: width of the camera.
-        height: height of the camera.
+        width: Width of the camera.
+        height: Height of the camera.
+
+        Return: Success, camera object.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def __init__(self, class_private_create_key: object, camera: "BaseCameraDevice") -> None:
+    def __init__(self, class_private_create_key: object, camera: object) -> None:
         """
-        Abstract private constructor
+        Abstract private constructor.
         """
         raise NotImplementedError
 

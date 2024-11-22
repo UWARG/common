@@ -8,9 +8,9 @@ import cv2
 
 from modules.camera import camera_factory
 
-# TODO: Camera logging
 
-IMAGE_LOG_PREFIX = pathlib.Path("logs", "test_log_image")
+# TODO: ...
+IMAGE_LOG_PREFIX = ...
 
 
 def main() -> int:
