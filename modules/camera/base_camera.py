@@ -17,6 +17,12 @@ class BaseCameraDevice(abc.ABC):
     def create(
         cls, width: int, height: int
     ) -> "tuple[True, BaseCameraDevice] | tuple[False, None]":
+        """
+        Abstract create method.
+
+        width: width of the camera.
+        height: height of the camera.
+        """
         pass
 
     @abc.abstractmethod
