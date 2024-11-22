@@ -23,7 +23,6 @@ class BaseCameraDevice(abc.ABC):
         width: width of the camera.
         height: height of the camera.
         """
-        pass
 
     @abc.abstractmethod
     def __init__(self) -> None:
