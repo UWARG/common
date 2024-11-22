@@ -23,7 +23,7 @@ class CameraOpenCV(base_camera.BaseCameraDevice):
         width: width of the camera.
         height: height of the camera.
         """
-        camera = cv2.VideoCapture()
+        camera = cv2.VideoCapture(0)
         if not camera.isOpened():
             return False, None
 
@@ -31,7 +31,7 @@ class CameraOpenCV(base_camera.BaseCameraDevice):
         camera.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
         if not (
             camera.get(cv2.CAP_PROP_FRAME_WIDTH) == width
-            and camera.get(cv2.CAP_PROP_FRAME_HEIGHT, height) == height
+            and camera.get(cv2.CAP_PROP_FRAME_HEIGHT) == height
         ):
             return False, None
 
@@ -51,7 +51,7 @@ class CameraOpenCV(base_camera.BaseCameraDevice):
         """
         self.__camera.release()
 
-    def get_camera_data(self) -> tuple[bool, np.ndarray | None]:
+    def run(self) -> tuple[bool, np.ndarray | None]:
         """
         Takes a picture with opencv camera.
 

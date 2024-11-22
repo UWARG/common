@@ -6,13 +6,10 @@ import numpy as np
 
 from . import base_camera
 
-PICAM2_PRESENT = False
-
 # The picamera2 module might not exist on the machine
 try:
     import picamera2
 
-    PICAM2_PRESENT = True
 except ImportError:
     pass
 
@@ -32,8 +29,6 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
         width: width of the camera.
         height: height of the camera.
         """
-        if not PICAM2_PRESENT:
-            return False, None
         try:
             camera = picamera2.Picamera2()
             # Unintuitively, "RGB888" is layout BGR
@@ -47,7 +42,7 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
         except RuntimeError:
             return False, None
 
-    def __init__(self, class_private_create_key: object, camera: picamera2.Picamera2) -> None:
+    def __init__(self, class_private_create_key: object, camera: "picamera2.Picamera2") -> None:
         """
         Private constructor, use create() method.
         """
@@ -61,7 +56,7 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
         """
         self.__camera.close()
 
-    def get_camera_data(self) -> tuple[bool, np.ndarray | None]:
+    def run(self) -> tuple[bool, np.ndarray | None]:
         """
         Takes a picture with picamera2 camera.
 
