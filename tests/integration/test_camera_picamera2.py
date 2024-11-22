@@ -2,8 +2,6 @@
 Test Picamera2 camera physically.
 """
 
-import pathlib
-
 import cv2
 
 from modules.camera import camera_factory
