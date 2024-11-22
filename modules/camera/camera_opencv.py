@@ -10,7 +10,7 @@ from . import base_camera
 
 class CameraOpenCV(base_camera.BaseCameraDevice):
     """
-    Class for the opencv implementation of the camera.
+    Class for the OpenCV implementation of the camera.
     """
 
     __create_key = object()
@@ -22,6 +22,8 @@ class CameraOpenCV(base_camera.BaseCameraDevice):
 
         width: width of the camera.
         height: height of the camera.
+
+        Return: Success, camera object.
         """
         camera = cv2.VideoCapture(0)
         if not camera.isOpened():
@@ -29,10 +31,10 @@ class CameraOpenCV(base_camera.BaseCameraDevice):
 
         camera.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         camera.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-        if not (
-            camera.get(cv2.CAP_PROP_FRAME_WIDTH) == width
-            and camera.get(cv2.CAP_PROP_FRAME_HEIGHT) == height
-        ):
+
+        set_width = camera.get(cv2.CAP_PROP_FRAME_WIDTH)
+        set_height = camera.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        if set_width != width or set_height != height:
             return False, None
 
         return True, CameraOpenCV(cls.__create_key, camera)
@@ -51,9 +53,9 @@ class CameraOpenCV(base_camera.BaseCameraDevice):
         """
         self.__camera.release()
 
-    def run(self) -> tuple[bool, np.ndarray | None]:
+    def run(self) -> tuple[True, np.ndarray] | tuple[False, None]:
         """
-        Takes a picture with opencv camera.
+        Takes a picture with OpenCV camera.
 
         Return: Success, image with shape (height, width, channels in BGR).
         """

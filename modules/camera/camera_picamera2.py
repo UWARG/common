@@ -4,19 +4,17 @@ Picamera2 implementation of the camera wrapper.
 
 import numpy as np
 
-from . import base_camera
-
-# The picamera2 module might not exist on the machine
 try:
     import picamera2
-
 except ImportError:
     pass
+
+from . import base_camera
 
 
 class CameraPiCamera2(base_camera.BaseCameraDevice):
     """
-    Class for the picamera2 implementation of the camera.
+    Class for the Picamera2 implementation of the camera.
     """
 
     __create_key = object()
@@ -28,11 +26,14 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
 
         width: width of the camera.
         height: height of the camera.
+
+        Return: Success, camera object.
         """
         try:
             camera = picamera2.Picamera2()
+
             # Unintuitively, "RGB888" is layout BGR
-            # See section 4.2.2.2 of the manual
+            # See section 4.2.2.2 of the Picamera2 manual
             config = camera.create_still_configuration(
                 {"size": (width, height), "format": "BGR888"}
             )
@@ -52,13 +53,13 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
 
     def __del__(self) -> None:
         """
-        Destructor to clean up Picamera2 object.
+        Destructor. Release hardware resources.
         """
         self.__camera.close()
 
-    def run(self) -> tuple[bool, np.ndarray | None]:
+    def run(self) -> tuple[True, np.ndarray] | tuple[False, None]:
         """
-        Takes a picture with picamera2 camera.
+        Takes a picture with Picamera2 camera.
 
         Return: Success, image with shape (height, width, channels in BGR).
         """

@@ -14,7 +14,7 @@ if($?) {
     git submodule foreach --recursive "pip install -r requirements.txt"
 
     ""
-    "Setup complete!"
+    "Seutp complete!"
 } else {
     "Please install a virtual environment in the directory 'venv', at the project root directory"
 }

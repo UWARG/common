@@ -1,5 +1,5 @@
 """
-Test opencv camera physically.
+Test OpenCV camera physically.
 """
 
 import pathlib
@@ -8,6 +8,7 @@ import cv2
 
 from modules.camera import camera_factory
 
+# TODO: Camera logging
 
 IMAGE_LOG_PREFIX = pathlib.Path("logs", "test_log_image")
 
@@ -17,7 +18,6 @@ def main() -> int:
     Main function.
     """
     result, device = camera_factory.create_camera(camera_factory.CameraOption.OPENCV, 640, 480)
-
     if not result:
         print("OpenCV camera creation error.")
         return -1

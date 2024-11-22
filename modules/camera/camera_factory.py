@@ -23,9 +23,9 @@ def create_camera(
 ) -> tuple[True, base_camera.BaseCameraDevice] | tuple[False, None]:
     """
     Create a camera object based off of given parameters.
+
     Return: Success, camera device object.
     """
-    # TODO: create() method for clas
     match camera_option:
         case CameraOption.OPENCV:
             return camera_opencv.CameraOpenCV.create(width, height)

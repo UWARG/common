@@ -23,17 +23,21 @@ class BaseCameraDevice(abc.ABC):
         width: width of the camera.
         height: height of the camera.
         """
+        raise NotImplementedError
 
     @abc.abstractmethod
-    def __init__(self) -> None:
-        pass
+    def __init__(self, class_private_create_key: object, camera: "BaseCameraDevice") -> None:
+        """
+        Abstract private constructor
+        """
+        raise NotImplementedError
 
     @abc.abstractmethod
     def __del__(self) -> None:
         """
         Destructor. Release hardware resources.
         """
-        return NotImplementedError
+        raise NotImplementedError
 
     @abc.abstractmethod
     def run(self) -> tuple[True, np.ndarray] | tuple[False, None]:
@@ -42,4 +46,4 @@ class BaseCameraDevice(abc.ABC):
 
         Return: Success, image with shape (height, width, channels in BGR).
         """
-        return NotImplementedError
+        raise NotImplementedError
