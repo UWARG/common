@@ -33,10 +33,8 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
         try:
             camera = picamera2.Picamera2()
 
-            # Unintuitively, "RGB888" is layout BGR
-            # See section 4.2.2.2 of the Picamera2 manual
             config = camera.create_still_configuration(
-                {"size": (width, height), "format": "BGR888"}
+                {"size": (width, height), "format": "RGB888"}
             )
             camera.configure(config)
             camera.start()
