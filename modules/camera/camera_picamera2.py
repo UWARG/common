@@ -64,8 +64,10 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
 
         Return: Success, image with shape (height, width, channels in BGR).
         """
-        result, image_data = self.__camera.capture_array()
-        if not result:
+        try:
+            # 1 second before timeout
+            image_data = self.__camera.capture_array(wait=1)
+        except TimeoutError:
             return False, None
 
         return True, image_data
