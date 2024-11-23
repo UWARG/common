@@ -4,7 +4,7 @@ Picamera2 implementation of the camera wrapper.
 
 import numpy as np
 
-# picamera2 module may not exist
+# Picamera2 library only exists on Raspberry Pi
 try:
     import picamera2
 except ImportError:
