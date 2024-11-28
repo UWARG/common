@@ -1,14 +1,15 @@
 """
-Test camera physically.
+Test Picamera2 camera physically.
 """
 
 import pathlib
 
 import cv2
 
-from modules.camera.camera_device import CameraDevice
+from modules.camera import camera_factory
 
 
+# TODO: Add camera logging
 IMAGE_LOG_PREFIX = pathlib.Path("logs", "test_log_image")
 
 
@@ -16,19 +17,22 @@ def main() -> int:
     """
     Main function.
     """
-    device = CameraDevice(0, 100, str(IMAGE_LOG_PREFIX))
+    result, device = camera_factory.create_camera(camera_factory.CameraOption.PICAM2, 640, 480)
+    if not result:
+        print("Picamera2 camera creation error.")
+        return -1
 
     IMAGE_LOG_PREFIX.parent.mkdir(parents=True, exist_ok=True)
 
     while True:
-        result, image = device.get_image()
+        result, image = device.run()
         if not result:
             print("ERROR")
             continue
 
         print(image.shape)
 
-        cv2.imshow("Camera", image)
+        cv2.imshow("Picamera2 camera", image)
 
         # Delay for 1 ms
         if cv2.waitKey(1) & 0xFF == ord("q"):
