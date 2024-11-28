@@ -15,6 +15,7 @@ from . import base_camera
 # TODO: pass in as constructor parameter
 CAMERA_TIMEOUT = 1
 
+
 class CameraPiCamera2(base_camera.BaseCameraDevice):
     """
     Class for the Picamera2 implementation of the camera.
