@@ -12,6 +12,8 @@ except ImportError:
 
 from . import base_camera
 
+# TODO: pass in as constructor parameter
+CAMERA_TIMEOUT = 1
 
 class CameraPiCamera2(base_camera.BaseCameraDevice):
     """
@@ -63,8 +65,8 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
         Return: Success, image with shape (height, width, channels in BGR).
         """
         try:
-            # 1 second before timeout
-            image_data = self.__camera.capture_array(wait=1)
+            # CAMERA_TIMEOUT seconds before raising TimeoutError
+            image_data = self.__camera.capture_array(wait=CAMERA_TIMEOUT)
         except TimeoutError:
             return False, None
 
