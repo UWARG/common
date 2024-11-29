@@ -11,6 +11,8 @@ import sys
 
 # Used in type annotation of logger parameters
 # pylint: disable-next=unused-import
+import types
+
 import numpy as np
 from PIL import Image
 
@@ -175,7 +177,11 @@ class Logger:
         self.logger.critical(message)
 
     def save_image(
-        self, image: np.ndarray, filename: str, log_with_frame_info: bool = True
+        self,
+        image: np.ndarray,
+        filename: str,
+        log_with_frame_info: bool = True,
+        log_info_message: bool = False,
     ) -> None:
         """
         Logs an image.
@@ -189,9 +195,10 @@ class Logger:
 
         img.save(filename)
 
-        message = f"{filename} saved"
-        if log_with_frame_info:
-            logger_frame = inspect.currentframe()
-            caller_frame = logger_frame.f_back
-            filename = self.message_and_metadata(message, caller_frame)
-        self.logger.info(message)
+        if log_info_message:
+            message = f"{filename} saved"
+            if log_with_frame_info:
+                logger_frame = inspect.currentframe()
+                caller_frame = logger_frame.f_back
+                filename = self.message_and_metadata(message, caller_frame)
+            self.logger.info(message)
