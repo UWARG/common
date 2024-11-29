@@ -180,8 +180,8 @@ class Logger:
         self,
         image: np.ndarray,
         filename: str,
-        log_with_frame_info: bool = True,
         log_info_message: bool = False,
+        log_with_frame_info: bool = True,
     ) -> None:
         """
         Logs an image.
