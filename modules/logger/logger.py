@@ -13,6 +13,9 @@ import sys
 # pylint: disable-next=unused-import
 import types
 
+import numpy as np
+from PIL import Image
+
 from ..read_yaml import read_yaml
 
 
@@ -172,3 +175,30 @@ class Logger:
             caller_frame = logger_frame.f_back
             message = self.message_and_metadata(message, caller_frame)
         self.logger.critical(message)
+
+    def save_image(
+        self,
+        image: np.ndarray,
+        filename: str,
+        log_info_message: bool = False,
+        log_with_frame_info: bool = True,
+    ) -> None:
+        """
+        Logs an image.
+
+        Args:
+            image: The image to log.
+            filename: The filename to save the image as.
+            log_with_frame_info: Whether to log the frame info.
+        """
+        img = Image.fromarray(image)
+
+        img.save(filename)
+
+        if log_info_message:
+            message = f"{filename} saved"
+            if log_with_frame_info:
+                logger_frame = inspect.currentframe()
+                caller_frame = logger_frame.f_back
+                filename = self.message_and_metadata(message, caller_frame)
+            self.logger.info(message)
