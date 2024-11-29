@@ -14,7 +14,7 @@ import sys
 import types
 
 import numpy as np
-from pillow import Image
+from PIL import Image
 from ..read_yaml import read_yaml
 
 
