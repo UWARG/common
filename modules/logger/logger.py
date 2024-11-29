@@ -11,10 +11,9 @@ import sys
 
 # Used in type annotation of logger parameters
 # pylint: disable-next=unused-import
-import types
-
 import numpy as np
 from PIL import Image
+
 from ..read_yaml import read_yaml
 
 
@@ -145,48 +144,6 @@ class Logger:
             message = self.message_and_metadata(message, caller_frame)
         self.logger.info(message)
 
-    def save_image(
-        self, image: np.ndarray, filename: str, log_with_frame_info: bool = True
-    ) -> None:
-        """
-        Logs an image.
-
-        Args:
-            image: The image to log.
-            filename: The filename to save the image as.
-            log_with_frame_info: Whether to log the frame info.
-        """
-        img = Image.fromarray(image)
-
-        # Get the file handler to save the image
-        file_handler = next(
-            (
-                handler
-                for handler in self.logger.handlers
-                if isinstance(handler, logging.FileHandler)
-            ),
-            None,
-        )
-        if not file_handler:
-            self.error("No file handler found to save image.")
-            return
-
-        log_dir = os.path.dirname(file_handler.baseFilename)
-
-        img_dir = os.path.join(log_dir, "images")
-        os.makedirs(img_dir, exist_ok=True)
-
-        timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        img_path = os.path.join(img_dir, f"{filename}_{timestamp}.png")
-        img.save(img_path)
-
-        message = f"Image saved to {img_path}"
-        if log_with_frame_info:
-            logger_frame = inspect.currentframe()
-            caller_frame = logger_frame.f_back
-            filename = self.message_and_metadata(message, caller_frame)
-        self.logger.info(message)
-
     def warning(self, message: str, log_with_frame_info: bool = True) -> None:
         """
         Logs a warning level message.
@@ -216,3 +173,25 @@ class Logger:
             caller_frame = logger_frame.f_back
             message = self.message_and_metadata(message, caller_frame)
         self.logger.critical(message)
+
+    def save_image(
+        self, image: np.ndarray, filename: str, log_with_frame_info: bool = True
+    ) -> None:
+        """
+        Logs an image.
+
+        Args:
+            image: The image to log.
+            filename: The filename to save the image as.
+            log_with_frame_info: Whether to log the frame info.
+        """
+        img = Image.fromarray(image)
+
+        img.save(filename)
+
+        message = f"{filename} saved"
+        if log_with_frame_info:
+            logger_frame = inspect.currentframe()
+            caller_frame = logger_frame.f_back
+            filename = self.message_and_metadata(message, caller_frame)
+        self.logger.info(message)
