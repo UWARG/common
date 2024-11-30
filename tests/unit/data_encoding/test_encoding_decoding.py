@@ -41,5 +41,3 @@ def test_encoding_decoding() -> None:
 
     assert original_position.longitude == decoded_position[2].longitude
     assert original_position.altitude == decoded_position[2].altitude
-
-

@@ -2,6 +2,7 @@
 Encoding and Decoding Global Positions
 Save first byte as char to represent which worker sent the message 
 """
+
 import struct
 
 from worker_enum import WorkerEnum
