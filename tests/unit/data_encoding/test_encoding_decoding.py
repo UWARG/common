@@ -38,7 +38,7 @@ def test_encoding_decoding() -> None:
     assert decoded_position[0] is True
 
     # Step 4: Validate that the original and decoded objects match
-    assert decoded_position[1] == worker_enum.Worker_Enum[worker_name.upper()].value
+    assert decoded_position[1] == WorkerEnum[worker_name.upper()].value
     assert original_position.latitude == decoded_position[2].latitude
 
     assert original_position.longitude == decoded_position[2].longitude
