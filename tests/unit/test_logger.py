@@ -15,7 +15,7 @@ from modules.logger import logger_main_setup
 from modules.read_yaml import read_yaml
 
 
-@pytest.fixture()
+@pytest.fixture
 def main_logger_instance_and_logging_path() -> tuple[logger.Logger, pathlib.Path]:  # type: ignore
     """
     Returns the main logger with logging to file enabled and sets up logging directory.
@@ -24,7 +24,8 @@ def main_logger_instance_and_logging_path() -> tuple[logger.Logger, pathlib.Path
     assert result
     assert config is not None
 
-    result, instance, logging_path = logger_main_setup.setup_main_logger(config)
+    # Increase max attempts for every use of this fixture
+    result, instance, logging_path = logger_main_setup.setup_main_logger(config, max_attempts=2)
     assert result
     assert instance is not None
     assert logging_path is not None
@@ -66,7 +67,7 @@ class TestMessageAndMetadata:
         frame = inspect.currentframe()
         message = "Test message"
         expected = (
-            f"[{__file__} | {self.test_message_and_metadata_with_frame.__name__} | 73] Test message"
+            f"[{__file__} | {self.test_message_and_metadata_with_frame.__name__} | 74] Test message"
         )
 
         # Get line number of this function call

@@ -9,12 +9,14 @@ from . import logger
 
 
 MAIN_LOGGER_NAME = "main"
-
 MAX_ATTEMPTS = 3
 
 
 def setup_main_logger(
-    config: "dict", main_logger_name: str = MAIN_LOGGER_NAME, enable_log_to_file: bool = True
+    config: "dict",
+    main_logger_name: str = MAIN_LOGGER_NAME,
+    enable_log_to_file: bool = True,
+    max_attempts: int = MAX_ATTEMPTS,
 ) -> "tuple[bool, logger.Logger | None, pathlib.Path | None]":
     """
     Setup prerequisites for logging in `main()` .
@@ -34,7 +36,7 @@ def setup_main_logger(
     # Create logging directory
     start_time = datetime.datetime.now()
     success = False
-    for i in range(0, MAX_ATTEMPTS):
+    for i in range(0, max_attempts):
         offset = datetime.timedelta(seconds=i)
         logging_path = pathlib.Path(
             log_directory_path, (start_time + offset).strftime(log_path_format)
