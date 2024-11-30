@@ -5,7 +5,7 @@ Save first byte as char to represent which worker sent the message
 
 import struct
 
-from .worker_enum import WorkerEnum
+from . import worker_enum
 
 
 # For Floats
@@ -26,7 +26,7 @@ def encode_metadata(
 
     try:
 
-        worker_id = WorkerEnum[worker_name.upper()]
+        worker_id = worker_enum.WorkerEnum[worker_name.upper()]
         if not worker_id:  # If worker ID is not in the Enum Class
             return False, None
 
@@ -45,7 +45,7 @@ def encode_metadata(
 
 def decode_metadata(
     encoded_metadata: bytes,
-) -> "tuple[True, WorkerEnum, int] | tuple[False, None, None]":
+) -> "tuple[True, worker_enum.WorkerEnum, int] | tuple[False, None, None]":
     """
     Decode bytes into a PositionGlobal object.
 
@@ -72,4 +72,4 @@ def decode_metadata(
         return False, None, None
 
     # Create and return a PositionGlobal object
-    return True, WorkerEnum(worker_id), number_of_messages
+    return True, worker_enum.WorkerEnum(worker_id), number_of_messages

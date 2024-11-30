@@ -5,7 +5,7 @@ Save first byte as char to represent which worker sent the message
 
 import struct
 
-from .worker_enum import WorkerEnum
+from . import worker_enum
 
 from .. import position_global
 
@@ -28,7 +28,7 @@ def encode_position_global(
 
     try:
 
-        worker_id = WorkerEnum[worker_name.upper()]
+        worker_id = worker_enum.WorkerEnum[worker_name.upper()]
         if not worker_id:  # If worker ID is not in the Enum Class
             return False, None
 
@@ -48,7 +48,9 @@ def encode_position_global(
 
 def decode_bytes_to_position_global(
     encoded_global_position: bytes,
-) -> "tuple[True, WorkerEnum, position_global.PositionGlobal] | tuple[False, None, None]":
+) -> (
+    "tuple[True, worker_enum.WorkerEnum, position_global.PositionGlobal] | tuple[False, None, None]"
+):
     """
     Decode bytes into a PositionGlobal object.
 
@@ -67,7 +69,7 @@ def decode_bytes_to_position_global(
             "=Bddd"
         ):  # should equal 25: 1 char + 3 double precision floats * 8 bytes for each float
             return False, None, None
-        worker_id = WorkerEnum(struct.unpack("B", encoded_global_position[:1])[0])
+        worker_id = worker_enum.WorkerEnum(struct.unpack("B", encoded_global_position[:1])[0])
 
         latitude, longitude, altitude = struct.unpack("ddd", encoded_global_position[1:])
     except struct.error:
