@@ -29,7 +29,7 @@ def encode_position_global(
     try:
 
         worker_id = WorkerEnum[worker_name.upper()]
-        if not worker_id:
+        if not worker_id:  # If worker ID is not in the Enum Class
             return False, None
 
         # Encode message using PositionGlobal's latitude, longitude, altitude, with the worker ID in the front
@@ -48,7 +48,7 @@ def encode_position_global(
 
 def decode_bytes_to_position_global(
     encoded_global_position: bytes,
-) -> "tuple[True, int, position_global.PositionGlobal] | tuple[False, None, None]":
+) -> "tuple[True, WorkerEnum, position_global.PositionGlobal] | tuple[False, None, None]":
     """
     Decode bytes into a PositionGlobal object.
 
@@ -56,7 +56,7 @@ def decode_bytes_to_position_global(
         encoded_message (bytes): Encoded bytearray containing latitude, longitude, altitude
 
     Returns:
-        Tuple: success, unsigned char: worker_id_number PositionGlobal: Decoded PositionGlobal object.
+        Tuple: success, WorkerEnum class corresponding to ID, PositionGlobal: Decoded PositionGlobal object.
     """
 
     # check to make sure encoded message is 1 char and 3 double precision floats
@@ -67,7 +67,7 @@ def decode_bytes_to_position_global(
             "=Bddd"
         ):  # should equal 25: 1 char + 3 double precision floats * 8 bytes for each float
             return False, None, None
-        worker_id_number = struct.unpack("B", encoded_global_position[:1])[0]
+        worker_id = WorkerEnum(struct.unpack("B", encoded_global_position[:1])[0])
 
         latitude, longitude, altitude = struct.unpack("ddd", encoded_global_position[1:])
     except struct.error:
@@ -75,4 +75,4 @@ def decode_bytes_to_position_global(
 
     # Create and return a PositionGlobal object
     success, position = position_global.PositionGlobal.create(latitude, longitude, altitude)
-    return success, worker_id_number, position
+    return success, worker_id, position
