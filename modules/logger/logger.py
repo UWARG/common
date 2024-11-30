@@ -8,13 +8,14 @@ import logging
 import os
 import pathlib
 import sys
+import time
 
 # Used in type annotation of logger parameters
 # pylint: disable-next=unused-import
 import types
 
+import cv2
 import numpy as np
-from PIL import Image
 
 from ..read_yaml import read_yaml
 
@@ -99,15 +100,25 @@ class Logger:
             file_handler.setFormatter(formatter)
             logger.addHandler(file_handler)
 
-        return True, Logger(cls.__create_key, logger)
+            return True, Logger(
+                cls.__create_key, logger, pathlib.Path(log_directory_path, log_path)
+            )
 
-    def __init__(self, class_create_private_key: object, logger: logging.Logger) -> None:
+        return True, Logger(cls.__create_key, logger, None)
+
+    def __init__(
+        self,
+        class_create_private_key: object,
+        logger: logging.Logger,
+        maybe_log_directory: pathlib.Path | None,
+    ) -> None:
         """
         Private constructor, use create() method.
         """
         assert class_create_private_key is Logger.__create_key, "Use create() method."
 
         self.logger = logger
+        self.__maybe_log_directory = maybe_log_directory
 
     @staticmethod
     def message_and_metadata(message: str, frame: "types.FrameType | None") -> str:
@@ -179,8 +190,7 @@ class Logger:
     def save_image(
         self,
         image: np.ndarray,
-        filename: str,
-        log_info_message: bool = False,
+        filename: str = "",
         log_with_frame_info: bool = True,
     ) -> None:
         """
@@ -191,14 +201,20 @@ class Logger:
             filename: The filename to save the image as.
             log_with_frame_info: Whether to log the frame info.
         """
-        img = Image.fromarray(image)
+        if self.__maybe_log_directory is None:
+            self.logger.warning("Image not saved: Logger not set up with file logging")
+            return
 
-        img.save(filename)
+        # Get Pylance to stop complaining
+        assert self.__maybe_log_directory is not None
 
-        if log_info_message:
-            message = f"{filename} saved"
-            if log_with_frame_info:
-                logger_frame = inspect.currentframe()
-                caller_frame = logger_frame.f_back
-                filename = self.message_and_metadata(message, caller_frame)
-            self.logger.info(message)
+        full_file_name = (
+            f"{self.logger.name}_{int(time.time())}_{filename}.png"
+            if filename != ""
+            else f"{self.logger.name}_{int(time.time())}.png"
+        )
+        filepath = pathlib.Path(self.__maybe_log_directory, full_file_name)
+
+        cv2.imwrite(str(filepath), image)
+
+        self.info(f"Image saved as: {full_file_name}", log_with_frame_info)

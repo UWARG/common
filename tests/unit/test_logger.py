@@ -6,6 +6,8 @@ import inspect
 import pathlib
 import re
 
+import cv2
+import numpy as np
 import pytest
 
 from modules.logger import logger
@@ -13,17 +15,21 @@ from modules.logger import logger_main_setup
 from modules.read_yaml import read_yaml
 
 
-@pytest.fixture
-def main_logger_instance_and_log_file_path() -> logger.Logger:  # type: ignore
+@pytest.fixture()
+def main_logger_instance_and_logging_path() -> tuple[logger.Logger, pathlib.Path]:  # type: ignore
     """
     Returns the main logger with logging to file enabled and sets up logging directory.
     """
     result, config = read_yaml.open_config(logger.CONFIG_FILE_PATH)
     assert result
+    assert config is not None
 
-    result, instance, log_file_path = logger_main_setup.setup_main_logger(config=config)
+    result, instance, logging_path = logger_main_setup.setup_main_logger(config)
     assert result
-    yield instance, log_file_path
+    assert instance is not None
+    assert logging_path is not None
+
+    yield instance, logging_path
 
 
 @pytest.fixture
@@ -33,6 +39,8 @@ def logger_instance_to_file_enabled() -> logger.Logger:  # type: ignore
     """
     result, instance = logger.Logger.create("test_logger_to_file_enabled", True)
     assert result
+    assert instance is not None
+
     yield instance
 
 
@@ -58,7 +66,7 @@ class TestMessageAndMetadata:
         frame = inspect.currentframe()
         message = "Test message"
         expected = (
-            f"[{__file__} | {self.test_message_and_metadata_with_frame.__name__} | 65] Test message"
+            f"[{__file__} | {self.test_message_and_metadata_with_frame.__name__} | 73] Test message"
         )
 
         # Get line number of this function call
@@ -108,14 +116,14 @@ class TestLogger:
 
     def test_log_to_file(
         self,
-        main_logger_instance_and_log_file_path: "tuple[logger.Logger | None, pathlib.Path | None]",
+        main_logger_instance_and_logging_path: tuple[logger.Logger, pathlib.Path],
         logger_instance_to_file_enabled: logger.Logger,
     ) -> None:
         """
         Test if messages are logged to file
         All levels are done in one test since they will all be logged to the same file
         """
-        main_logger_instance, log_file_path = main_logger_instance_and_log_file_path
+        main_logger_instance, logging_path = main_logger_instance_and_logging_path
 
         main_message = "main message"
         main_logger_instance.debug(main_message, False)
@@ -131,13 +139,13 @@ class TestLogger:
         logger_instance_to_file_enabled.error(test_message, False)
         logger_instance_to_file_enabled.critical(test_message, False)
 
-        main_log_file_path = pathlib.Path(log_file_path, "main.log")
-        test_log_file_path = pathlib.Path(log_file_path, "test_logger_to_file_enabled.log")
+        main_logging_path = pathlib.Path(logging_path, "main.log")
+        test_logging_path = pathlib.Path(logging_path, "test_logger_to_file_enabled.log")
 
-        with open(main_log_file_path, "r", encoding="utf8") as log_file:
+        with open(main_logging_path, "r", encoding="utf8") as log_file:
             actual_main = log_file.read()
 
-        with open(test_log_file_path, "r", encoding="utf8") as log_file:
+        with open(test_logging_path, "r", encoding="utf8") as log_file:
             actual_test = log_file.read()
 
         for level in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
@@ -222,3 +230,29 @@ class TestLogger:
         expected_pattern = re.compile(r"CRITICAL.*" + re.escape(test_message))
 
         assert re.search(expected_pattern, actual) is not None
+
+    def test_log_images(
+        self,
+        main_logger_instance_and_logging_path: tuple[logger.Logger, pathlib.Path],
+        logger_instance_to_file_enabled: logger.Logger,
+    ) -> None:
+        """
+        Test logging images.
+        """
+        # Setup
+        expected_image = np.zeros((480, 640, 3), dtype=np.uint8)
+
+        main_logger_instance, logging_path = main_logger_instance_and_logging_path
+
+        # Run
+        main_logger_instance.save_image(expected_image)
+        logger_instance_to_file_enabled.save_image(expected_image)
+
+        # Check
+        image_paths = list(logging_path.glob("*.png"))
+        assert len(image_paths) == 2
+
+        for image_path in image_paths:
+            actual_image = cv2.imread(image_path)
+
+            assert np.array_equal(actual_image, expected_image)
