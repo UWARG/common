@@ -14,6 +14,7 @@ Usage:
 
 from enum import Enum
 
+
 class WorkerEnum(Enum):
     "Enum class for worker classes. Acts as message ID"
     ADD_RANDOM_WORKER = 1

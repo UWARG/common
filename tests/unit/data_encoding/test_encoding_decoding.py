@@ -1,6 +1,7 @@
 """
 To Test the module message_encoding_decoding.py
 """
+
 from modules.data_encoding.worker_enum import WorkerEnum
 
 from modules import position_global

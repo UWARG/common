@@ -5,7 +5,7 @@ Save first byte as char to represent which worker sent the message
 
 import struct
 
-from worker_enum import WorkerEnum
+from .worker_enum import WorkerEnum
 
 from .. import position_global
 
