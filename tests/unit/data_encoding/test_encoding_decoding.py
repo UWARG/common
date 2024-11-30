@@ -2,8 +2,8 @@
 To Test the module message_encoding_decoding.py
 """
 
-from modules import data_encoding
-
+from modules.data_encoding import message_encoding_decoding
+from modules.data_encoding import worker_enum
 from modules import position_global
 
 
@@ -17,26 +17,22 @@ def test_encoding_decoding() -> None:
     success, original_position = position_global.PositionGlobal.create(
         latitude=34.24902422, longitude=84.6233434, altitude=27.4343424
     )
-    if not success:
-        return
+    assert success
 
     # Step 2: Encode the PositionGlobal object
-    encoded_bytes = data_encoding.message_encoding_decoding.encode_position_global(
+    result, encoded_bytes = message_encoding_decoding.encode_position_global(
         worker_name, original_position
     )
-    assert encoded_bytes[0] is True
+    assert result
 
     # Step 3: Decode the bytes back to a PositionGlobal object
-    decoded_position = data_encoding.message_encoding_decoding.decode_bytes_to_position_global(
-        encoded_bytes[1]
+    result, worker, decoded_position = message_encoding_decoding.decode_bytes_to_position_global(
+        encoded_bytes
     )
-    assert decoded_position[0] is True
-
+    assert result
     # Step 4: Validate that the original and decoded objects match
-    assert decoded_position[1] == data_encoding.worker_enum.WorkerEnum(
-        data_encoding.worker_enum.WorkerEnum[worker_name.upper()].value
-    )
+    assert worker == worker_enum.WorkerEnum(worker_enum.WorkerEnum[worker_name.upper()].value)
 
-    assert original_position.latitude == decoded_position[2].latitude
-    assert original_position.longitude == decoded_position[2].longitude
-    assert original_position.altitude == decoded_position[2].altitude
+    assert original_position.latitude == decoded_position.latitude
+    assert original_position.longitude == decoded_position.longitude
+    assert original_position.altitude == decoded_position.altitude

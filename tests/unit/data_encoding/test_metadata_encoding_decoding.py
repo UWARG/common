@@ -2,7 +2,8 @@
 To Test the module metadata_encoding_decoding.py
 """
 
-from modules import data_encoding
+from modules.data_encoding import metadata_encoding_decoding
+from modules.data_encoding import worker_enum
 
 
 def test_encoding_metadata() -> None:
@@ -11,23 +12,22 @@ def test_encoding_metadata() -> None:
     """
 
     # Step 1: Create a worker_name and PositionGlobal object
-    worker_name = "communications_worker"  # =3 in Worker_Enum
+    worker_name = "communications_worker"  # =3 in worker_enum.py
     number_of_messages = 5
 
     # Step 2: Encode the WorkerEnum ID and number of messages
 
-    encoded_bytes = data_encoding.metadata_encoding_decoding.encode_metadata(
+    result, encoded_bytes = metadata_encoding_decoding.encode_metadata(
         worker_name, number_of_messages
     )
-    assert encoded_bytes[0] is True
+    assert result
 
     # Step 3: Decode the bytes back to a unsigned char and int respectively
-    decoded_metadata = data_encoding.metadata_encoding_decoding.decode_metadata(encoded_bytes[1])
-    assert decoded_metadata[0] is True
+    result, worker_class, decoded_number_of_messages = metadata_encoding_decoding.decode_metadata(
+        encoded_bytes
+    )
+    assert result
 
     # Step 4: Validate that the original and decoded objects match
-    assert decoded_metadata[1] == data_encoding.worker_enum.WorkerEnum(
-        data_encoding.worker_enum.WorkerEnum[worker_name.upper()].value
-    )
-
-    assert number_of_messages == decoded_metadata[2]
+    assert worker_class == worker_enum.WorkerEnum(worker_enum.WorkerEnum[worker_name.upper()].value)
+    assert number_of_messages == decoded_number_of_messages
