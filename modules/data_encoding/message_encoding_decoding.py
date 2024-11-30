@@ -62,7 +62,7 @@ def decode_bytes_to_position_global(
             "=Bddd"
         ):  # should equal 25: 1 char (1 byte) and 3 double precision floats (3 * 8 bytes)
             return False, None, None
-        
+
         worker_id = worker_enum.WorkerEnum(struct.unpack("B", encoded_global_position[:1])[0])
         latitude, longitude, altitude = struct.unpack("ddd", encoded_global_position[1:])
     except struct.error:

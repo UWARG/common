@@ -58,7 +58,7 @@ def decode_metadata(
             "=Bi"
         ):  # should equal 5 bytes: 1 unsigned char + 1 int
             return False, None, None
-        
+
         worker_id = struct.unpack("B", encoded_metadata[:1])[
             0
         ]  # unpack returns tuple (unsigned char,) so [0] is needed

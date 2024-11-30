@@ -19,6 +19,7 @@ class WorkerEnum(Enum):
     """
     Enum class for worker classes. Acts as message ID
     """
+
     CLUSTER_ESTIMATION_WORKER = 1
     COMMUNICATIONS_WORKER = 2
     DATA_MERGE_WORKER = 3
