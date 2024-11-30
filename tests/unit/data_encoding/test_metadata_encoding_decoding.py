@@ -1,5 +1,5 @@
 """
-To Test the module message_encoding_decoding.py
+To Test the module metadata_encoding_decoding.py
 """
 
 from modules.data_encoding.worker_enum import WorkerEnum
@@ -16,12 +16,12 @@ def test_encoding_metadata() -> None:
     worker_name = "communications_worker"  # =3 in Worker_Enum
     number_of_messages = 5
 
-    # Step 2: Encode the PositionGlobal object
+    # Step 2: Encode the WorkerEnum ID and number of messages
 
     encoded_bytes = encode_metadata(worker_name, number_of_messages)
     assert encoded_bytes[0] is True
 
-    # Step 3: Decode the bytes back to a PositionGlobal object
+    # Step 3: Decode the bytes back to a unsigned char and int respectively
     decoded_metadata = decode_metadata(encoded_bytes[1])
     assert decoded_metadata[0] is True
 
