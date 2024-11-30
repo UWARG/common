@@ -6,6 +6,7 @@ from modules.data_encoding.message_encoding_decoding import (
     encode_position_global,
     decode_bytes_to_position_global,
 )
+from modules.data_encoding import worker_enum
 from modules import position_global
 
 
@@ -14,9 +15,10 @@ def test_encoding_decoding() -> None:
     Function to test encoding
     """
 
-    # Step 1: Create a PositionGlobal object
+    # Step 1: Create a worker_name and PositionGlobal object
+    worker_name = "communications_worker"  # =3 in Worker_Enum
     success, original_position = position_global.PositionGlobal.create(
-        latitude=0.0, longitude=0.0, altitude=0.0
+        latitude=34.24902422, longitude=84.6233434, altitude=27.4343424
     )
     if not success:
         print("Failed to create PositionGlobal object.")
@@ -25,38 +27,19 @@ def test_encoding_decoding() -> None:
     print(f"Original PositionGlobal: {original_position}")
 
     # Step 2: Encode the PositionGlobal object
-    try:
-        encoded_bytes = encode_position_global(original_position)
-        print(f"Encoded bytes: {encoded_bytes}")
-    except TypeError as e:
-        print(f"Encoding failed due to invalid input type: {e}")
-        return
-    except ValueError as e:
-        print(f"Encoding failed due to invalid value: {e}")
-        return
+
+    encoded_bytes = encode_position_global(worker_name, original_position)
+    assert encoded_bytes[0] is True
 
     # Step 3: Decode the bytes back to a PositionGlobal object
-    try:
-        decoded_position = decode_bytes_to_position_global(encoded_bytes)
-        print(f"Decoded PositionGlobal: {decoded_position}")
-    except TypeError as e:
-        print(f"Decoding failed due to invalid input type: {e}")
-        return
-    except ValueError as e:
-        print(f"Decoding failed due to invalid value: {e}")
-        return
+    decoded_position = decode_bytes_to_position_global(encoded_bytes[1])
+    assert decoded_position[0] is True
 
     # Step 4: Validate that the original and decoded objects match
-    if (
-        original_position.latitude == decoded_position.latitude
-        and original_position.longitude == decoded_position.longitude
-        and original_position.altitude == decoded_position.altitude
-    ):
-        print("Test passed: Original and decoded PositionGlobal objects match.")
-    else:
-        print("Test failed: Original and decoded PositionGlobal objects do not match.")
+    assert decoded_position[1] == worker_enum.Worker_Enum[worker_name.upper()].value
+    assert original_position.latitude == decoded_position[2].latitude
+
+    assert original_position.longitude == decoded_position[2].longitude
+    assert original_position.altitude == decoded_position[2].altitude
 
 
-# Run the test
-if __name__ == "__main__":
-    test_encoding_decoding()
