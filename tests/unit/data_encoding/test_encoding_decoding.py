@@ -3,8 +3,8 @@ To Test the module message_encoding_decoding.py
 """
 
 from modules.data_encoding import message_encoding_decoding
-from modules.data_encoding import worker_enum
 from modules import position_global
+from modules.data_encoding import worker_enum
 
 
 def test_encoding_decoding() -> None:
