@@ -8,7 +8,6 @@ import struct
 from . import worker_enum
 
 
-# For Floats
 def encode_metadata(
     worker_name: str, number_of_messages: int
 ) -> "tuple[True, bytes] | tuple[False, None]":
@@ -23,9 +22,7 @@ def encode_metadata(
         packed_coordinates (bytes): Encoded int corresponding to number of messages as bytes.
         First byte dependant on which worker is calling the funciton, value depends on its corresponding enum value (see worker_enum.py)
     """
-
     try:
-
         worker_id = worker_enum.WorkerEnum[worker_name.upper()]
         if not worker_id:  # If worker ID is not in the Enum Class
             return False, None
@@ -55,15 +52,13 @@ def decode_metadata(
     Returns:
         Tuple: success, WorkerEnum member instance corresponding to ID, number of messages received as an integer
     """
-
-    # check to make sure encoded message is 1 char and 1 int
-
     # Unpack the byte sequence
     try:
         if len(encoded_metadata) != struct.calcsize(
             "=Bi"
         ):  # should equal 5 bytes: 1 unsigned char + 1 int
             return False, None, None
+        
         worker_id = struct.unpack("B", encoded_metadata[:1])[
             0
         ]  # unpack returns tuple (unsigned char,) so [0] is needed

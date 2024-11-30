@@ -11,7 +11,6 @@ def test_encoding_decoding() -> None:
     """
     Function to test encoding
     """
-
     # Step 1: Create a worker_name and PositionGlobal object
     worker_name = "communications_worker"  # =3 in Worker_Enum
     success, original_position = position_global.PositionGlobal.create(
@@ -31,7 +30,7 @@ def test_encoding_decoding() -> None:
     )
     assert result
     # Step 4: Validate that the original and decoded objects match
-    assert worker == worker_enum.WorkerEnum(worker_enum.WorkerEnum[worker_name.upper()].value)
+    assert worker == worker_enum.WorkerEnum(worker_name.upper())
 
     assert original_position.latitude == decoded_position.latitude
     assert original_position.longitude == decoded_position.longitude
