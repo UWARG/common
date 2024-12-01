@@ -9,7 +9,6 @@ Workers can be found in UWARG/computer-vision-python Github repository
 Usage:
     This enum can be used to identify and categorize workers programmatically.
     For example, `Worker_Enum.COMMUNICATIONS_WORKER.value` will return the integer ID `3`.
-
 """
 
 from enum import Enum
