@@ -67,47 +67,43 @@ class Logger:
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
 
-        # Handles logging to file
-        # Else is explicit to reduce confusion
-        # pylint: disable-next=no-else-return
-        if enable_log_to_file:
-            # Get the path to the logs directory.
-            entries = os.listdir(log_directory_path)
-
-            if len(entries) == 0:
-                print("ERROR: The directory for this log session was not found.")
-                return False, None
-
-            log_names = [
-                entry for entry in entries if os.path.isdir(os.path.join(log_directory_path, entry))
-            ]
-
-            # Find the log directory for the current run, which is the most recent timestamp.
-            log_path = max(
-                log_names,
-                key=lambda datetime_string: datetime.datetime.strptime(
-                    datetime_string, file_datetime_format
-                ),
-            )
-
-            filepath = pathlib.Path(log_directory_path, log_path, f"{name}.log")
-            try:
-                file = os.open(filepath, os.O_RDWR | os.O_EXCL | os.O_CREAT)
-                os.close(file)
-            except OSError:
-                print("ERROR: Log file already exists.")
-                return False, None
-
-            file_handler = logging.FileHandler(filename=filepath, mode="w")
-            file_handler.setFormatter(formatter)
-            logger.addHandler(file_handler)
-
-            return True, Logger(
-                cls.__create_key, logger, pathlib.Path(log_directory_path, log_path)
-            )
-        else:
-            # No log path to use
+        if not enable_log_to_file:
             return True, Logger(cls.__create_key, logger, None)
+
+        # Handles logging to file
+
+        # Get the path to the logs directory.
+        entries = os.listdir(log_directory_path)
+
+        if len(entries) == 0:
+            print("ERROR: The directory for this log session was not found.")
+            return False, None
+
+        log_names = [
+            entry for entry in entries if os.path.isdir(os.path.join(log_directory_path, entry))
+        ]
+
+        # Find the log directory for the current run, which is the most recent timestamp.
+        log_path = max(
+            log_names,
+            key=lambda datetime_string: datetime.datetime.strptime(
+                datetime_string, file_datetime_format
+            ),
+        )
+
+        filepath = pathlib.Path(log_directory_path, log_path, f"{name}.log")
+        try:
+            file = os.open(filepath, os.O_RDWR | os.O_EXCL | os.O_CREAT)
+            os.close(file)
+        except OSError:
+            print("ERROR: Log file already exists.")
+            return False, None
+
+        file_handler = logging.FileHandler(filename=filepath, mode="w")
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
+        return True, Logger(cls.__create_key, logger, pathlib.Path(log_directory_path, log_path))
 
     def __init__(
         self,
