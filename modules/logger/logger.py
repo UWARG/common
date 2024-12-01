@@ -68,6 +68,8 @@ class Logger:
         logger.addHandler(stream_handler)
 
         # Handles logging to file
+        # Else is explicit to reduce confusion
+        # pylint: disable-next=no-else-return
         if enable_log_to_file:
             # Get the path to the logs directory.
             entries = os.listdir(log_directory_path)
@@ -103,8 +105,9 @@ class Logger:
             return True, Logger(
                 cls.__create_key, logger, pathlib.Path(log_directory_path, log_path)
             )
-
-        return True, Logger(cls.__create_key, logger, None)
+        else:
+            # No log path to use
+            return True, Logger(cls.__create_key, logger, None)
 
     def __init__(
         self,
