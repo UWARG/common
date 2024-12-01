@@ -31,9 +31,7 @@ def test_encoding_decoding() -> None:
     assert result
 
     # Step 4: Validate that the original and decoded objects match
-    assert worker_enum.WorkerEnum[worker_name.upper()] == worker_enum.WorkerEnum(
-        worker
-    )  # Checks ID number of both to see if they match
+    assert worker_enum.WorkerEnum[worker_name.upper()] == worker  # Checks if Enum type Matches
 
     assert original_position.latitude == decoded_position.latitude
     assert original_position.longitude == decoded_position.longitude
