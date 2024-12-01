@@ -27,5 +27,8 @@ def test_encoding_metadata() -> None:
     assert result
 
     # Step 4: Validate that the original and decoded objects match
-    assert worker_class == worker_enum.WorkerEnum(worker_name.upper())
+    assert (
+        worker_enum.WorkerEnum(worker_class) == worker_enum.WorkerEnum[worker_name.upper()]
+    )  # Checks ID number of both to see if they match
+    
     assert number_of_messages == decoded_number_of_messages

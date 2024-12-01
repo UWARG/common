@@ -29,8 +29,11 @@ def test_encoding_decoding() -> None:
         encoded_bytes
     )
     assert result
+
     # Step 4: Validate that the original and decoded objects match
-    assert worker == worker_enum.WorkerEnum(worker_name.upper())
+    assert worker_enum.WorkerEnum[worker_name.upper()] == worker_enum.WorkerEnum(
+        worker
+    )  # Checks ID number of both to see if they match
 
     assert original_position.latitude == decoded_position.latitude
     assert original_position.longitude == decoded_position.longitude
