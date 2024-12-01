@@ -241,7 +241,8 @@ class TestLogger:
         Test logging images.
         """
         # Setup
-        expected_image = np.zeros((480, 640, 3), dtype=np.uint8)
+        expected_image = np.empty((480, 640, 3), dtype=np.uint8)
+        expected_image.fill(255)
 
         main_logger_instance, logging_path = main_logger_instance_and_logging_path
 
