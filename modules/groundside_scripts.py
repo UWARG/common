@@ -60,7 +60,6 @@ def send_ftp_command(
         target_component=connection.target_component,
         payload=ftp_payload,
     )
-    seq_num += 1
 
 
 vehicle = mavutil.mavlink_connection(CONNECTION_ADDRESS, baud=57600)
@@ -82,6 +81,7 @@ send_ftp_command(
     size=len(FILE_PATH),
     payload=FILE_PATH,
 )
+SEQ_NUM += 1
 response = vehicle.recv_match(type="FILE_TRANSFER_PROTOCOL", blocking=True, timeout=TIMEOUT)
 
 if response is None:
@@ -116,6 +116,7 @@ while DATA_OFFSET < FILE_SIZE:
         size=CHUNK_SIZE,
         payload=b"",
     )
+    SEQ_NUM += 1
     response = vehicle.recv_match(type="FILE_TRANSFER_PROTOCOL", blocking=True, timeout=TIMEOUT)
 
     if response is None:
@@ -145,6 +146,7 @@ while DATA_OFFSET < FILE_SIZE:
             size=CHUNK_SIZE,
             payload=b"",
         )
+        SEQ_NUM += 1
 
 # Terminate read session
 send_ftp_command(
