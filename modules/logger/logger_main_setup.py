@@ -17,7 +17,7 @@ def setup_main_logger(
     main_logger_name: str = MAIN_LOGGER_NAME,
     enable_log_to_file: bool = True,
     max_attempts: int = MAX_ATTEMPTS,
-) -> "tuple[bool, logger.Logger | None, pathlib.Path | None]":
+) -> tuple[True, logger.Logger, pathlib.Path] | tuple[False, None, None]:
     """
     Setup prerequisites for logging in `main()` .
 
