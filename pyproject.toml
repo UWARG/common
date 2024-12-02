@@ -101,7 +101,7 @@ min-similarity-lines = 10
 minversion = "6.0"
 
 # Submodules
-addopts = "--ignore=mavlink/dronekit/"
+addopts = "--ignore=modules/mavlink/dronekit/"
 
 [tool.black]
 line-length = 100
