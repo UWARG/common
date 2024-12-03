@@ -352,7 +352,7 @@ class FlightController:
 
         return self.upload_commands(commands)
 
-    def send_STATUSTEXT_msg(
+    def send_statustext_msg(
         self,
         vehicle: dronekit.Vehicle,
         message: str,
