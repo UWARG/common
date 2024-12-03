@@ -351,3 +351,16 @@ class FlightController:
         commands.insert(index, new_waypoint)
 
         return self.upload_commands(commands)
+
+    def send_STATUSTEXT_msg(
+        self,
+        vehicle: dronekit.Vehicle,
+        message: str,
+        severity: int = mavutil.mavlink.MAV_SEVERITY_INFO,
+    ) -> None:
+        """
+        Sends a STATUSTEXT message to the vehicle.
+        """
+        message_bytes = message.encode("utf-8")
+        msg = vehicle.message_factory.statustext_encode(severity, message_bytes)
+        vehicle.send_mavlink(msg)
