@@ -40,10 +40,10 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
         try:
             camera = picamera2.Picamera2()
 
-            camera_config = camera.create_preview_configuration(
+            camera_configuration = camera.create_preview_configuration(
                 {"size": (width, height), "format": "RGB888"}
             )
-            camera.configure(camera_config)
+            camera.configure(camera_configuration)
             camera.start()
             if config:
                 controls = config.to_dict()
