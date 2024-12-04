@@ -41,15 +41,10 @@ class PiCameraConfig:
             controls["Contrast"] = self.contrast
         if self.lens_position is not None:
             controls["LensPosition"] = self.lens_position
-
-        try:
             controls["AfMode"] = controls.AfModeEnum.Manual
-            if self.lens_position is not None:
-                controls["LensPosition"] = self.lens_position
-            else:
-                controls["LensPosition"] = 0.0
-        except ImportError:
-            pass
+        else:
+            controls["LensPosition"] = 0.0
+            controls["AfMode"] = controls.AfModeEnum.Auto
 
         return controls
 
