@@ -2,6 +2,11 @@
 Camera configuration
 """
 
+try:
+    from libcamera import controls  # This is a pre-installed library on the Rpi5
+except ImportError:
+    pass   # pylint: disable=bare-except
+
 
 class PiCameraConfig:
     """
@@ -32,26 +37,25 @@ class PiCameraConfig:
         """
         Dictionary containing camera controls.
         """
-        controls: dict[str, int | float] = {}
+        camera_controls: dict[str, int | float] = {}
         if self.exposure_time is not None:
-            controls["ExposureTime"] = self.exposure_time
+            camera_controls["ExposureTime"] = self.exposure_time
         if self.analogue_gain is not None:
-            controls["AnalogueGain"] = self.analogue_gain
+            camera_controls["AnalogueGain"] = self.analogue_gain
         if self.contrast is not None:
-            controls["Contrast"] = self.contrast
+            camera_controls["Contrast"] = self.contrast
         if self.lens_position is not None:
-            controls["LensPosition"] = self.lens_position
-            controls["AfMode"] = controls.AfModeEnum.Manual
+            camera_controls["LensPosition"] = self.lens_position
+            camera_controls["AfMode"] = controls.AfModeEnum.Manual
         else:
-            controls["LensPosition"] = 0.0
-            controls["AfMode"] = controls.AfModeEnum.Auto
+            camera_controls["LensPosition"] = 0.0
+            camera_controls["AfMode"] = controls.AfModeEnum.Auto
 
-        return controls
+        return camera_controls
 
 
 class OpenCVCameraConfig:
     """
     Placeholder
     """
-
-    pass
+    pass  # pylint: disable=unnecessary-pass

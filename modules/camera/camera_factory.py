@@ -32,7 +32,7 @@ def create_camera(
     """
     match camera_option:
         case CameraOption.OPENCV:
-            return camera_opencv.CameraOpenCV.create(width, height)
+            return camera_opencv.CameraOpenCV.create(width, height, config)
         case CameraOption.PICAM2:
             return camera_picamera2.CameraPiCamera2.create(width, height, config)
 

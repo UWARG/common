@@ -1,14 +1,12 @@
 """
-Test Picamera2 camera physically.
+Test Picamera2 camera physically and verifies configuration.
 """
 
 import pathlib
 
 import cv2
 
-from modules.camera import camera_factory
-
-from modules.camera.camera_config import PiCameraConfig
+from modules.camera import camera_factory, camera_config
 
 # TODO: Add camera logging
 IMAGE_LOG_PREFIX = pathlib.Path("logs", "test_log_image")
@@ -19,7 +17,15 @@ def main() -> int:
     Main function.
     """
 
-    config = PiCameraConfig(exposure_time=250, contrast=1.0, analogue_gain=64.0)
+    config = camera_config.PiCameraConfig(exposure_time=250, contrast=1.0, analogue_gain=64.0)
+    try:
+        assert config.exposure_time == 250
+        assert config.contrast == 1.0
+        assert config.analogue_gain == 64.0
+        assert config.lens_position is None
+    except AssertionError as e:
+        print(f"Configuration test failed: {e}")
+        return -1
 
     result, device = camera_factory.create_camera(
         camera_factory.CameraOption.PICAM2, 640, 480, config

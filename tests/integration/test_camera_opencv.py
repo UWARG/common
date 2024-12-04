@@ -6,8 +6,7 @@ import pathlib
 
 import cv2
 
-from modules.camera import camera_factory
-
+from modules.camera import camera_factory, camera_config
 
 # TODO: Add camera logging
 IMAGE_LOG_PREFIX = pathlib.Path("logs", "test_log_image")
@@ -17,7 +16,16 @@ def main() -> int:
     """
     Main function.
     """
-    result, device = camera_factory.create_camera(camera_factory.CameraOption.OPENCV, 640, 480)
+    config = camera_config.OpenCVCameraConfig()
+    try:
+        assert config is not None
+    except AssertionError as e:
+        print(f"Configuration test failed: {e}")
+        return -1
+
+    result, device = camera_factory.create_camera(
+        camera_factory.CameraOption.OPENCV, 640, 480, config=config
+    )
     if not result:
         print("OpenCV camera creation error.")
         return -1
