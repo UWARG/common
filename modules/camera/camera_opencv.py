@@ -29,7 +29,7 @@ class CameraOpenCV(base_camera.BaseCameraDevice):
 
         Return: Success, camera object.
         """
-        _ = config # placeholder
+        _ = config  # placeholder
         camera = cv2.VideoCapture(0)
         if not camera.isOpened():
             return False, None
