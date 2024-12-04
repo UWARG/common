@@ -9,6 +9,7 @@ import cv2
 from modules.camera import camera_factory
 
 from modules.camera.camera_config import PiCameraConfig
+
 # TODO: Add camera logging
 IMAGE_LOG_PREFIX = pathlib.Path("logs", "test_log_image")
 

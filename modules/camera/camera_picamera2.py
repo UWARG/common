@@ -39,7 +39,7 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
         try:
             camera = picamera2.Picamera2()
 
-            camera_config = camera.create_still_configuration(
+            camera_config = camera.create_preview_configuration(
                 {"size": (width, height), "format": "RGB888"}
             )
             camera.configure(camera_config)

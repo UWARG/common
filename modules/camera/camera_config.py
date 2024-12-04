@@ -9,7 +9,13 @@ class PiCameraConfig:
     This class allows specifying parameters such as exposure time, gain, and contrast.
     """
 
-    def __init__(self, exposure_time: int = 250, analogue_gain: float = 64.0, contrast: float = 1.0, lens_position: float = None) -> None:
+    def __init__(
+        self,
+        exposure_time: int = 250,
+        analogue_gain: float = 64.0,
+        contrast: float = 1.0,
+        lens_position: float = None,
+    ) -> None:
         """
         Args:
             exposure_time (int)
@@ -22,12 +28,11 @@ class PiCameraConfig:
         self.contrast = contrast
         self.lens_position = lens_position
 
-
     def to_dict(self) -> dict[str, int | float | None]:
         """
         Dictionary containing camera controls.
         """
-        controls: dict[str, int | float | None]  = {}
+        controls: dict[str, int | float] = {}
         if self.exposure_time is not None:
             controls["ExposureTime"] = self.exposure_time
         if self.analogue_gain is not None:
@@ -36,6 +41,16 @@ class PiCameraConfig:
             controls["Contrast"] = self.contrast
         if self.lens_position is not None:
             controls["LensPosition"] = self.lens_position
+
+        try:
+            controls["AfMode"] = controls.AfModeEnum.Manual
+            if self.lens_position is not None:
+                controls["LensPosition"] = self.lens_position
+            else:
+                controls["LensPosition"] = 0.0
+        except ImportError:
+            pass
+
         return controls
 
 
@@ -43,3 +58,5 @@ class OpenCVCameraConfig:
     """
     Placeholder
     """
+
+    pass

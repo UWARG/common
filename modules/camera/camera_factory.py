@@ -3,9 +3,11 @@ Factory pattern for constructing camera device class at runtime.
 """
 
 import enum
+
 from . import base_camera
 from . import camera_opencv
 from . import camera_picamera2
+from . import camera_config
 
 
 class CameraOption(enum.Enum):
@@ -18,8 +20,11 @@ class CameraOption(enum.Enum):
 
 
 def create_camera(
-    camera_option: CameraOption, width: int, height: int, config: None
-) -> tuple[True, base_camera.BaseCameraDevice | None] | tuple[False, None]:
+    camera_option: CameraOption,
+    width: int,
+    height: int,
+    config: camera_config.PiCameraConfig | camera_config.OpenCVCameraConfig,
+) -> tuple[True, base_camera.BaseCameraDevice] | tuple[False, None]:
     """
     Create a camera object based off of given parameters.
 
