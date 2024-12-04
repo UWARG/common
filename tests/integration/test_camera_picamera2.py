@@ -19,7 +19,9 @@ def main() -> int:
     Main function.
     """
 
-    config = camera_configurations.PiCameraConfig(exposure_time=250, contrast=1.0, analogue_gain=64.0)
+    config = camera_configurations.PiCameraConfig(
+        exposure_time=250, contrast=1.0, analogue_gain=64.0
+    )
     assert config.exposure_time == 250
     assert config.contrast == 1.0
     assert config.analogue_gain == 64.0
