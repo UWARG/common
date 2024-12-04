@@ -7,7 +7,7 @@ import pathlib
 import cv2
 
 from modules.camera import camera_factory
-from modules.camera import camera_config
+from modules.camera import camera_configurations
 
 
 # TODO: Add camera logging
@@ -18,7 +18,7 @@ def main() -> int:
     """
     Main function.
     """
-    config = camera_config.OpenCVCameraConfig()
+    config = camera_configurations.OpenCVCameraConfig()
     assert config is not None
 
     result, device = camera_factory.create_camera(

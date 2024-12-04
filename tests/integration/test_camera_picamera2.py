@@ -7,7 +7,7 @@ import pathlib
 import cv2
 
 from modules.camera import camera_factory
-from modules.camera import camera_config
+from modules.camera import camera_configurations
 
 
 # TODO: Add camera logging
@@ -19,7 +19,7 @@ def main() -> int:
     Main function.
     """
 
-    config = camera_config.PiCameraConfig(exposure_time=250, contrast=1.0, analogue_gain=64.0)
+    config = camera_configurations.PiCameraConfig(exposure_time=250, contrast=1.0, analogue_gain=64.0)
     assert config.exposure_time == 250
     assert config.contrast == 1.0
     assert config.analogue_gain == 64.0

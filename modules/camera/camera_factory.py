@@ -7,7 +7,7 @@ import enum
 from . import base_camera
 from . import camera_opencv
 from . import camera_picamera2
-from . import camera_config
+from . import camera_configurations
 
 
 class CameraOption(enum.Enum):
@@ -23,7 +23,7 @@ def create_camera(
     camera_option: CameraOption,
     width: int,
     height: int,
-    config: camera_config.PiCameraConfig | camera_config.OpenCVCameraConfig,
+    config: camera_configurations.PiCameraConfig | camera_configurations.OpenCVCameraConfig,
 ) -> tuple[True, base_camera.BaseCameraDevice] | tuple[False, None]:
     """
     Create a camera object based off of given parameters.

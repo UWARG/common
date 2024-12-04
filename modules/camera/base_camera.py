@@ -5,7 +5,7 @@ Base class for camera device.
 import abc
 
 import numpy as np
-import camera_config
+import modules.camera.camera_configurations as camera_configurations
 
 
 class BaseCameraDevice(abc.ABC):
@@ -19,7 +19,7 @@ class BaseCameraDevice(abc.ABC):
         cls,
         width: int,
         height: int,
-        config: camera_config.PiCameraConfig | camera_config.OpenCVCameraConfig,
+        config: camera_configurations.PiCameraConfig | camera_configurations.OpenCVCameraConfig,
     ) -> "tuple[True, BaseCameraDevice] | tuple[False, None]":
         """
         Abstract create method.
