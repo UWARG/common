@@ -1,0 +1,37 @@
+# Module names are ordered alphabetically
+# Required packages are ordered alphabetically within each module
+
+# Global
+pytest
+pytest-mock
+pytest-xprocess
+
+# Module camera
+opencv-python
+numpy
+
+# Module image_encoding
+Pillow
+
+# Module kml
+simplekml
+
+# Module logger
+pyyaml
+
+# Coordinate conversions
+pymap3d
+
+# Module mavlink
+pymavlink
+# On the Raspberry Pi, pymavlink and dronekit don't have this as a import dependency
+# This is because to connect to pixhawk using serial requires this
+pyserial
+
+# Module qr
+pyzbar
+
+# Linters and formatters are explicitly versioned
+black==24.2.0
+flake8-annotations==3.0.1
+pylint==3.0.3

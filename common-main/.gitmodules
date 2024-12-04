@@ -1,0 +1,4 @@
+[submodule "modules/mavlink/dronekit"]
+	path = modules/mavlink/dronekit
+	url = https://github.com/UWARG/dronekit.git
+	branch = WARG-minimal
