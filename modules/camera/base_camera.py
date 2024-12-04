@@ -5,7 +5,8 @@ Base class for camera device.
 import abc
 
 import numpy as np
-import modules.camera.camera_configurations as camera_configurations
+
+from . import camera_configurations
 
 
 class BaseCameraDevice(abc.ABC):
