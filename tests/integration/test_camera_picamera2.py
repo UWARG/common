@@ -8,7 +8,7 @@ import cv2
 
 from modules.camera import camera_factory
 
-
+from modules.camera.camera_config import PiCameraConfig
 # TODO: Add camera logging
 IMAGE_LOG_PREFIX = pathlib.Path("logs", "test_log_image")
 
@@ -17,7 +17,12 @@ def main() -> int:
     """
     Main function.
     """
-    result, device = camera_factory.create_camera(camera_factory.CameraOption.PICAM2, 640, 480)
+
+    config = PiCameraConfig(exposure_time=250, contrast=1.0, analogue_gain=64.0)
+
+    result, device = camera_factory.create_camera(
+        camera_factory.CameraOption.PICAM2, 640, 480, config
+    )
     if not result:
         print("Picamera2 camera creation error.")
         return -1
