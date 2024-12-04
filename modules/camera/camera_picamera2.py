@@ -3,7 +3,8 @@ Picamera2 implementation of the camera wrapper.
 """
 
 import numpy as np
-from .camera_config import PiCameraConfig
+
+from . import camera_config
 
 # Picamera2 library only exists on Raspberry Pi
 try:
@@ -26,7 +27,7 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
 
     @classmethod
     def create(
-        cls, width: int, height: int, config: PiCameraConfig = None
+        cls, width: int, height: int, config: camera_config.PiCameraConfig = None
     ) -> "tuple[True, CameraPiCamera2] | tuple[False, None]":
         """
         Picamera2 Camera.

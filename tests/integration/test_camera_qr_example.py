@@ -4,7 +4,8 @@ Camera to QR scanner example
 
 import cv2
 
-from modules.camera import camera_factory, camera_config
+from modules.camera import camera_factory
+from modules.camera import camera_config
 from modules.qr import qr_scanner
 
 

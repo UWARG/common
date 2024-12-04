@@ -5,7 +5,7 @@ Camera configuration
 try:
     from libcamera import controls  # This is a pre-installed library on the Rpi5
 except ImportError:
-    pass  # pylint: disable=bare-except
+    pass
 
 
 class PiCameraConfig:

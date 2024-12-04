@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 
 from . import base_camera
-from .camera_config import OpenCVCameraConfig
+from . import camera_config
 
 
 class CameraOpenCV(base_camera.BaseCameraDevice):
@@ -18,17 +18,19 @@ class CameraOpenCV(base_camera.BaseCameraDevice):
 
     @classmethod
     def create(
-        cls, width: int, height: int, config: OpenCVCameraConfig
+        cls, width: int, height: int, config: camera_config.OpenCVCameraConfig = None
     ) -> "tuple[True, CameraOpenCV] | tuple[False, None]":
-        # TODO: apply camera configs to camera here
         """
         OpenCV Camera.
 
         width: Width of the camera.
         height: Height of the camera.
+        config (OpenCVCameraConfig, optional): Configuration of the camera.
 
         Return: Success, camera object.
         """
+
+        # TODO: apply camera configs to camera here
         _ = config  # placeholder
         camera = cv2.VideoCapture(0)
         if not camera.isOpened():
