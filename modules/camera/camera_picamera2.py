@@ -11,6 +11,8 @@ except ImportError:
     pass
 
 from . import base_camera
+from . import camera_configurations
+
 
 # TODO: pass in as constructor parameter
 CAMERA_TIMEOUT = 1
@@ -24,23 +26,28 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
     __create_key = object()
 
     @classmethod
-    def create(cls, width: int, height: int) -> "tuple[True, CameraPiCamera2] | tuple[False, None]":
+    def create(
+        cls, width: int, height: int, config: camera_configurations.PiCameraConfig = None
+    ) -> "tuple[True, CameraPiCamera2] | tuple[False, None]":
         """
         Picamera2 Camera.
 
         width: Width of the camera.
         height: Height of the camera.
-
+        config (PiCameraConfig): Configuration object
         Return: Success, camera object.
         """
         try:
             camera = picamera2.Picamera2()
 
-            config = camera.create_still_configuration(
+            camera_config = camera.create_preview_configuration(
                 {"size": (width, height), "format": "RGB888"}
             )
-            camera.configure(config)
+            camera.configure(camera_config)
             camera.start()
+            if config:
+                controls = config.to_dict()
+                camera.set_controls(controls)
             return True, CameraPiCamera2(cls.__create_key, camera)
         except RuntimeError:
             return False, None

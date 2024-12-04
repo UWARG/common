@@ -1,11 +1,12 @@
 """
-Test Picamera2 camera physically.
+Test Picamera2 camera physically and verifies configuration.
 """
 
 import pathlib
 
 import cv2
 
+from modules.camera import camera_configurations
 from modules.camera import camera_factory
 
 
@@ -17,7 +18,18 @@ def main() -> int:
     """
     Main function.
     """
-    result, device = camera_factory.create_camera(camera_factory.CameraOption.PICAM2, 640, 480)
+
+    config = camera_configurations.PiCameraConfig(
+        exposure_time=250, contrast=1.0, analogue_gain=64.0
+    )
+    assert config.exposure_time == 250
+    assert config.contrast == 1.0
+    assert config.analogue_gain == 64.0
+    assert config.lens_position is None
+
+    result, device = camera_factory.create_camera(
+        camera_factory.CameraOption.PICAM2, 640, 480, config
+    )
     if not result:
         print("Picamera2 camera creation error.")
         return -1
