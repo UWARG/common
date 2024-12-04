@@ -5,9 +5,9 @@ Factory pattern for constructing camera device class at runtime.
 import enum
 
 from . import base_camera
+from . import camera_configurations
 from . import camera_opencv
 from . import camera_picamera2
-from . import camera_configurations
 
 
 class CameraOption(enum.Enum):

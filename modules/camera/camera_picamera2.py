@@ -4,8 +4,6 @@ Picamera2 implementation of the camera wrapper.
 
 import numpy as np
 
-from . import camera_configurations
-
 # Picamera2 library only exists on Raspberry Pi
 try:
     import picamera2
@@ -13,6 +11,8 @@ except ImportError:
     pass
 
 from . import base_camera
+from . import camera_configurations
+
 
 # TODO: pass in as constructor parameter
 CAMERA_TIMEOUT = 1
