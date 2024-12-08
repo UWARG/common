@@ -11,11 +11,54 @@ except ImportError:
     pass
 
 from . import base_camera
-from . import camera_configurations
 
 
-# TODO: pass in as constructor parameter
-CAMERA_TIMEOUT = 1
+class ConfigPiCamera2:
+    """
+    Configuration for the PiCamera.
+    """
+
+    def __init__(
+        self,
+        timeout: float = 1.0,
+        exposure_time: int = 250,
+        analogue_gain: float = 64.0,
+        contrast: float = 1.0,
+        maybe_lens_position: float | None = None,
+    ) -> None:
+        """
+        timeout: Getting image timeout in seconds.
+
+        exposure_time: Microseconds.
+        analogue_gain:
+        contrast: 0.0 to 32.0 . 0.0 is no contrast, 1.0 is normal contrast, higher is more contrast.
+        lens_position: Position of the lens is dioptres (reciprocal of metres: 1/m ).
+        """
+        self.timeout = timeout
+
+        self.exposure_time = exposure_time
+        self.analogue_gain = analogue_gain
+        self.contrast = contrast
+        self.maybe_lens_position = maybe_lens_position
+
+    def to_dict(self) -> dict[str, int | float]:
+        """
+        Dictionary containing camera controls.
+        """
+        camera_controls = {
+            "ExposureTime": self.exposure_time,
+            "AnalogueGain": self.analogue_gain,
+            "Contrast": self.contrast,
+        }
+
+        if self.maybe_lens_position is not None:
+            camera_controls["LensPosition"] = self.maybe_lens_position
+            camera_controls["AfMode"] = picamera2.controls.AfModeEnum.Manual
+        else:
+            camera_controls["LensPosition"] = 0.0
+            camera_controls["AfMode"] = picamera2.controls.AfModeEnum.Auto
+
+        return camera_controls
 
 
 class CameraPiCamera2(base_camera.BaseCameraDevice):
@@ -27,38 +70,51 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
 
     @classmethod
     def create(
-        cls, width: int, height: int, config: camera_configurations.PiCameraConfig = None
+        cls, width: int, height: int, config: ConfigPiCamera2
     ) -> "tuple[True, CameraPiCamera2] | tuple[False, None]":
         """
         Picamera2 Camera.
 
         width: Width of the camera.
         height: Height of the camera.
-        config (PiCameraConfig): Configuration object
+        config: Configuration for PiCamera2 camera.
+
         Return: Success, camera object.
         """
+        if width <= 0:
+            return False, None
+
+        if height <= 0:
+            return False, None
+
         try:
             camera = picamera2.Picamera2()
 
             camera_config = camera.create_preview_configuration(
-                {"size": (width, height), "format": "RGB888"}
+                {"size": (config.image_width, config.image_height), "format": "RGB888"}
             )
             camera.configure(camera_config)
             camera.start()
-            if config:
-                controls = config.to_dict()
-                camera.set_controls(controls)
-            return True, CameraPiCamera2(cls.__create_key, camera)
+            controls = config.to_dict()
+            camera.set_controls(controls)
+
+            return True, CameraPiCamera2(cls.__create_key, camera, config)
         except RuntimeError:
             return False, None
 
-    def __init__(self, class_private_create_key: object, camera: "picamera2.Picamera2") -> None:
+    def __init__(
+        self,
+        class_private_create_key: object,
+        camera: "picamera2.Picamera2",
+        config: ConfigPiCamera2,
+    ) -> None:
         """
         Private constructor, use create() method.
         """
         assert class_private_create_key is CameraPiCamera2.__create_key, "Use create() method."
 
         self.__camera = camera
+        self.__config = config
 
     def __del__(self) -> None:
         """
@@ -73,8 +129,7 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
         Return: Success, image with shape (height, width, channels in BGR).
         """
         try:
-            # CAMERA_TIMEOUT seconds before raising TimeoutError
-            image_data = self.__camera.capture_array(wait=CAMERA_TIMEOUT)
+            image_data = self.__camera.capture_array(wait=self.__config.timeout)
         except TimeoutError:
             return False, None
 
