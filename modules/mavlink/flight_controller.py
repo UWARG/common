@@ -357,10 +357,14 @@ class FlightController:
         vehicle: dronekit.Vehicle,
         message: str,
         severity: int = mavutil.mavlink.MAV_SEVERITY_INFO,
-    ) -> None:
+    ) -> bool:
         """
         Sends a STATUSTEXT message to the vehicle.
         """
         message_bytes = message.encode("utf-8")
+        if len(message_bytes) > 50:
+            print("Message too long, cannot send STATUSTEXT message")
+            return False
         msg = vehicle.message_factory.statustext_encode(severity, message_bytes)
         vehicle.send_mavlink(msg)
+        return True
