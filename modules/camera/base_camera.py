@@ -6,8 +6,6 @@ import abc
 
 import numpy as np
 
-from . import camera_configurations
-
 
 class BaseCameraDevice(abc.ABC):
     """
@@ -20,13 +18,14 @@ class BaseCameraDevice(abc.ABC):
         cls,
         width: int,
         height: int,
-        config: camera_configurations.PiCameraConfig | camera_configurations.OpenCVCameraConfig,
+        config: object,
     ) -> "tuple[True, BaseCameraDevice] | tuple[False, None]":
         """
         Abstract create method.
 
         width: Width of the camera.
         height: Height of the camera.
+        config: Configuration.
 
         Return: Success, camera object.
         """
