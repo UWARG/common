@@ -6,6 +6,7 @@ import numpy as np
 
 # Picamera2 library only exists on Raspberry Pi
 try:
+    import libcamera
     import picamera2
 except ImportError:
     pass
@@ -30,9 +31,9 @@ class ConfigPiCamera2:
         timeout: Getting image timeout in seconds.
 
         exposure_time: Microseconds.
-        analogue_gain:
+        analogue_gain: 0.0 to 64.0 . ISO = Analogue gain * Digital gain * 100 .
         contrast: 0.0 to 32.0 . 0.0 is no contrast, 1.0 is normal contrast, higher is more contrast.
-        lens_position: Position of the lens is dioptres (reciprocal of metres: 1/m ).
+        lens_position: Position of the lens is dioptres (reciprocal of metres: 1/m ) (0 means infinite distance).
         """
         self.timeout = timeout
 
@@ -53,10 +54,10 @@ class ConfigPiCamera2:
 
         if self.maybe_lens_position is not None:
             camera_controls["LensPosition"] = self.maybe_lens_position
-            camera_controls["AfMode"] = picamera2.controls.AfModeEnum.Manual
+            camera_controls["AfMode"] = libcamera.controls.AfModeEnum.Manual
         else:
             camera_controls["LensPosition"] = 0.0
-            camera_controls["AfMode"] = picamera2.controls.AfModeEnum.Auto
+            camera_controls["AfMode"] = libcamera.controls.AfModeEnum.Auto
 
         return camera_controls
 
