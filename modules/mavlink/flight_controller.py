@@ -33,7 +33,9 @@ class FlightController:
         """
         try:
             # Wait ready is false as the drone may be on the ground
-            drone = dronekit.connect(address, wait_ready=False, baud=baud, source_component=0, source_system=1)
+            drone = dronekit.connect(
+                address, wait_ready=False, baud=baud, source_component=0, source_system=1
+            )
         except dronekit.TimeoutError:
             print("No messages are being received. Make sure address/port is a host address/port.")
             return False, None
