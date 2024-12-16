@@ -8,7 +8,7 @@ from modules.mavlink import flight_controller
 
 
 DELAY_TIME = 0.5  # seconds
-MISSION_PLANNER_ADDRESS = "tcp:127.0.0.1:14550"
+MISSION_PLANNER_ADDRESS = "tcp:localhost:5762"
 TIMEOUT = 1.0  # seconds
 
 
@@ -27,52 +27,53 @@ def main() -> int:
     for _ in range(5):
         result, odometry = controller.get_odometry()
         if result:
-            print("lat: " + str(odometry.position.latitude))
-            print("lon: " + str(odometry.position.longitude))
-            print("alt: " + str(odometry.position.altitude))
-            print("yaw: " + str(odometry.orientation.yaw))
-            print("roll: " + str(odometry.orientation.roll))
-            print("pitch: " + str(odometry.orientation.pitch))
-            print("")
+            controller.send_statustext_msg("lat: " + str(odometry.position.latitude))
+            controller.send_statustext_msg("lat: " + str(odometry.position.latitude))
+            controller.send_statustext_msg("lon: " + str(odometry.position.longitude))
+            controller.send_statustext_msg("alt: " + str(odometry.position.altitude))
+            controller.send_statustext_msg("yaw: " + str(odometry.orientation.yaw))
+            controller.send_statustext_msg("roll: " + str(odometry.orientation.roll))
+            controller.send_statustext_msg("pitch: " + str(odometry.orientation.pitch))
+            controller.send_statustext_msg("")
         else:
-            print("Failed to get odometry")
+            controller.send_statustext_msg("Failed to get odometry")
 
         result, home = controller.get_home_position(TIMEOUT)
         if result:
-            print("lat: " + str(home.latitude))
-            print("lon: " + str(home.longitude))
-            print("alt: " + str(home.altitude))
+            controller.send_statustext_msg("lat: " + str(home.latitude))
+            controller.send_statustext_msg("lon: " + str(home.longitude))
+            controller.send_statustext_msg("alt: " + str(home.altitude))
         else:
-            print("Failed to get home position")
+            controller.send_statustext_msg("Failed to get home position")
 
         time.sleep(DELAY_TIME)
 
     # Download and print commands
     success, commands = controller.download_commands()
     if success:
-        print("Downloaded commands:")
+        controller.send_statustext_msg("Downloaded commands:")
         for command in commands:
-            print(command)
+            controller.send_statustext_msg(str(command))
     else:
-        print("Failed to download commands.")
+        controller.send_statustext_msg("Failed to download commands.")
 
     result, next_waypoint = controller.get_next_waypoint()
     if result:
-        print("next waypoint lat: " + str(next_waypoint.latitude))
-        print("next waypoint lon: " + str(next_waypoint.longitude))
-        print("next waypoint alt: " + str(next_waypoint.altitude))
+        controller.send_statustext_msg("next waypoint lat: " + str(next_waypoint.latitude))
+        controller.send_statustext_msg("next waypoint lon: " + str(next_waypoint.longitude))
+        controller.send_statustext_msg("next waypoint alt: " + str(next_waypoint.altitude))
     else:
-        print("Failed to get next waypoint.")
+        controller.send_statustext_msg("Failed to get next waypoint.")
 
     result, home = controller.get_home_position(TIMEOUT)
     if not result:
-        print("Failed to get home position")
+        controller.send_statustext_msg("Failed to get home position")
         return -1
 
     # Create and add land command
     result = controller.upload_land_command(home.latitude, home.longitude)
     if not result:
-        print("Could not upload land command.")
+        controller.send_statustext_msg("Could not upload land command.")
         return -1
 
     return 0
