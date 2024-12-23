@@ -7,10 +7,10 @@ import sys
 
 from pymavlink import mavutil
 
-from flight_controller import FlightController
+from modules.mavlink.flight_controller import FlightController
 
 # Connect to the vehicle
-success, controller = FlightController.create("tcp:localhost:5672")
+success, controller = FlightController.create("tcp:localhost:5762")
 if not success:
     print("Failed to connect")
     sys.exit(1)
@@ -30,7 +30,5 @@ messages = [  # 10 random messages
 ]
 
 for msg in messages:
-    controller.send_statustext_msg(controller.drone, msg, mavutil.mavlink.MAV_SEVERITY_INFO)
+    controller.send_statustext_msg(msg, mavutil.mavlink.MAV_SEVERITY_INFO)
     time.sleep(1)  # Wait 1 second between messages
-
-controller.drone.close()

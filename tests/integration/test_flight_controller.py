@@ -36,7 +36,7 @@ def main() -> int:
             controller.send_statustext_msg("pitch: " + str(odometry.orientation.pitch))
             controller.send_statustext_msg("")
         else:
-            controller.send_statustext_msg("Failed to get odometry")
+            print("Failed to get odometry")
 
         result, home = controller.get_home_position(TIMEOUT)
         if result:
@@ -44,18 +44,18 @@ def main() -> int:
             controller.send_statustext_msg("lon: " + str(home.longitude))
             controller.send_statustext_msg("alt: " + str(home.altitude))
         else:
-            controller.send_statustext_msg("Failed to get home position")
+            print("Failed to get home position")
 
         time.sleep(DELAY_TIME)
 
     # Download and print commands
     success, commands = controller.download_commands()
     if success:
-        controller.send_statustext_msg("Downloaded commands:")
+        print("Downloaded commands:")
         for command in commands:
-            controller.send_statustext_msg(str(command))
+            print(str(command))
     else:
-        controller.send_statustext_msg("Failed to download commands.")
+        print("Failed to download commands.")
 
     result, next_waypoint = controller.get_next_waypoint()
     if result:
@@ -63,17 +63,17 @@ def main() -> int:
         controller.send_statustext_msg("next waypoint lon: " + str(next_waypoint.longitude))
         controller.send_statustext_msg("next waypoint alt: " + str(next_waypoint.altitude))
     else:
-        controller.send_statustext_msg("Failed to get next waypoint.")
+        print("Failed to get next waypoint.")
 
     result, home = controller.get_home_position(TIMEOUT)
     if not result:
-        controller.send_statustext_msg("Failed to get home position")
+        print("Failed to get home position")
         return -1
 
     # Create and add land command
     result = controller.upload_land_command(home.latitude, home.longitude)
     if not result:
-        controller.send_statustext_msg("Could not upload land command.")
+        print("Could not upload land command.")
         return -1
 
     return 0
