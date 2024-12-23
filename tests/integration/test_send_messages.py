@@ -10,7 +10,7 @@ from pymavlink import mavutil
 from modules.mavlink.flight_controller import FlightController
 
 # Connect to the vehicle
-success, controller = FlightController.create("tcp:localhost:5762")
+success, controller = FlightController.create("tcp:localhost:5672")
 if not success:
     print("Failed to connect")
     sys.exit(1)
