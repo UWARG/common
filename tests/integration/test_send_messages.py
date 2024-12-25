@@ -8,6 +8,7 @@ from pymavlink import mavutil
 
 from modules.mavlink.flight_controller import FlightController
 
+
 DELAY_TIME = 0.5  # seconds
 MISSION_PLANNER_ADDRESS = "tcp:localhost:5672"
 
@@ -37,7 +38,7 @@ def main() -> int:
 
     for msg in messages:
         controller.send_statustext_msg(msg, mavutil.mavlink.MAV_SEVERITY_INFO)
-        time.sleep(DELAY_TIME)  # Wait 1 second between messages
+        time.sleep(DELAY_TIME)
 
     return 0
 
