@@ -33,7 +33,9 @@ class FlightController:
         """
         try:
             # Wait ready is false as the drone may be on the ground
-            drone = dronekit.connect(address, wait_ready=False, baud=baud)
+            drone = dronekit.connect(
+                address, wait_ready=False, baud=baud, source_component=0, source_system=1
+            )
         except dronekit.TimeoutError:
             print("No messages are being received. Make sure address/port is a host address/port.")
             return False, None
@@ -351,3 +353,19 @@ class FlightController:
         commands.insert(index, new_waypoint)
 
         return self.upload_commands(commands)
+
+    def send_statustext_msg(
+        self,
+        message: str,
+        severity: int = mavutil.mavlink.MAV_SEVERITY_INFO,
+    ) -> bool:
+        """
+        Sends a STATUSTEXT message to the vehicle.
+        """
+        message_bytes = message.encode("utf-8")
+        if len(message_bytes) > 50:
+            print("Message too long, cannot send STATUSTEXT message")
+            return False
+        msg = self.drone.message_factory.statustext_encode(severity, message_bytes)
+        self.drone.send_mavlink(msg)
+        return True
