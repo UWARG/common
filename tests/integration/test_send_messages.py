@@ -8,16 +8,19 @@ from pymavlink import mavutil
 
 from modules.mavlink.flight_controller import FlightController
 
+DELAY_TIME = 0.5  # seconds
+MISSION_PLANNER_ADDRESS = "tcp:localhost:5672"
+
 
 def main() -> int:
     """
     Main function.
     """
     # Connect to the vehicle
-    success, controller = FlightController.create("tcp:localhost:5672")
+    success, controller = FlightController.create(MISSION_PLANNER_ADDRESS)
     if not success:
         print("Failed to connect")
-        return 1
+        return -1
 
     messages = [  # 10 random messages
         "System startup",
@@ -34,7 +37,7 @@ def main() -> int:
 
     for msg in messages:
         controller.send_statustext_msg(msg, mavutil.mavlink.MAV_SEVERITY_INFO)
-        time.sleep(1)  # Wait 1 second between messages
+        time.sleep(DELAY_TIME)  # Wait 1 second between messages
 
     return 0
 
