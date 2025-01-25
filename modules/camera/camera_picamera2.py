@@ -92,7 +92,7 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
             camera = picamera2.Picamera2()
 
             camera_config = camera.create_preview_configuration(
-                {"size": (config.image_width, config.image_height), "format": "RGB888"}
+                {"size": (width, height), "format": "RGB888"}
             )
             camera.configure(camera_config)
             camera.start()
@@ -106,7 +106,7 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
     def __init__(
         self,
         class_private_create_key: object,
-        camera: "picamera2.Picamera2",
+        camera: picamera2.Picamera2,
         config: ConfigPiCamera2,
     ) -> None:
         """
