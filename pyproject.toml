@@ -100,8 +100,8 @@ min-similarity-lines = 10
 [tool.pytest.ini_options]
 minversion = "6.0"
 
-# Submodules
-addopts = "--ignore=modules/mavlink/dronekit/"
+# Submodules and Integration tests
+addopts = "--ignore=modules/mavlink/dronekit/ --ignore=tests/integration/"
 
 [tool.black]
 line-length = 100
