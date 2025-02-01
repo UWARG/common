@@ -4,7 +4,8 @@ Camera to QR scanner example
 
 import cv2
 
-from modules.camera import camera_device
+from modules.camera import camera_factory
+from modules.camera import camera_opencv
 from modules.qr import qr_scanner
 
 
@@ -12,11 +13,17 @@ def main() -> int:
     """
     Main function.
     """
-    camera = camera_device.CameraDevice(0, 0, "")
+    config = camera_opencv.ConfigOpenCV(0)
+    result, camera = camera_factory.create_camera(
+        camera_factory.CameraOption.OPENCV, 640, 480, config
+    )
+    if not result:
+        print("OpenCV camera creation error.")
+        return -1
 
     text = ""
     while True:
-        result, image = camera.get_image()
+        result, image = camera.run()
         if not result:
             continue
 
@@ -37,7 +44,7 @@ def main() -> int:
 
 if __name__ == "__main__":
     result_main = main()
-    if result_main < 0:
+    if result_main != 0:
         print(f"ERROR: Status code: {result_main}")
 
     print("Done!")
