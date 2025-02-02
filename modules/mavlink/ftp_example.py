@@ -44,7 +44,7 @@ class Opcode(Enum):
     # ERROR responses
     ACK_RESPONSE = 128
     NAK_RESPONSE = 129
-    
+
 
 class NakErrorCode(Enum):
     """
