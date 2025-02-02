@@ -23,7 +23,7 @@ def encode_metadata(
         First byte dependant on which worker is calling the funciton, value depends on its corresponding enum value (see worker_enum.py)
     """
     try:
-        if not worker_id:  # If worker ID is not in the Enum Class
+        if not isinstance(worker_id, worker_enum.WorkerEnum):  # If worker ID is not in the Enum Class
             return False, None
 
         # Encode message using PositionGlobal's latitude, longitude, altitude, with the worker ID in the front
