@@ -9,13 +9,13 @@ from . import worker_enum
 
 
 def encode_metadata(
-    worker_name: str, number_of_messages: int
+    worker_id: worker_enum.WorkerEnum, number_of_messages: int
 ) -> "tuple[True, bytes] | tuple[False, None]":
     """
     Encode PositionGlobal object into Bytes. Worker_ID to be encoded as the first byte of the message
 
     Parameters:
-       worker_name: name of the worker defined by the name of its own file (worker_name = pathlib.Path(__file__).stem)
+       worker_id: ID of the worker defined by its constant in WorkerEnum
        number_of_messages: number of messages intended to be sent
 
     Returns:
@@ -23,8 +23,9 @@ def encode_metadata(
         First byte dependant on which worker is calling the funciton, value depends on its corresponding enum value (see worker_enum.py)
     """
     try:
-        worker_id = worker_enum.WorkerEnum[worker_name.upper()]
-        if not worker_id:  # If worker ID is not in the Enum Class
+        if not isinstance(
+            worker_id, worker_enum.WorkerEnum
+        ):  # If worker ID is not in the Enum Class
             return False, None
 
         # Encode message using PositionGlobal's latitude, longitude, altitude, with the worker ID in the front

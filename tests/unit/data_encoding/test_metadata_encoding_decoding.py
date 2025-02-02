@@ -10,13 +10,13 @@ def test_encoding_metadata() -> None:
     """
     Function to test encoding
     """
-    # Step 1: Create a worker_name and PositionGlobal object
-    worker_name = "communications_worker"  # =3 in worker_enum.py
+    # Step 1: Create a worker_id and PositionGlobal object
+    worker_id = worker_enum.WorkerEnum.COMMUNICATIONS_WORKER  # =3 in worker_enum.py
     number_of_messages = 5
 
     # Step 2: Encode the WorkerEnum ID and number of messages
     result, encoded_bytes = metadata_encoding_decoding.encode_metadata(
-        worker_name, number_of_messages
+        worker_id, number_of_messages
     )
     assert result
 
@@ -27,8 +27,6 @@ def test_encoding_metadata() -> None:
     assert result
 
     # Step 4: Validate that the original and decoded objects match
-    assert (
-        worker_enum.WorkerEnum[worker_name.upper()] == worker_class
-    )  # Checks if Enum type Matches
+    assert worker_id == worker_class  # Checks if Enum type Matches
 
     assert number_of_messages == decoded_number_of_messages

@@ -10,13 +10,13 @@ from . import worker_enum
 
 
 def encode_position_global(
-    worker_name: str, global_position: position_global.PositionGlobal
+    worker_id: worker_enum.WorkerEnum, global_position: position_global.PositionGlobal
 ) -> "tuple[True, bytes] | tuple[False, None]":
     """
     Encode PositionGlobal object into Bytes. Worker_ID to be encoded as the first byte of the message
 
     Parameters:
-       worker_name: name of the worker defined by the name of its own file (worker_name = pathlib.Path(__file__).stem)
+       worker_id: ID of the worker defined by its constant in WorkerEnum
        global_position: PositionGlobal object
 
     Returns:
@@ -24,8 +24,9 @@ def encode_position_global(
         First byte dependant on which worker is calling the funciton, value depends on its corresponding enum value.
     """
     try:
-        worker_id = worker_enum.WorkerEnum[worker_name.upper()]
-        if not worker_id:  # If worker ID is not in the Enum Class
+        if not isinstance(
+            worker_id, worker_enum.WorkerEnum
+        ):  # If worker ID is not in the Enum Class
             return False, None
 
         # Encode message using PositionGlobal's latitude, longitude, altitude, with the worker ID in the front
