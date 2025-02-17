@@ -7,9 +7,9 @@ import numpy as np
 # Picamera2 library only exists on Raspberry Pi
 try:
     import libcamera
-    import picamera2
+    from picamera2 import Picamera2
 except ImportError:
-    pass
+    Picamera2 = None
 
 from . import base_camera
 
@@ -89,7 +89,7 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
             return False, None
 
         try:
-            camera = picamera2.Picamera2()
+            camera = Picamera2()
 
             camera_config = camera.create_preview_configuration(
                 {"size": (width, height), "format": "RGB888"}
@@ -106,7 +106,7 @@ class CameraPiCamera2(base_camera.BaseCameraDevice):
     def __init__(
         self,
         class_private_create_key: object,
-        camera: picamera2.Picamera2,
+        camera: Picamera2,
         config: ConfigPiCamera2,
     ) -> None:
         """
