@@ -69,8 +69,6 @@ if picamera2 is None:
         Class for the Picamera2 import failure.
         """
 
-        __create_key = object()
-
         @classmethod
         def create(cls, width: int, height: int, config: ConfigPiCamera2) -> "tuple[False, None]":
             return False, None
