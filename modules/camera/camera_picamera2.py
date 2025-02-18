@@ -101,9 +101,6 @@ else:
             Return: Success, camera object.
             """
 
-            if picamera2 is None:
-                return False, None
-
             if width <= 0:
                 return False, None
 
