@@ -63,6 +63,7 @@ class ConfigPiCamera2:
 
 
 if picamera2 is None:
+
     class CameraPiCamera2(base_camera.BaseCameraDevice):
         """
         Class for the Picamera2 import failure.
@@ -74,9 +75,11 @@ if picamera2 is None:
         def create(cls, width: int, height: int, config: ConfigPiCamera2) -> "tuple[False, None]":
             return False, None
 
-        def __init__(self, *args, **kwargs) -> None:
+        def __init__(self) -> None:
             pass
+
 else:
+
     class CameraPiCamera2(base_camera.BaseCameraDevice):
         """
         Class for the Picamera2 implementation of the camera.
