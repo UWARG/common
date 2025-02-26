@@ -1,5 +1,5 @@
 """
-Position and orientation of drone.
+Position, orientation, and flight mode of drone.
 """
 
 import enum
@@ -68,7 +68,7 @@ class DroneOdometryGlobal:
         """
         To string.
         """
-        return f"{self.__class__}: Position: {self.position}, orientation: {self.orientation}, flight mode: {self.flight_mode}"
+        return f"{self.__class__}: Position: {self.position}, orientation: {self.orientation}, flight mode: {self.flight_mode.name}"
 
     def __repr__(self) -> str:
         """
