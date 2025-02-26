@@ -69,10 +69,11 @@ def decode_metadata(
             return False, None, None
 
         # unpack returns tuple (unsigned char,) so [0] is needed
-        worker_id = struct.unpack(DATA_FORMAT[1], encoded_metadata[:1])[0]
-        number_of_messages = struct.unpack(DATA_FORMAT[2], encoded_metadata[1:])[0]
+        unpacked_data = struct.unpack(DATA_FORMAT, encoded_metadata)
+        worker_id = worker_enum.WorkerEnum(unpacked_data[0])
+        number_of_messages = unpacked_data[1]
     except struct.error:
         return False, None, None
 
     # Create and return a PositionGlobal object
-    return True, worker_enum.WorkerEnum(worker_id), number_of_messages
+    return True, worker_id, number_of_messages

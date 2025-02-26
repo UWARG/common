@@ -74,10 +74,9 @@ def decode_bytes_to_position_global(
             return False, None, None
 
         # Decode position global
-        worker_id = worker_enum.WorkerEnum(
-            struct.unpack(DATA_FORMAT[1], encoded_global_position[:1])[0]
-        )
-        latitude, longitude, altitude = struct.unpack(DATA_FORMAT[2:], encoded_global_position[1:])
+        unpacked_data = struct.unpack(DATA_FORMAT, encoded_global_position)
+        worker_id = worker_enum.WorkerEnum(unpacked_data[0])
+        latitude, longitude, altitude = unpacked_data[1], unpacked_data[2], unpacked_data[3]
     except struct.error:
         return False, None, None
 
