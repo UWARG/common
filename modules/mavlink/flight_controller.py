@@ -57,7 +57,7 @@ class MAVLinkMessager:
         self.mav = vehicle.mav
         self.start_time = vehicle.start_time
 
-    def send_status_text(
+    def status_text_send(
         self,
         data: dict,
         severity: int = mavutil.mavlink.MAV_SEVERITY_INFO,
@@ -78,7 +78,7 @@ class MAVLinkMessager:
         self.mav.statustext_send(severity, text_bytes)
         return True
 
-    def send_debug_vect(
+    def debug_vect_send(
         self,
         data: dict,
     ) -> bool:
@@ -114,7 +114,7 @@ class MAVLinkMessager:
         )
         return True
 
-    def send_named_value_float(
+    def named_value_float_send(
         self,
         data: dict,
     ) -> bool:
@@ -144,7 +144,7 @@ class MAVLinkMessager:
         )
         return True
 
-    def send_named_value_int(
+    def named_value_int_send(
         self,
         data: dict,
     ) -> bool:
@@ -179,13 +179,13 @@ class MAVLinkMessager:
         Sending a General MavLink Message
         """
         if message_type == MAVLinkMessage.DEBUG_VECT:
-            return self.send_debug_vect(data)
+            return self.debug_vect_send(data)
         if message_type == MAVLinkMessage.NAMED_VALUE_FLOAT:
-            return self.send_named_value_float(data)
+            return self.named_value_float_send(data)
         if message_type == MAVLinkMessage.NAMED_VALUE_INT:
-            return self.send_named_value_int(data)
+            return self.named_value_int_send(data)
         if message_type == MAVLinkMessage.STATUSTEXT:
-            return self.send_status_text(data)
+            return self.status_text_send(data)
         print("Invalid MAVLinkMessage Value. Could not send MAVLink Message.")
         return False
 
