@@ -65,17 +65,17 @@ class MAVLinkMessager:
         """
         Sending a STATUSTEXT MavLink Message
         """
-        if data["message"] is None:
-            print("Message is required to send STATUSTEXT message")
+        if data["text"] is None:
+            print("Text is required to send STATUSTEXT message")
             return False
-        if not isinstance(data["message"], str):
-            print("Message must be of type string to send STATUSTEXT message")
+        if not isinstance(data["text"], str):
+            print("Text must be of type string to send STATUSTEXT message")
             return False
-        message_bytes = data["message"].encode("utf-8")
-        if len(message_bytes) > 50:
-            print("Message too long, cannot send STATUSTEXT message")
+        text_bytes = data["text"].encode("utf-8")
+        if len(text_bytes) > 50:
+            print("Text too long, cannot send STATUSTEXT message")
             return False
-        self.mav.statustext_send(severity, message_bytes)
+        self.mav.statustext_send(severity, text_bytes)
         return True
 
     def send_debug_vect(
@@ -138,7 +138,9 @@ class MAVLinkMessager:
             print("Value must be of type float to send NAMED_VALUE_FLOAT message")
             return False
         self.mav.named_value_float_send(
-            value=data["value"], name=name_bytes, time_boot_ms=int(time.time() - self.start_time)
+            value=data["value"],
+            name=name_bytes,
+            time_boot_ms=int(time.time() - self.start_time) * (10**3),  # Convert s to ms
         )
         return True
 
@@ -166,7 +168,9 @@ class MAVLinkMessager:
             print("Value must be of type int to send NAMED_VALUE_INT message")
             return False
         self.mav.named_value_float_send(
-            value=data["value"], name=name_bytes, time_boot_ms=int(time.time() - self.start_time)
+            value=data["value"],
+            name=name_bytes,
+            time_boot_ms=int(time.time() - self.start_time) * (10**3),  # Convert s to ms
         )
         return True
 
