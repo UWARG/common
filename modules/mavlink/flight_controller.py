@@ -167,7 +167,7 @@ class MAVLinkMessager:
         if not isinstance(data["value"], int):
             print("Value must be of type int to send NAMED_VALUE_INT message")
             return False
-        self.mav.named_value_float_send(
+        self.mav.named_value_int_send(
             value=data["value"],
             name=name_bytes,
             time_boot_ms=int(time.time() - self.start_time) * (10**3),  # Convert s to ms
