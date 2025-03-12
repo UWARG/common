@@ -3,6 +3,7 @@ Wrapper for the flight controller.
 """
 
 import time
+import enum
 
 from pymavlink import mavutil
 
@@ -10,6 +11,183 @@ from . import drone_odometry_global
 from . import dronekit
 from .. import orientation
 from .. import position_global
+
+
+class MAVLinkMessage(enum.Enum):
+    """
+    Possible MAVLink Message Types
+    """
+
+    DEBUG_VECT = 250
+    NAMED_VALUE_FLOAT = 251
+    NAMED_VALUE_INT = 252
+    STATUSTEXT = 253
+
+
+class MAVLinkMessager:
+    """
+    Wrapper for MAVLink
+    """
+
+    __create_key = object()
+
+    @classmethod
+    def create(
+        cls,
+        vehicle: mavutil.mavtcp,
+    ) -> "tuple[bool, MAVLinkMessager] | tuple[False, None]":
+        """
+        Abstraction from MAVLink Message
+        """
+        if vehicle is None:
+            return False, None
+
+        return True, MAVLinkMessager(cls.__create_key, vehicle)
+
+    def __init__(
+        self,
+        class_private_create_key: object,
+        vehicle: mavutil.mavtcp,
+    ) -> None:
+        """
+        Private constructor, use create() method.
+        """
+        assert class_private_create_key is MAVLinkMessager.__create_key, "Use create() method."
+
+        self.mav = vehicle.mav
+        self.start_time = vehicle.start_time
+
+    def status_text_send(
+        self,
+        data: dict,
+        severity: int = mavutil.mavlink.MAV_SEVERITY_INFO,
+    ) -> bool:
+        """
+        Sending a STATUSTEXT MavLink Message
+        """
+        if data["text"] is None:
+            print("Text is required to send STATUSTEXT message")
+            return False
+        if not isinstance(data["text"], str):
+            print("Text must be of type string to send STATUSTEXT message")
+            return False
+        text_bytes = data["text"].encode("utf-8")
+        if len(text_bytes) > 50:
+            print("Text too long, cannot send STATUSTEXT message")
+            return False
+        self.mav.statustext_send(severity, text_bytes)
+        return True
+
+    def debug_vect_send(
+        self,
+        data: dict,
+    ) -> bool:
+        """
+        Sending a DEBUG_VECT MavLink Message
+        """
+        if data["name"] is None:
+            print("Name is required to send DEBUG_VECT message")
+            return False
+        if not isinstance(data["name"], str):
+            print("Name must be of type string to send DEBUG_VECT message")
+            return False
+        name_bytes = data["name"].encode("utf-8")
+        if len(name_bytes) > 10:
+            print("Name too long, cannot send DEBUG_VECT message")
+            return False
+        if data["x"] is None or data["y"] is None or data["z"] is None:
+            print("Values x, y, z, are needed to send a DEBUG_VECT message")
+            return False
+        if (
+            not isinstance(data["x"], float)
+            or not isinstance(data["y"], float)
+            or not isinstance(data["z"], float)
+        ):
+            print("Values x, y, z, must be of type float to send a DEBUG_VECT message")
+            return False
+        self.mav.debug_vect_send(
+            x=data["x"],
+            y=data["y"],
+            z=data["z"],
+            name=name_bytes,
+            time_usec=int(time.time() * (10**6)),  # Convert s to us
+        )
+        return True
+
+    def named_value_float_send(
+        self,
+        data: dict,
+    ) -> bool:
+        """
+        Sending a NAMED_VALUE_FLOAT MavLink Message
+        """
+        if data["name"] is None:
+            print("Name is required to send NAMED_VALUE_FLOAT message")
+            return False
+        if not isinstance(data["name"], str):
+            print("Name must be of type string to send NAMED_VALUE_FLOAT message")
+            return False
+        name_bytes = data["name"].encode("utf-8")
+        if len(name_bytes) > 10:
+            print("Name too long, cannot send NAMED_VALUE_FLOAT message")
+            return False
+        if data["value"] is None:
+            print("Value is required to send NAMED_VALUE_FLOAT message")
+            return False
+        if not isinstance(data["value"], float):
+            print("Value must be of type float to send NAMED_VALUE_FLOAT message")
+            return False
+        self.mav.named_value_float_send(
+            value=data["value"],
+            name=name_bytes,
+            time_boot_ms=int(time.time() - self.start_time) * (10**3),  # Convert s to ms
+        )
+        return True
+
+    def named_value_int_send(
+        self,
+        data: dict,
+    ) -> bool:
+        """
+        Sending a NAMED_VALUE_INT MavLink Message
+        """
+        if data["name"] is None:
+            print("Name is required to send NAMED_VALUE_INT message")
+            return False
+        if not isinstance(data["name"], str):
+            print("Name must be of type string to send NAMED_VALUE_INT message")
+            return False
+        name_bytes = data["name"].encode("utf-8")
+        if len(name_bytes) > 10:
+            print("Name too long, cannot send NAMED_VALUE_INT message")
+            return False
+        if data["value"] is None:
+            print("Value is required to send NAMED_VALUE_INT message")
+            return False
+        if not isinstance(data["value"], int):
+            print("Value must be of type int to send NAMED_VALUE_INT message")
+            return False
+        self.mav.named_value_int_send(
+            value=data["value"],
+            name=name_bytes,
+            time_boot_ms=int(time.time() - self.start_time) * (10**3),  # Convert s to ms
+        )
+        return True
+
+    def send_message(self, data: dict, message_type: MAVLinkMessage) -> bool:
+        """
+        Sending a General MavLink Message
+        """
+        if message_type == MAVLinkMessage.DEBUG_VECT:
+            return self.debug_vect_send(data)
+        if message_type == MAVLinkMessage.NAMED_VALUE_FLOAT:
+            return self.named_value_float_send(data)
+        if message_type == MAVLinkMessage.NAMED_VALUE_INT:
+            return self.named_value_int_send(data)
+        if message_type == MAVLinkMessage.STATUSTEXT:
+            return self.status_text_send(data)
+        print("Invalid MAVLinkMessage Value. Could not send MAVLink Message.")
+        return False
 
 
 class FlightController:
