@@ -24,7 +24,9 @@ def create_camera(
     camera_option: CameraOption,
     width: int,
     height: int,
-    config: camera_opencv.ConfigOpenCV | camera_picamera2.ConfigPiCamera2 | None, #TODO: Replace this later
+    config: (
+        camera_opencv.ConfigOpenCV | camera_picamera2.ConfigPiCamera2 | None
+    ),  # TODO: Replace this later
 ) -> tuple[True, base_camera.BaseCameraDevice] | tuple[False, None]:
     """
     Create a camera object based off of given parameters.

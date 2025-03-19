@@ -14,7 +14,9 @@ import arducam_rgbir_remosaic
 
 from modules.camera import camera_factory
 from modules.camera import camera_arducamir
-#TODO: Might need to import Enum for arducamoutput
+
+# TODO: Might need to import Enum for arducamoutput
+
 
 def main() -> int:
     """
@@ -22,8 +24,11 @@ def main() -> int:
     """
 
     result, device = camera_factory.create_camera(
-        #camera_factory.CameraOption.ARDUCAMIR, 100, 200, config 
-        camera_factory.CameraOption.ARDUCAMIR, 100, 200, None
+        # camera_factory.CameraOption.ARDUCAMIR, 100, 200, config
+        camera_factory.CameraOption.ARDUCAMIR,
+        100,
+        200,
+        None,
     )
     if not result:
         print("ArducamIR camera creation error.")
@@ -34,31 +39,32 @@ def main() -> int:
         if not result:
             print("ERROR, image not captured.\n")
             continue
-        
-        if image.seq%50==0: #Avoiding too many prints, 50 is an arbitrary number
+
+        if image.seq % 50 == 0:  # Avoiding too many prints, 50 is an arbitrary number
             print("Timestamp: [{0:s}]".format(time.ctime(float(image.timestamp / 10**3))))
             print("Bit Depth: {0:2d}".format(image.format.bit_depth))
             print("Format Code: {0:2d}".format(image.format.format_code))
             print("Height: {0:3d}".format(image.format.height))
             print("Width: {0:3d}\n".format(image.format.width))
 
-            #Assertions for Arducam cfg config values
+            # Assertions for Arducam cfg config values
             assert image.format.bit_depth == 12
             assert image.format.format_code == 2307
             assert image.format.width == 640
             assert image.format.height == 480
 
         color_frame = device.demosaic(image, camera_arducamir.ArducamOutput.IR)
-    
+
         if image.data is not None:
             cv2.imshow("ArducamIR Test", color_frame)
         cv2.setWindowTitle("ArducamIR Test", "ArducamIR Test " + str(image.seq))
 
-        #1ms delay between next picture
+        # 1ms delay between next picture
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
     return 0
+
 
 if __name__ == "__main__":
     result_main = main()
