@@ -9,6 +9,8 @@ pytest-xprocess
 # Module camera
 opencv-python
 numpy
+ArducamEvkSDK
+arducam_rgbir_remosaic
 
 # Module image_encoding
 Pillow
