@@ -1,16 +1,9 @@
 """
 Test ArducamIR camera physically and verifies configuration
 """
-
-import pathlib
+import time
 
 import cv2
-import time
-import numpy as np
-
-import ArducamEvkSDK
-from ArducamEvkSDK import Frame
-import arducam_rgbir_remosaic
 
 from modules.camera import camera_factory
 from modules.camera import camera_arducamir
@@ -41,11 +34,11 @@ def main() -> int:
             continue
 
         if image.seq % 50 == 0:  # Avoiding too many prints, 50 is an arbitrary number
-            print("Timestamp: [{0:s}]".format(time.ctime(float(image.timestamp / 10**3))))
-            print("Bit Depth: {0:2d}".format(image.format.bit_depth))
-            print("Format Code: {0:2d}".format(image.format.format_code))
-            print("Height: {0:3d}".format(image.format.height))
-            print("Width: {0:3d}\n".format(image.format.width))
+            print(f"Timestamp: [{0:s}]",time.ctime(float(image.timestamp / 10**3)))
+            print("Bit Depth: {0:2d}",image.format.bit_depth)
+            print("Format Code: {0:2d}",image.format.format_code)
+            print("Height: {0:3d}",image.format.height)
+            print("Width: {0:3d}\n",image.format.width)
 
             # Assertions for Arducam cfg config values
             assert image.format.bit_depth == 12

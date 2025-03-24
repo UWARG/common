@@ -30,18 +30,23 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
     __create_key = object()
 
     @classmethod
-    def create(cls) -> "tuple[True, CameraArducamIR] | tuple[False, None]":
+    def create(cls, width: int, height: int, config: None) -> "tuple[True, CameraArducamIR] | tuple[False, None]":
         # TODO: Do I need a create() function, if there are no invalid inputs?
 
         camera = Camera()
 
-        return True, CameraArducamIR(cls.__create_key, camera)
+        return True, CameraArducamIR(cls.__create_key, camera, width, height, config)
 
-    def __init__(self, class_private_create_key: object, camera: ArducamEvkSDK.Camera) -> None:
+    def __init__(self, class_private_create_key: object, camera: ArducamEvkSDK.Camera, width: int, height: int, config:None) -> None:
         """
         Private constructor, use create() method.
         """
         assert class_private_create_key is CameraArducamIR.__create_key, "Use create() method."
+
+        # TODO: Nonsense for passing pylint
+        self.width = width
+        self.height = height
+        self.config = config
 
         param = Param()
         param.config_file_name = "config.cfg"

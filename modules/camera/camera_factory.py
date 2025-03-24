@@ -39,6 +39,6 @@ def create_camera(
         case CameraOption.PICAM2:
             return camera_picamera2.CameraPiCamera2.create(width, height, config)
         case CameraOption.ARDUCAMIR:
-            return camera_arducamir.CameraArducamIR.create()
+            return camera_arducamir.CameraArducamIR.create(width, height, config)
 
     return False, None
