@@ -82,15 +82,15 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
         """
         Converts Bayer Pattern & IR data to OpenCV Matrix
         """
-        #Convert sensor data to useable format
+        # Convert sensor data to useable format
         data = self.format(image)
-        #Splits raw sensor data into bayer data and IR data using GRIG (Green, Red, IR, Green) filter pattern
+        # Splits raw sensor data into bayer data and IR data using GRIG (Green, Red, IR, Green) filter pattern
         bayer, ir = arducam_rgbir_remosaic.rgbir_remosaic(data, arducam_rgbir_remosaic.GRIG)
-        #Converts Bayer data to BGRA (Blue, Green, Red, Alpha)
+        # Converts Bayer data to BGRA (Blue, Green, Red, Alpha)
         color = cv2.cvtColor(bayer, cv2.COLOR_BayerRG2BGRA)
-        #Converts IR data to BGRA
+        # Converts IR data to BGRA
         ir_color = cv2.cvtColor(ir, cv2.COLOR_GRAY2BGRA)
-        #Resize the IR image so that they are both the same size
+        # Resize the IR image so that they are both the same size
         ir_resize = cv2.resize(ir_color, (bayer.shape[1], bayer.shape[0]))
         if output == ArducamOutput.RGB:
             return color
@@ -109,7 +109,7 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
 
         if bit_depth > 8:
             data = np.frombuffer(data, np.uint16).reshape(height, width)
-            #Reduce higher precision inputs to 8-bit arrays
+            # Reduce higher precision inputs to 8-bit arrays
             data = (data >> (bit_depth - 8)).astype(np.uint8)
         else:
             data = np.frombuffer(data, np.uint8).reshape(height, width)
