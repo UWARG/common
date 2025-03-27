@@ -8,6 +8,7 @@ import cv2
 from modules.camera import camera_factory
 from modules.camera import camera_arducamir
 
+
 def main() -> int:
     """
     Main function
