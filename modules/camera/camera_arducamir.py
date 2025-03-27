@@ -33,35 +33,27 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
     def create(
         cls, width: int, height: int, config: None
     ) -> "tuple[True, CameraArducamIR] | tuple[False, None]":
-        # TODO: Do I need a create() function, if there are no invalid inputs?
 
         camera = Camera()
-
-        return True, CameraArducamIR(cls.__create_key, camera, width, height, config)
-
-    def __init__(
-        self,
-        class_private_create_key: object,
-        camera: ArducamEvkSDK.Camera,
-        width: int,
-        height: int,
-        config: None,
-    ) -> None:
-        """
-        Private constructor, use create() method.
-        """
-        assert class_private_create_key is CameraArducamIR.__create_key, "Use create() method."
-
-        # Purely for passing pylint, serves no functional purpose
-        self.width = width
-        self.height = height
-        self.config = config
 
         param = Param()
         param.config_file_name = "./config/camera_config.cfg"
 
         if not camera.open(param):
             print("Error trying to open Arducam camera")
+            return False, None
+
+        return True, CameraArducamIR(cls.__create_key, camera)
+
+    def __init__(
+        self,
+        class_private_create_key: object,
+        camera: ArducamEvkSDK.Camera,
+    ) -> None:
+        """
+        Private constructor, use create() method.
+        """
+        assert class_private_create_key is CameraArducamIR.__create_key, "Use create() method."
 
         self.__camera = camera
         self.__camera.init()
@@ -86,24 +78,29 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
 
         return True, image_data
 
-    def frame_to_mat(self, data: np.ndarray, output: ArducamOutput) -> np.ndarray | None:
+    def demosaic(self, image: Frame, output: ArducamOutput) -> np.ndarray | None:
         """
-        Converts Frame to Mat
+        Converts Bayer Pattern & IR data to OpenCV Matrix
         """
+        #Convert sensor data to useable format
+        data = self.format(image)
+        #Splits raw sensor data into bayer data and IR data using GRIG (Green, Red, IR, Green) filter pattern
         bayer, ir = arducam_rgbir_remosaic.rgbir_remosaic(data, arducam_rgbir_remosaic.GRIG)
+        #Converts Bayer data to BGRA (Blue, Green, Red, Alpha)
         color = cv2.cvtColor(bayer, cv2.COLOR_BayerRG2BGRA)
+        #Converts IR data to BGRA
         ir_color = cv2.cvtColor(ir, cv2.COLOR_GRAY2BGRA)
+        #Resize the IR image so that they are both the same size
         ir_resize = cv2.resize(ir_color, (bayer.shape[1], bayer.shape[0]))
         if output == ArducamOutput.RGB:
             return color
         if output == ArducamOutput.IR:
             return ir_resize
-        print("Error. Invalid output type.")
-        return None
+        raise ValueError(f"Error. Invalid output type: {output}")
 
-    def demosaic(self, image: Frame, output: ArducamOutput) -> Frame:
+    def format(self, image: Frame) -> np.ndarray:
         """
-        Converts Frame to Mat
+        Formats byte buffer sensor input into 8-bit arrays
         """
         width = image.format.width
         height = image.format.height
@@ -112,10 +109,9 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
 
         if bit_depth > 8:
             data = np.frombuffer(data, np.uint16).reshape(height, width)
+            #Reduce higher precision inputs to 8-bit arrays
             data = (data >> (bit_depth - 8)).astype(np.uint8)
         else:
             data = np.frombuffer(data, np.uint8).reshape(height, width)
 
-        frame = self.frame_to_mat(data, output)
-
-        return frame
+        return data
