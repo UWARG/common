@@ -26,7 +26,7 @@ def create_camera(
     height: int,
     config: (
         camera_opencv.ConfigOpenCV | camera_picamera2.ConfigPiCamera2 | None
-    ),  # TODO: Replace this later
+    ),
 ) -> tuple[True, base_camera.BaseCameraDevice] | tuple[False, None]:
     """
     Create a camera object based off of given parameters.
@@ -39,6 +39,8 @@ def create_camera(
         case CameraOption.PICAM2:
             return camera_picamera2.CameraPiCamera2.create(width, height, config)
         case CameraOption.ARDUCAMIR:
+            if config is not None: #ArducamIR does not have configurable settings
+                return False, None
             return camera_arducamir.CameraArducamIR.create(width, height, config)
 
     return False, None

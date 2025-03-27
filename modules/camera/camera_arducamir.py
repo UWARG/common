@@ -52,13 +52,13 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
         """
         assert class_private_create_key is CameraArducamIR.__create_key, "Use create() method."
 
-        # TODO: Nonsense for passing pylint
+        # Purely for passing pylint, serves no functional purpose
         self.width = width
         self.height = height
         self.config = config
 
         param = Param()
-        param.config_file_name = "config.cfg"
+        param.config_file_name = "./config/camera_config.cfg"
 
         if not camera.open(param):
             print("Error trying to open Arducam camera")

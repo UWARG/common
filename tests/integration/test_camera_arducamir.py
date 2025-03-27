@@ -3,14 +3,10 @@ Test ArducamIR camera physically and verifies configuration
 """
 
 import time
-
 import cv2
 
 from modules.camera import camera_factory
 from modules.camera import camera_arducamir
-
-# TODO: Might need to import Enum for arducamoutput
-
 
 def main() -> int:
     """
@@ -18,7 +14,6 @@ def main() -> int:
     """
 
     result, device = camera_factory.create_camera(
-        # camera_factory.CameraOption.ARDUCAMIR, 100, 200, config
         camera_factory.CameraOption.ARDUCAMIR,
         100,
         200,
