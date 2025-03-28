@@ -11,6 +11,7 @@ from modules.mavlink.flight_controller import FlightController
 # Test functions use text fixture names and access private class members
 # pylint: disable=protected-access, redefined-outer-name
 
+
 @pytest.fixture
 def mock_drone(mocker):
     """
