@@ -2,7 +2,9 @@
 Test flight interface's send_statustext_msg function.
 """
 
+from unittest.mock import Mock
 import pytest
+from pytest_mock import MockerFixture
 
 from pymavlink import mavutil
 
@@ -13,7 +15,7 @@ from modules.mavlink.flight_controller import FlightController
 
 
 @pytest.fixture
-def mock_drone(mocker):
+def mock_drone(mocker: MockerFixture) -> Mock:
     """
     Mock drone to return test message.
     """
@@ -22,7 +24,7 @@ def mock_drone(mocker):
     return mock_drone
 
 
-def test_send_statustext_msg_valid(mock_drone):
+def test_send_statustext_msg_valid(mock_drone: Mock) -> None:
     """
     Test message under 50 characters.
     """
@@ -40,7 +42,7 @@ def test_send_statustext_msg_valid(mock_drone):
     mock_drone.send_mavlink.assert_called_once_with("test_message")
 
 
-def test_send_statustext_msg_invalid(mock_drone):
+def test_send_statustext_msg_invalid(mock_drone: Mock) -> None:
     """
     Test message over 50 characters.
     """
