@@ -86,17 +86,14 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
         data = self.format(image)
         # Splits raw sensor data into bayer data and IR data using GRIG (Green, Red, IR, Green) filter pattern
         bayer, ir = arducam_rgbir_remosaic.rgbir_remosaic(data, arducam_rgbir_remosaic.GRIG)
-        # Converts Bayer data to BGRA (Blue, Green, Red, Alpha)
-        color = cv2.cvtColor(bayer, cv2.COLOR_BayerRG2BGRA)
-        # Converts IR data to BGRA
-        ir_color = cv2.cvtColor(ir, cv2.COLOR_GRAY2BGRA)
-        # Resize the IR image so that they are both the same size
-        ir_resize = cv2.resize(ir_color, (bayer.shape[1], bayer.shape[0]))
         if output == ArducamOutput.RGB:
-            return color
+            # Converts Bayer data to BGRA (Blue, Green, Red, Alpha)
+            return cv2.cvtColor(bayer, cv2.COLOR_BayerRG2BGRA)
         if output == ArducamOutput.IR:
-            return ir_resize
-        raise ValueError(f"Error. Invalid output type: {output}")
+            # Converts IR data to BGRA
+            ir_color = cv2.cvtColor(ir, cv2.COLOR_GRAY2BGRA)
+            # Resize the IR image so that they are both the same size
+            return cv2.resize(ir_color, (bayer.shape[1], bayer.shape[0]))
 
     def format(self, image: ArducamEvkSDK.Frame) -> np.ndarray:
         """
