@@ -46,6 +46,9 @@ good-names = [
     "result_main",
 ]
 
+#Used to ignore no-name-in-module & c-extension-no-member errors in C-written python libraries 
+extension-pkg-allow-list="ArducamEvkSDK,arducam_rgbir_remosaic"
+
 [tool.pylint."messages control"]
 # Disable the message, report, category or checker with the given id(s). You can
 # either give multiple identifiers separated by comma (,) or put this option
