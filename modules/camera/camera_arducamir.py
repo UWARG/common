@@ -89,11 +89,10 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
         if output == ArducamOutput.RGB:
             # Converts Bayer data to BGRA (Blue, Green, Red, Alpha)
             return cv2.cvtColor(bayer, cv2.COLOR_BayerRG2BGRA)
-        if output == ArducamOutput.IR:
-            # Converts IR data to BGRA
-            ir_color = cv2.cvtColor(ir, cv2.COLOR_GRAY2BGRA)
-            # Resize the IR image so that they are both the same size
-            return cv2.resize(ir_color, (bayer.shape[1], bayer.shape[0]))
+        # Converts IR data to BGRA
+        ir_color = cv2.cvtColor(ir, cv2.COLOR_GRAY2BGRA)
+        # Resize the IR image so that they are both the same size
+        return cv2.resize(ir_color, (bayer.shape[1], bayer.shape[0]))
 
     def format(self, image: ArducamEvkSDK.Frame) -> np.ndarray:
         """
