@@ -7,10 +7,11 @@ import numpy as np
 import cv2
 
 import ArducamEvkSDK
-from ArducamEvkSDK import Camera, Frame, Param
 import arducam_rgbir_remosaic
 
 from . import base_camera
+
+CAMERA_CONFIG_DIR = "./config/camera_config.cfg"
 
 
 class ArducamOutput(enum.Enum):
@@ -34,13 +35,12 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
         cls, width: int, height: int, config: None
     ) -> "tuple[True, CameraArducamIR] | tuple[False, None]":
 
-        camera = Camera()
+        camera = ArducamEvkSDK.Camera()
 
-        param = Param()
-        param.config_file_name = "./config/camera_config.cfg"
+        param = ArducamEvkSDK.Param()
+        param.config_file_name = CAMERA_CONFIG_DIR
 
         if not camera.open(param):
-            print("Error trying to open Arducam camera")
             return False, None
 
         return True, CameraArducamIR(cls.__create_key, camera)
@@ -66,7 +66,7 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
         self.__camera.stop()
         self.__camera.close()
 
-    def run(self) -> tuple[True, Frame] | tuple[False, None]:
+    def run(self) -> tuple[True, ArducamEvkSDK.Frame] | tuple[False, None]:
         """
         Takes a picture with ArducamIR camera.
 
@@ -78,7 +78,7 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
 
         return True, image_data
 
-    def demosaic(self, image: Frame, output: ArducamOutput) -> np.ndarray | None:
+    def demosaic(self, image: ArducamEvkSDK.Frame, output: ArducamOutput) -> np.ndarray | None:
         """
         Converts Bayer Pattern & IR data to OpenCV Matrix
         """
@@ -98,7 +98,7 @@ class CameraArducamIR(base_camera.BaseCameraDevice):
             return ir_resize
         raise ValueError(f"Error. Invalid output type: {output}")
 
-    def format(self, image: Frame) -> np.ndarray:
+    def format(self, image: ArducamEvkSDK.Frame) -> np.ndarray:
         """
         Formats byte buffer sensor input into 8-bit arrays
         """

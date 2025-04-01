@@ -31,7 +31,7 @@ def main() -> int:
             continue
 
         if image.seq % 50 == 0:  # Avoiding too many prints, 50 is an arbitrary number
-            print(f"Timestamp: [{0:s}]", time.ctime(float(image.timestamp / 10**3)))
+            print("Timestamp: [{0:s}]", time.ctime(float(image.timestamp / 10**3)))
             print("Bit Depth: {0:2d}", image.format.bit_depth)
             print("Format Code: {0:2d}", image.format.format_code)
             print("Height: {0:3d}", image.format.height)
