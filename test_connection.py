@@ -12,7 +12,7 @@ from pymavlink import mavutil
 
 DELAY_TIME = 1.0  # seconds
 # /dev/ttyAMA0 for drone, tcp:127.0.0.1:14550 for mission planner simulator
-CONNECTION_ADDRESS = "tcp:127.0.0.1:14550"
+CONNECTION_ADDRESS = "/dev/ttyAMA0"
 TIMEOUT = 1.0  # seconds
 LOG_FILE_PATH = pathlib.Path("logs", f"mavlink_connection_{time.time_ns()}.log")
 DATETIME_FMT = "%Y-%m-%d_%H-%M-%S"
