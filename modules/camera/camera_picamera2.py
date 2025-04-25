@@ -112,7 +112,6 @@ else:
                     {"size": (width, height), "format": "RGB888"}
                 )
                 camera.configure(camera_config)
-                camera.start_preview(picamera2.Preview.QT)
                 camera.start()
                 controls = config.to_dict()
                 camera.set_controls(controls)
