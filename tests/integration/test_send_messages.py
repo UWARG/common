@@ -23,17 +23,10 @@ def main() -> int:
         print("Failed to connect")
         return -1
 
-    messages = [  # 10 random messages
-        "System startup",
-        "Initializing sensors",
-        "GPS lock acquired",
-        "Motors armed",
-        "Taking off",
-        "Reaching altitude",
-        "Mission started",
-        "Waypoint reached",
-        "Returning home",
-        "Landing sequence initiated",
+    messages = [
+        "System startup",  # Regular message (success)
+        "A" * 50,  # Exactly 50 characters (success)
+        "B" * 51,  # 51 characters (fail)
     ]
 
     for msg in messages:
