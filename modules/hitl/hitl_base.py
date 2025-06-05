@@ -22,14 +22,14 @@ class HITL:
         cls, drone: FlightController, camera_module: bool
     ) -> "tuple[True, HITL] | tuple[False, None]":
         """
-        Setup workers for.
+        Factory method to create a HITL instance.
 
         Args:
             drone: The FlightController instance for the drone.
             camera_module: Boolean indicating if the camera module is enabled.
 
         Returns:
-            Success, HITL instance.
+            Success, HITL instance | None.
         """
         if not isinstance(drone, FlightController):
             return False, None
