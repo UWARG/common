@@ -19,4 +19,8 @@ class PositionEmulator:
         Returns:
             Success, PositionEmulator instance.
         """
+
+        if not isinstance(drone, FlightController):
+            return False, None
+
         return True, self
