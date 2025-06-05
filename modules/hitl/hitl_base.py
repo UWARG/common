@@ -19,7 +19,7 @@ class HITL:
 
     @classmethod
     def create(
-        cls, drone: FlightController, camera_module: bool
+        cls, drone: FlightController, camera_module: bool, images_path: str | None = None
     ) -> "tuple[True, HITL] | tuple[False, None]":
         """
         Factory method to create a HITL instance.
@@ -27,6 +27,7 @@ class HITL:
         Args:
             drone: The FlightController instance for the drone.
             camera_module: Boolean indicating if the camera module is enabled.
+            images_path: Optional path to the images directory for the camera emulator.
 
         Returns:
             Success, HITL instance | None.
@@ -34,14 +35,12 @@ class HITL:
         if not isinstance(drone, FlightController):
             return False, None
 
-        position_emulator = PositionEmulator()
-        result, position_emulator = position_emulator.create(drone)
+        result, position_emulator = PositionEmulator.create(drone)
         if not result:
             return False, None
 
         if camera_module:
-            camera_emulator = CameraEmulator()
-            result, camera_emulator = camera_emulator.create()
+            result, camera_emulator = CameraEmulator.create(images_path)
             if not result:
                 return False, None
 
