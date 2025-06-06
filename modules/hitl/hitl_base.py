@@ -17,7 +17,7 @@ class HITL:
 
     @classmethod
     def create(
-        cls, poaition_callback: callable, camera_module: bool, images_path: str | None = None
+        cls, position_callback: callable, camera_module: bool, images_path: str | None = None
     ) -> "tuple[True, HITL] | tuple[False, None]":
         """
         Factory method to create a HITL instance.
@@ -30,7 +30,7 @@ class HITL:
         Returns:
             Success, HITL instance | None.
         """
-        result, position_emulator = PositionEmulator.create(poaition_callback)
+        result, position_emulator = PositionEmulator.create(position_callback)
         if not result:
             return False, None
 
