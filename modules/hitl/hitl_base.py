@@ -2,8 +2,6 @@
 Setup for HITL modules.
 """
 
-from modules.mavlink.flight_controller import FlightController
-
 from modules.hitl.position_emulator import PositionEmulator
 from modules.hitl.camera_emulator import CameraEmulator
 
@@ -19,23 +17,20 @@ class HITL:
 
     @classmethod
     def create(
-        cls, drone: FlightController, camera_module: bool, images_path: str | None = None
+        cls, poaition_callback: callable, camera_module: bool, images_path: str | None = None
     ) -> "tuple[True, HITL] | tuple[False, None]":
         """
         Factory method to create a HITL instance.
 
         Args:
-            drone: The FlightController instance for the drone.
+            positoinal_callback: Callback for sending current position.
             camera_module: Boolean indicating if the camera module is enabled.
             images_path: Optional path to the images directory for the camera emulator.
 
         Returns:
             Success, HITL instance | None.
         """
-        if not isinstance(drone, FlightController):
-            return False, None
-
-        result, position_emulator = PositionEmulator.create(drone)
+        result, position_emulator = PositionEmulator.create(poaition_callback)
         if not result:
             return False, None
 
@@ -44,16 +39,13 @@ class HITL:
             if not result:
                 return False, None
 
-        hitl = HITL(
-            cls.__create_key, drone, position_emulator, camera_emulator if camera_module else None
-        )
+        hitl = HITL(cls.__create_key, position_emulator, camera_emulator if camera_module else None)
 
         return True, hitl
 
     def __init__(
         self,
         class_private_create_key: object,
-        drone: FlightController,
         position_emulator: "PositionEmulator",
         camera_emulator: "CameraEmulator | None" = None,
     ) -> None:
@@ -61,8 +53,6 @@ class HITL:
         Private constructor, use create() method.
         """
         assert class_private_create_key is HITL.__create_key, "Use create() method"
-
-        self.drone = drone
 
         self.position_emulator = position_emulator
         self.camera_emulator = camera_emulator

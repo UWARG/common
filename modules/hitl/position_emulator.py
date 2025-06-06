@@ -2,8 +2,6 @@
 Emulates position and attitude to Pixhawk.
 """
 
-from modules.mavlink.flight_controller import FlightController
-
 
 class PositionEmulator:
     """
@@ -14,7 +12,7 @@ class PositionEmulator:
 
     @classmethod
     def create(
-        cls, drone: FlightController
+        cls, poaition_callback: callable
     ) -> "tuple[True, PositionEmulator] | tuple[False, None]":
         """
         Setup position emulator.
@@ -23,15 +21,12 @@ class PositionEmulator:
             Success, PositionEmulator instance.
         """
 
-        if not isinstance(drone, FlightController):
-            return False, None
+        return True, PositionEmulator(cls.__create_key, poaition_callback)
 
-        return True, PositionEmulator(cls.__create_key, drone)
-
-    def __init__(self, class_private_create_key: object, drone: FlightController) -> None:
+    def __init__(self, class_private_create_key: object, poaition_callback: callable) -> None:
         """
         Private constructor, use create() method.
         """
         assert class_private_create_key is PositionEmulator.__create_key, "Use create() method"
 
-        self._drone = drone
+        self.poaition_callback = poaition_callback
