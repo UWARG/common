@@ -2,6 +2,8 @@
 Setup for HITL modules.
 """
 
+from mavlink import dronekit
+
 from modules.hitl.position_emulator import PositionEmulator
 from modules.hitl.camera_emulator import CameraEmulator
 
@@ -17,20 +19,23 @@ class HITL:
 
     @classmethod
     def create(
-        cls, position_callback: callable, camera_module: bool, images_path: str | None = None
+        cls, drone: dronekit.Vehicle, camera_module: bool, images_path: str | None = None
     ) -> "tuple[True, HITL] | tuple[False, None]":
         """
         Factory method to create a HITL instance.
 
         Args:
-            positoinal_callback: Callback for sending current position.
+            drone: The dronekit instance to use for sending MAVLink messages.
             camera_module: Boolean indicating if the camera module is enabled.
             images_path: Optional path to the images directory for the camera emulator.
 
         Returns:
             Success, HITL instance | None.
         """
-        result, position_emulator = PositionEmulator.create(position_callback)
+        if not isinstance(drone, dronekit.Vehicle):
+            return False, None
+
+        result, position_emulator = PositionEmulator.create(drone)
         if not result:
             return False, None
 
@@ -46,6 +51,7 @@ class HITL:
     def __init__(
         self,
         class_private_create_key: object,
+        drone: dronekit.Vehicle,
         position_emulator: "PositionEmulator",
         camera_emulator: "CameraEmulator | None" = None,
     ) -> None:
@@ -54,5 +60,6 @@ class HITL:
         """
         assert class_private_create_key is HITL.__create_key, "Use create() method"
 
+        self.drone = drone
         self.position_emulator = position_emulator
         self.camera_emulator = camera_emulator
