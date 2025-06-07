@@ -19,13 +19,20 @@ class HITL:
 
     @classmethod
     def create(
-        cls, drone: dronekit.Vehicle, camera_module: bool, images_path: str | None = None
+        cls,
+        drone: dronekit.Vehicle,
+        hitl_enabled: bool,
+        position_module: bool,
+        camera_module: bool,
+        images_path: str | None = None,
     ) -> "tuple[True, HITL] | tuple[False, None]":
         """
         Factory method to create a HITL instance.
 
         Args:
             drone: The dronekit instance to use for sending MAVLink messages.
+            hitl_enabled: Boolean indicating if HITL is enabled.
+            position_module: Boolean indicating if the position module is enabled.
             camera_module: Boolean indicating if the camera module is enabled.
             images_path: Optional path to the images directory for the camera emulator.
 
@@ -35,16 +42,24 @@ class HITL:
         if not isinstance(drone, dronekit.Vehicle):
             return False, None
 
-        result, position_emulator = PositionEmulator.create(drone)
-        if not result:
-            return False, None
+        if not hitl_enabled:
+            return True, HITL(cls.__create_key, drone, None, None)
+
+        if position_module:
+            result, position_emulator = PositionEmulator.create(drone)
+            if not result:
+                return False, None
 
         if camera_module:
             result, camera_emulator = CameraEmulator.create(images_path)
             if not result:
                 return False, None
 
-        hitl = HITL(cls.__create_key, position_emulator, camera_emulator if camera_module else None)
+        hitl = HITL(
+            cls.__create_key,
+            position_emulator if position_emulator else None,
+            camera_emulator if camera_module else None,
+        )
 
         return True, hitl
 
@@ -52,7 +67,7 @@ class HITL:
         self,
         class_private_create_key: object,
         drone: dronekit.Vehicle,
-        position_emulator: "PositionEmulator",
+        position_emulator: "PositionEmulator | None" = None,
         camera_emulator: "CameraEmulator | None" = None,
     ) -> None:
         """
