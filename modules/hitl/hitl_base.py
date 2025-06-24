@@ -2,10 +2,9 @@
 Setup for HITL modules.
 """
 
-from mavlink import dronekit
-
 from modules.hitl.position_emulator import PositionEmulator
 from modules.hitl.camera_emulator import CameraEmulator
+from ..mavlink import dronekit
 
 
 class HITL:
@@ -47,6 +46,7 @@ class HITL:
 
         if position_module:
             result, position_emulator = PositionEmulator.create(drone)
+            position_emulator.inject_position()  # Inject initial position
             if not result:
                 return False, None
 

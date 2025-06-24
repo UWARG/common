@@ -6,6 +6,7 @@ import time
 import enum
 
 from pymavlink import mavutil
+from modules.hitl import hitl_base
 
 from . import drone_odometry_global
 from . import dronekit
@@ -202,18 +203,28 @@ class FlightController:
     __MAVLINK_WAYPOINT_COMMAND = mavutil.mavlink.MAV_CMD_NAV_WAYPOINT
 
     @classmethod
-    def create(cls, address: str, baud: int = 57600) -> "tuple[bool, FlightController | None]":
+    def create(
+        cls, address: str, baud: int = 57600, mode: str | None = None
+    ) -> "tuple[bool, FlightController | None]":
         """
         address: TCP address or serial port of the drone (e.g. "tcp:127.0.0.1:14550").
         baud: Baud rate for the connection (default is 57600).
         Establishes connection to drone through provided address
         and stores the DroneKit object.
         """
+
         try:
             # Wait ready is false as the drone may be on the ground
             drone = dronekit.connect(
                 address, wait_ready=False, baud=baud, source_component=0, source_system=1
             )
+
+            hitl = False
+            if mode is not None and mode.lower() == "hitl":
+                print("HITL mode enabled, creating HITL instance.")
+                hitl = True
+                hitl_instance = hitl_base.HITL.create(drone, True, True, True)
+
         except dronekit.TimeoutError:
             print("No messages are being received. Make sure address/port is a host address/port.")
             return False, None
@@ -221,15 +232,21 @@ class FlightController:
             print("Cannot connect to drone! Make sure the address/port is correct.")
             return False, None
 
-        return True, FlightController(cls.__create_key, drone)
+        return True, FlightController(
+            cls.__create_key, drone, hitl, hitl_instance if hitl else None
+        )
 
-    def __init__(self, class_private_create_key: object, vehicle: dronekit.Vehicle) -> None:
+    def __init__(
+        self, class_private_create_key: object, vehicle: dronekit.Vehicle, hitl: bool, hitl_instance: hitl_base.HITL | None
+    ) -> None:
         """
         Private constructor, use create() method.
         """
         assert class_private_create_key is FlightController.__create_key, "Use create() method"
 
         self.drone = vehicle
+        self.hitl = hitl
+        self.hitl_instance = hitl_instance
 
     def get_odometry(self) -> "tuple[bool, drone_odometry_global.DroneOdometryGlobal | None]":
         """
@@ -423,6 +440,13 @@ class FlightController:
                 position.latitude, position.longitude, position.altitude
             )
             self.drone.simple_goto(target_location)
+
+            # If HITL is enabled, inject the position into the HITL instance
+            # to simulate the drone's movement in the HITL environment.
+            if self.hitl:
+                self.hitl_instance.position_emulator.inject_position(
+                    position.latitude, position.longitude, position.altitude
+                )
 
             return True
         except KeyError:
