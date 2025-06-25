@@ -41,32 +41,34 @@ class PositionEmulator:
         altitude: float = 373.0,
     ) -> None:
         """
-        Inject fake GPS position into the drone via MAVLink GPS_INPUT.
-
+        Simulates gps coordinates by injecting the desired position of the drone.
         Args:
             latitude: Latitude in degrees.
             longitude: Longitude in degrees.
             altitude: Altitude in meters.
         """
-        gps_input_msg = self.drone.message_factory.gps_input_encode(
-            int(time.time() * 1e6),  # timestamp (microseconds)
+        values = [
+            int(time.time() * 1e6),  # time_usec
             0,  # gps_id
-            0b111111,  # flags (all fields valid)
-            0,
-            0,  # week, week_ms (optional)
+            0b111111,  # ignore_flags (all fields valid)
+            0,  # time_week_ms
+            0,  # time_week
+            3,  # fix_type (3D fix)
             int(latitude * 1e7),  # lat
             int(longitude * 1e7),  # lon
-            int(altitude * 1000),  # alt in mm
-            100,
-            100,  # HDOP, VDOP (x100)
-            0,
-            0,
-            0,  # velocity components
-            0,
-            0,
-            0,  # speed_acc, horiz_acc, vert_acc
+            int(altitude * 1000),  # alt (mm)
+            100,  # hdop (x100)
+            100,  # vdop (x100)
+            0,  # vn (cm/s)
+            0,  # ve (cm/s)
+            0,  # vd (cm/s)
+            0,  # speed_accuracy (cm/s)
+            0,  # horiz_accuracy (cm)
+            0,  # vert_accuracy (cm)
             10,  # satellites_visible
-            3,  # fix_type (3D fix)
-        )
+            0,  # yaw (deg*100)
+        ]
+        print("Packing values:", values)
+        gps_input_msg = self.drone.message_factory.gps_input_encode(*values)
         self.drone.send_mavlink(gps_input_msg)
         self.drone.flush()

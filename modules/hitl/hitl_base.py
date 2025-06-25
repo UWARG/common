@@ -2,6 +2,7 @@
 Setup for HITL modules.
 """
 
+import time
 from modules.hitl.position_emulator import PositionEmulator
 from modules.hitl.camera_emulator import CameraEmulator
 from ..mavlink import dronekit
@@ -78,3 +79,34 @@ class HITL:
         self.drone = drone
         self.position_emulator = position_emulator
         self.camera_emulator = camera_emulator
+
+    def set_inject_position(self, latitude: float, longitude: float, altitude: float) -> None:
+        """
+        Set the position to inject into the drone.
+        Print out a message if position emulator is not enabled.
+
+        Args:
+            latitude: Latitude in degrees.
+            longitude: Longitude in degrees.
+            altitude: Altitude in meters.
+        """
+        if self.position_emulator:
+            self.position_emulator.inject_position(latitude, longitude, altitude)
+        else:
+            print("Position emulator is not enabled.")
+
+    def set_inject_waypoint_positions(self, drone: dronekit.Vehicle) -> None:
+        """
+        Continuously update the drone's position to simulate travelling to the next waypoint in the mission.
+        The drone will behave as if it has teleported to the next waypoint.
+        """
+        if not self.position_emulator:
+            print("Position emulator is not enabled.")
+            return
+
+        command_list = list(drone.commands)
+
+        for command in command_list:
+            if command.command == 16:  # If command is a MAV_CMD_NAV_WAYPOINT command
+                self.position_emulator.inject_position(command.x, command.y, command.z)
+            time.sleep(2)  # Allow some time for the position to be injected

@@ -204,11 +204,12 @@ class FlightController:
 
     @classmethod
     def create(
-        cls, address: str, baud: int = 57600, mode: str | None = None
+        cls, address: str, baud: int = 57600, mode: bool | None = None
     ) -> "tuple[bool, FlightController | None]":
         """
         address: TCP address or serial port of the drone (e.g. "tcp:127.0.0.1:14550").
         baud: Baud rate for the connection (default is 57600).
+        mode: True to enable HITL mode, False or None to disable it.
         Establishes connection to drone through provided address
         and stores the DroneKit object.
         """
@@ -219,11 +220,12 @@ class FlightController:
                 address, wait_ready=False, baud=baud, source_component=0, source_system=1
             )
 
-            hitl = False
-            if mode is not None and mode.lower() == "hitl":
-                print("HITL mode enabled, creating HITL instance.")
-                hitl = True
-                hitl_instance = hitl_base.HITL.create(drone, True, True, True)
+            # Enable/disable HITL based on mode
+            success, hitl_instance = hitl_base.HITL.create(
+                drone, mode, True, True, "./../hitl/images"
+            )
+            if not success:
+                print("HITL mode disabled")
 
         except dronekit.TimeoutError:
             print("No messages are being received. Make sure address/port is a host address/port.")
@@ -232,12 +234,14 @@ class FlightController:
             print("Cannot connect to drone! Make sure the address/port is correct.")
             return False, None
 
-        return True, FlightController(
-            cls.__create_key, drone, hitl, hitl_instance if hitl else None
-        )
+        return True, FlightController(cls.__create_key, drone, mode, hitl_instance)
 
     def __init__(
-        self, class_private_create_key: object, vehicle: dronekit.Vehicle, hitl: bool, hitl_instance: hitl_base.HITL | None
+        self,
+        class_private_create_key: object,
+        vehicle: dronekit.Vehicle,
+        hitl: bool,
+        hitl_instance: hitl_base.HITL | None = None,
     ) -> None:
         """
         Private constructor, use create() method.
@@ -359,6 +363,10 @@ class FlightController:
 
             # Upload commands to drone
             command_sequence.upload()
+
+            # Update the position in HITL based off waypoint locations, if enabled
+            self.hitl_instance.set_inject_waypoint_positions(self.drone)
+
         except dronekit.TimeoutError:
             print("Upload timeout, commands are not being sent.")
             return False
@@ -441,12 +449,11 @@ class FlightController:
             )
             self.drone.simple_goto(target_location)
 
-            # If HITL is enabled, inject the position into the HITL instance
-            # to simulate the drone's movement in the HITL environment.
-            if self.hitl:
-                self.hitl_instance.position_emulator.inject_position(
-                    position.latitude, position.longitude, position.altitude
-                )
+            # Set the position to be injected into HITL
+            # Will do nothing if HITL/position_emulator is not enabled
+            self.hitl_instance.set_inject_position(
+                position.latitude, position.longitude, position.altitude
+            )
 
             return True
         except KeyError:
