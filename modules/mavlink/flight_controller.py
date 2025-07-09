@@ -204,7 +204,13 @@ class FlightController:
 
     @classmethod
     def create(
-        cls, address: str, baud: int = 57600, mode: bool | None = None
+        cls, 
+        address: str, 
+        baud: int = 57600, 
+        hitl_enabled: bool | None = None,
+        position_module: bool | None = None,
+        camera_module: bool | None = None,
+        images_path: str | None = None,
     ) -> "tuple[bool, FlightController | None]":
         """
         address: TCP address or serial port of the drone (e.g. "tcp:127.0.0.1:14550").
@@ -219,10 +225,9 @@ class FlightController:
             drone = dronekit.connect(
                 address, wait_ready=False, baud=baud, source_component=0, source_system=1
             )
-
             # Enable/disable HITL based on mode
             success, hitl_instance = hitl_base.HITL.create(
-                drone, mode, True, True, "./../hitl/images"
+                drone, hitl_enabled, position_module, camera_module, images_path
             )
             if not success:
                 print("HITL mode disabled")
@@ -234,7 +239,7 @@ class FlightController:
             print("Cannot connect to drone! Make sure the address/port is correct.")
             return False, None
 
-        return True, FlightController(cls.__create_key, drone, mode, hitl_instance)
+        return True, FlightController(cls.__create_key, drone, hitl_enabled, hitl_instance)
 
     def __init__(
         self,
@@ -365,7 +370,7 @@ class FlightController:
             command_sequence.upload()
 
             # Update the position in HITL based off waypoint locations, if enabled
-            self.hitl_instance.set_inject_waypoint_positions(self.drone)
+            self.hitl_instance.set_inject_position()
 
         except dronekit.TimeoutError:
             print("Upload timeout, commands are not being sent.")
@@ -451,9 +456,7 @@ class FlightController:
 
             # Set the position to be injected into HITL
             # Will do nothing if HITL/position_emulator is not enabled
-            self.hitl_instance.set_inject_position(
-                position.latitude, position.longitude, position.altitude
-            )
+            self.hitl_instance.set_inject_position()
 
             return True
         except KeyError:

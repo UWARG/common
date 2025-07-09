@@ -58,7 +58,8 @@ class HITL:
 
         hitl = HITL(
             cls.__create_key,
-            position_emulator if position_emulator else None,
+            drone,
+            position_emulator if position_module else None,
             camera_emulator if camera_module else None,
         )
 
@@ -80,33 +81,26 @@ class HITL:
         self.position_emulator = position_emulator
         self.camera_emulator = camera_emulator
 
-    def set_inject_position(self, latitude: float, longitude: float, altitude: float) -> None:
+    def set_inject_position(self) -> None:
         """
         Set the position to inject into the drone.
         Print out a message if position emulator is not enabled.
 
-        Args:
-            latitude: Latitude in degrees.
-            longitude: Longitude in degrees.
-            altitude: Altitude in meters.
         """
-        if self.position_emulator:
-            self.position_emulator.inject_position(latitude, longitude, altitude)
-        else:
-            print("Position emulator is not enabled.")
-
-    def set_inject_waypoint_positions(self, drone: dronekit.Vehicle) -> None:
-        """
-        Continuously update the drone's position to simulate travelling to the next waypoint in the mission.
-        The drone will behave as if it has teleported to the next waypoint.
-        """
-        if not self.position_emulator:
+        if self.position_emulator is None:
             print("Position emulator is not enabled.")
             return
+        
+        position_target = self.drone._master.recv_match(type="POSITION_TARGET_GLOBAL_INT", blocking=True, timeout=2)
 
-        command_list = list(drone.commands)
+        if position_target:
+            latitude = position_target.lat_int / 1e7
+            longitude = position_target.lon_int / 1e7
+            altitude = position_target.alt
 
-        for command in command_list:
-            if command.command == 16:  # If command is a MAV_CMD_NAV_WAYPOINT command
-                self.position_emulator.inject_position(command.x, command.y, command.z)
-            time.sleep(2)  # Allow some time for the position to be injected
+            self.position_emulator.inject_position(latitude, longitude, altitude)
+            print(f"Injected position: lat={latitude}, lon={longitude}, alt={altitude}")
+        else:
+            print("No POSITION_TARGET_GLOBAL_INT message received.")
+
+        time.sleep(3)
