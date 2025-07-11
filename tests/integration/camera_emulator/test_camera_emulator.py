@@ -11,13 +11,16 @@ Note: may need to mess around with camera index
 """
 
 import time
+import os
 from modules.hitl.camera_emulator import CameraEmulator
+
 
 def main() -> None:
     """
     Runs camera emulator
     """
-    has_cam, cam_emulator = CameraEmulator.create("tests\\integration\\camera_emulator\\images")
+    images_folder_path = os.path.join("tests", "integration", "camera_emulator", "images")
+    has_cam, cam_emulator = CameraEmulator.create(images_folder_path)
     if has_cam:
         print("CAMERA EMULATOR RUNNING")
         start = time.perf_counter()
@@ -28,6 +31,7 @@ def main() -> None:
                 cam_emulator.next_image()
                 cam_emulator.update_current_image()
                 start = time.perf_counter()
+
 
 if __name__ == "__main__":
     main()
