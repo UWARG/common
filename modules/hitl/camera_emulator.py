@@ -57,8 +57,11 @@ class CameraEmulator:
         """
         try:
             self.__virtual_camera.send(self.__current_frame)
+
+        # Required for catching library exceptions
+        # pylint: disable-next=broad-exception-caught
         except Exception as e:
-            print(e)
+            print("Cannot send frame" + e)
 
     def sleep_until_next_frame(self) -> None:
         """
@@ -82,8 +85,11 @@ class CameraEmulator:
                 image = cv2.imread(image_path)
                 self.__current_frame = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 has_image = True
+
+            # Required for catching library exceptions
+            # pylint: disable-next=broad-exception-caught
             except Exception as e:
-                print("Could not read image: " + image_path)
+                print("Could not read image: " + image_path + " Error: " + e)
                 self.next_image()
                 loop_count += 1
 
@@ -104,5 +110,7 @@ class CameraEmulator:
                     path = os.path.join(self.__image_folder_path, image)
                     self.__image_paths.append(path)
 
+        # Required for catching library exceptions
+        # pylint: disable-next=broad-exception-caught
         except Exception as e:
-            print("Cannot open image folder " + e)
+            print("Error reading images: " + e)
