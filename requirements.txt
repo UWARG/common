@@ -6,6 +6,9 @@ pytest
 pytest-mock
 pytest-xprocess
 
+# hitl
+pyvirtualcam
+
 # Module camera
 opencv-python
 numpy

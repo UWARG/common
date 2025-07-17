@@ -1,5 +1,8 @@
 """
 Emulates camera input to PI.
+
+Requires OBS Virtual Camera on Windows or
+v4l2loopback for Linux to be installed to work
 """
 
 import os
