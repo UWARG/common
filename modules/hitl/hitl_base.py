@@ -90,9 +90,9 @@ class HITL:
         if self.position_emulator is None:
             print("Position emulator is not enabled.")
             return
-        
-        position_target = self.drone._master.recv_match(type="POSITION_TARGET_GLOBAL_INT", blocking=True, timeout=2)
-
+        # pylint: disable=protected-access
+        position_target = self.drone._master.recv_match(...)
+        # pylint: enable=protected-access
         if position_target:
             latitude = position_target.lat_int / 1e7
             longitude = position_target.lon_int / 1e7

@@ -4,20 +4,24 @@ Test on random coordinate injection into HITL by printing to console.
 
 import random
 
-from modules import position_global
 from modules.mavlink import flight_controller
 
 
 MISSION_PLANNER_ADDRESS = "tcp:localhost:5762"
 
+
 def main() -> int:
     """
     Main function.
     """
-    result, controller = flight_controller.FlightController.create(MISSION_PLANNER_ADDRESS, 57600, True, True, False, None)
+    result, controller = flight_controller.FlightController.create(
+        MISSION_PLANNER_ADDRESS, 57600, True, True, False, None
+    )
     if not result:
         print("Failed to create flight controller")
         return -1
+
+    controller.set_flight_mode("AUTO")
 
     # Generate random coordinates
     latitude = random.uniform(43.0, 44.0)

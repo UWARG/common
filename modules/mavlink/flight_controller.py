@@ -204,12 +204,12 @@ class FlightController:
 
     @classmethod
     def create(
-        cls, 
-        address: str, 
-        baud: int = 57600, 
-        hitl_enabled: bool | None = None,
-        position_module: bool | None = None,
-        camera_module: bool | None = None,
+        cls,
+        address: str,
+        baud: int = 57600,
+        hitl_enabled: bool = False,
+        position_module: bool = False,
+        camera_module: bool = False,
         images_path: str | None = None,
     ) -> "tuple[bool, FlightController | None]":
         """
@@ -230,7 +230,7 @@ class FlightController:
                 drone, hitl_enabled, position_module, camera_module, images_path
             )
             if not success:
-                print("HITL mode disabled")
+                print("Error creating HITL module")
 
         except dronekit.TimeoutError:
             print("No messages are being received. Make sure address/port is a host address/port.")
@@ -369,9 +369,6 @@ class FlightController:
             # Upload commands to drone
             command_sequence.upload()
 
-            # Update the position in HITL based off waypoint locations, if enabled
-            self.hitl_instance.set_inject_position()
-
         except dronekit.TimeoutError:
             print("Upload timeout, commands are not being sent.")
             return False
@@ -453,10 +450,6 @@ class FlightController:
                 position.latitude, position.longitude, position.altitude
             )
             self.drone.simple_goto(target_location)
-
-            # Set the position to be injected into HITL
-            # Will do nothing if HITL/position_emulator is not enabled
-            self.hitl_instance.set_inject_position()
 
             return True
         except KeyError:

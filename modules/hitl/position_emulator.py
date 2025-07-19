@@ -62,9 +62,9 @@ class PositionEmulator:
             0,  # vn (cm/s)
             0,  # ve (cm/s)
             0,  # vd (cm/s)
-            0,  # speed_accuracy (cm/s)
-            0,  # horiz_accuracy (cm)
-            0,  # vert_accuracy (cm)
+            100,  # speed_accuracy (cm/s)
+            100,  # horiz_accuracy (cm)
+            100,  # vert_accuracy (cm)
             10,  # satellites_visible
             0,  # yaw (deg*100)
         ]
