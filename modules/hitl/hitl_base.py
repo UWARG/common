@@ -2,10 +2,10 @@
 Setup for HITL modules.
 """
 
-from mavlink import dronekit
-
+import time
 from modules.hitl.position_emulator import PositionEmulator
 from modules.hitl.camera_emulator import CameraEmulator
+from ..mavlink import dronekit
 
 
 class HITL:
@@ -47,6 +47,7 @@ class HITL:
 
         if position_module:
             result, position_emulator = PositionEmulator.create(drone)
+            position_emulator.inject_position()  # Inject initial position
             if not result:
                 return False, None
 
@@ -57,7 +58,8 @@ class HITL:
 
         hitl = HITL(
             cls.__create_key,
-            position_emulator if position_emulator else None,
+            drone,
+            position_emulator if position_module else None,
             camera_emulator if camera_module else None,
         )
 
@@ -78,3 +80,27 @@ class HITL:
         self.drone = drone
         self.position_emulator = position_emulator
         self.camera_emulator = camera_emulator
+
+    def set_inject_position(self) -> None:
+        """
+        Set the position to inject into the drone.
+        Print out a message if position emulator is not enabled.
+
+        """
+        if self.position_emulator is None:
+            print("Position emulator is not enabled.")
+            return
+        # pylint: disable=protected-access
+        position_target = self.drone._master.recv_match(...)
+        # pylint: enable=protected-access
+        if position_target:
+            latitude = position_target.lat_int / 1e7
+            longitude = position_target.lon_int / 1e7
+            altitude = position_target.alt
+
+            self.position_emulator.inject_position(latitude, longitude, altitude)
+            print(f"Injected position: lat={latitude}, lon={longitude}, alt={altitude}")
+        else:
+            print("No POSITION_TARGET_GLOBAL_INT message received.")
+
+        time.sleep(3)

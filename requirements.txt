@@ -33,6 +33,10 @@ pyserial
 # Module qr
 pyzbar
 
+# Hitl
+future
+monotonic
+
 # Linters and formatters are explicitly versioned
 black==24.2.0
 flake8-annotations==3.0.1
