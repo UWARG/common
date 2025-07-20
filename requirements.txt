@@ -21,6 +21,9 @@ simplekml
 # Module logger
 pyyaml
 
+pymavlink>=2.2.20
+monotonic>=1.3
+
 # Coordinate conversions
 pymap3d
 
@@ -32,6 +35,10 @@ pyserial
 
 # Module qr
 pyzbar
+
+# Hitl
+future
+monotonic
 
 # Linters and formatters are explicitly versioned
 black==24.2.0
