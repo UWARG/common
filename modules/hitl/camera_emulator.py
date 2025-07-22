@@ -36,16 +36,33 @@ class CameraEmulator:
         if not isinstance(images_path, str):
             return False, None
 
-        return True, CameraEmulator(cls.__create_key, images_path)
+        try:
+            virtual_camera_instance = pyvirtualcam.Camera(IMAGE_SIZE[0], IMAGE_SIZE[1], CAMERA_FPS)
 
-    def __init__(self, class_private_create_key: object, images_path: str) -> None:
+        # Required for catching library exceptions
+        # pylint: disable-next=broad-exception-caught
+        except Exception as e:
+            print(
+                "Error creating virtual camera (Check if OBS or v4l2loopback is installed): "
+                + str(e)
+            )
+            return False, None
+
+        if virtual_camera_instance is None:
+            return False, None
+
+        return True, CameraEmulator(cls.__create_key, images_path, virtual_camera_instance)
+
+    def __init__(
+        self, class_private_create_key: object, images_path: str, virtual_camera: pyvirtualcam
+    ) -> None:
         """
         Private constructor, use create() method.
         """
         assert class_private_create_key is CameraEmulator.__create_key, "Use create() method"
 
         self.__image_folder_path = images_path
-        self.__virtual_camera = pyvirtualcam.Camera(IMAGE_SIZE[0], IMAGE_SIZE[1], CAMERA_FPS)
+        self.__virtual_camera = virtual_camera
         self.__image_paths: "list[str]" = []
         self.__current_frame = None
         self.__image_index = 0
@@ -64,7 +81,7 @@ class CameraEmulator:
         # Required for catching library exceptions
         # pylint: disable-next=broad-exception-caught
         except Exception as e:
-            print("Cannot send frame" + e)
+            print("Cannot send frame" + str(e))
 
     def sleep_until_next_frame(self) -> None:
         """
@@ -92,7 +109,7 @@ class CameraEmulator:
             # Required for catching library exceptions
             # pylint: disable-next=broad-exception-caught
             except Exception as e:
-                print("Could not read image: " + image_path + " Error: " + e)
+                print("Could not read image: " + image_path + " Error: " + str(e))
                 self.next_image()
                 loop_count += 1
 
@@ -116,4 +133,4 @@ class CameraEmulator:
         # Required for catching library exceptions
         # pylint: disable-next=broad-exception-caught
         except Exception as e:
-            print("Error reading images: " + e)
+            print("Error reading images: " + str(e))
