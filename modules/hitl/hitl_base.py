@@ -137,7 +137,6 @@ class HITL:
                 self.position_emulator.periodic()
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"HITL position thread error: {exc}")
-            time.sleep(0.02)
 
     def run_camera(self) -> None:
         """
@@ -149,7 +148,3 @@ class HITL:
                 self.camera_emulator.periodic()
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"HITL camera thread error: {exc}")
-<<<<<<< HEAD
-                time.sleep(0.1)
-=======
->>>>>>> 2bf98af (Adds proper position listening for mission waypoints in hitl)
