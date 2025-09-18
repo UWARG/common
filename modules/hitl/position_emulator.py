@@ -55,16 +55,26 @@ class PositionEmulator:
             Target position as (latitude, longitude, altitude).
         """
         # pylint: disable=protected-access
-        position_target = self.drone._master.recv_match(...)
+        position_target = None
+        try:
+            # Poll non-blocking for the latest global position target from the FCU
+            position_target = self.drone._master.recv_match(
+                type="POSITION_TARGET_GLOBAL_INT", blocking=False
+            )
+        except Exception as exc:  # pylint: disable=broad-except
+            print(f"HITL get_target_position recv_match error: {exc}")
+            position_target = None
         # pylint: enable=protected-access
+
         if position_target:
             latitude = position_target.lat_int / 1e7
             longitude = position_target.lon_int / 1e7
             altitude = position_target.alt
-        else:
-            print("No POSITION_TARGET_GLOBAL_INT message received.")
+            return (latitude, longitude, altitude)
 
-        return (latitude, longitude, altitude) if position_target else self.target_position
+        print("No POSITION_TARGET_GLOBAL_INT message received.")
+
+        return self.target_position
 
     def periodic(self) -> None:
         """
@@ -73,9 +83,9 @@ class PositionEmulator:
 
         self.target_position = self.get_target_position()
 
-        self.inject_position(self.target_position[0], self.target_position[1], self.target_position[2])
-
-        time.sleep(0.1) # 10 Hz
+        self.inject_position(
+            self.target_position[0], self.target_position[1], self.target_position[2]
+        )
 
     def inject_position(
         self,

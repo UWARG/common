@@ -131,17 +131,25 @@ class HITL:
             pass
 
     def run_position(self) -> None:
+        """
+        Runs the position emulator periodic function in a loop.
+        """
         assert self._stop_event is not None
         while not self._stop_event.is_set():
             try:
                 self.position_emulator.periodic()
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"HITL position thread error: {exc}")
+                time.sleep(0.1)
 
     def run_camera(self) -> None:
+        """
+        Runs the camera emulator periodic function in a loop.
+        """
         assert self._stop_event is not None
         while not self._stop_event.is_set():
             try:
                 self.camera_emulator.periodic()
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"HITL camera thread error: {exc}")
+                time.sleep(0.1)

@@ -8,6 +8,7 @@ import os
 import time
 from modules.mavlink import flight_controller
 
+
 def main() -> int:
     """
     Main function.
@@ -15,7 +16,7 @@ def main() -> int:
     images_folder_path = os.path.join("tests", "integration", "camera_emulator", "images")
 
     result, controller = flight_controller.FlightController.create(
-        PIXHAWK_ADDRESS, 57600, True, True # True, images_folder_path
+        PIXHAWK_ADDRESS, 57600, True, True  # True, images_folder_path
     )
     if not result:
         print("Failed to create flight controller")
