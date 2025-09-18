@@ -33,15 +33,11 @@ def main() -> int:
         print("Failed to create flight controller")
         return -1
 
-<<<<<<< HEAD
-    time.sleep(10)
-=======
     controller.set_flight_mode("AUTO")
 
     controller.insert_waypoint(0, 40, -40, 300)
 
     time.sleep(20)
->>>>>>> 2bf98af (Adds proper position listening for mission waypoints in hitl)
 
     return 0
 
