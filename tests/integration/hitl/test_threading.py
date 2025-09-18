@@ -5,7 +5,7 @@ Tests the threading behavior of the HITL module (gps and camera modules).
 PIXHAWK_ADDRESS = "tcp:localhost:5762"
 
 import os
-from time import time
+import time
 from modules.mavlink import flight_controller
 
 def main() -> int:
