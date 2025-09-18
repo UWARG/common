@@ -147,27 +147,3 @@ class HITL:
                 self.camera_emulator.periodic()
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"HITL camera thread error: {exc}")
-
-    def set_inject_position(self) -> None:
-        """
-        Set the position to inject into the drone.
-        Print out a message if position emulator is not enabled.
-
-        """
-        if self.position_emulator is None:
-            print("Position emulator is not enabled.")
-            return
-        # pylint: disable=protected-access
-        position_target = self.drone._master.recv_match(...)
-        # pylint: enable=protected-access
-        if position_target:
-            latitude = position_target.lat_int / 1e7
-            longitude = position_target.lon_int / 1e7
-            altitude = position_target.alt
-
-            self.position_emulator.inject_position(latitude, longitude, altitude)
-            print(f"Injected position: lat={latitude}, lon={longitude}, alt={altitude}")
-        else:
-            print("No POSITION_TARGET_GLOBAL_INT message received.")
-
-        time.sleep(3)
