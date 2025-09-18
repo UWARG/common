@@ -81,10 +81,7 @@ class HITL:
         self.position_emulator = position_emulator
         self.camera_emulator = camera_emulator
 
-        self._stop_event: Event | None = None
-        self._threads: list[Thread] = []
-
-    def start(self) -> None:
+    def set_inject_position(self) -> None:
         """
         Start HITL module threads.
         """

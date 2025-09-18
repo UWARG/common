@@ -89,32 +89,9 @@ class CameraEmulator:
         self.__image_paths: "list[str]" = []
         self.__current_frame = None
         self.__image_index = 0
-        self.__next_image_time = time.time() + time_between_images
-        self.__time_between_images = time_between_images
 
         self.__get_images()
         self.update_current_image()
-
-    def periodic(self) -> None:
-        """
-        Periodic function.
-        """
-        try:
-            # Send frame and pace to target FPS
-            self.send_frame()
-            self.sleep_until_next_frame()
-
-            now = time.time()
-            if now >= self.__next_image_time:
-                # Cycle image once per second
-                try:
-                    self.next_image()
-                    self.update_current_image()
-                except Exception as exc:  # pylint: disable=broad-except
-                    print(f"HITL camera image update error: {exc}")
-                self.__next_image_time = now + self.__time_between_images
-        except Exception as exc:  # pylint: disable=broad-except
-            print(f"HITL camera periodic error: {exc}")
 
     def send_frame(self) -> None:
         """
