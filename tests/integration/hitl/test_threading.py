@@ -16,7 +16,7 @@ from modules.mavlink import flight_controller
 PIXHAWK_ADDRESS = "tcp:localhost:5762"
 
 import os
-from time import time
+import time
 from modules.mavlink import flight_controller
 
 >>>>>>> 2bf98af (Adds proper position listening for mission waypoints in hitl)
