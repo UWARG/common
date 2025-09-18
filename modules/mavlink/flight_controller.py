@@ -211,6 +211,7 @@ class FlightController:
         position_module: bool = False,
         camera_module: bool = False,
         images_path: str | None = None,
+        positions_path: str | None = None,
     ) -> "tuple[bool, FlightController | None]":
         """
         address: TCP address or serial port of the drone (e.g. "tcp:127.0.0.1:14550").
@@ -229,7 +230,10 @@ class FlightController:
             success, hitl_instance = hitl_base.HITL.create(
                 drone, hitl_enabled, position_module, camera_module, images_path
             )
-            if not success:
+            if success:
+                if hitl_enabled and hitl_instance is not None:
+                    hitl_instance.start()
+            else:
                 print("Error creating HITL module")
 
         except dronekit.TimeoutError:
