@@ -36,6 +36,48 @@ class PositionEmulator:
 
         self.drone = drone
 
+<<<<<<< HEAD
+=======
+    def set_target_position(self, latitude: float, longitude: float, altitude: float) -> None:
+        """
+        Sets the target position manually (currently a fallback if Ardupilot target doesnt work).
+
+        Args:
+            latitude: Latitude in degrees.
+            longitude: Longitude in degrees.
+            altitude: Altitude in meters.
+        """
+        self.target_position = (latitude, longitude, altitude)
+
+    def get_target_position(self) -> tuple[float, float, float]:
+        """
+        Gets the target position from the Ardupilot target.
+
+        Returns:
+            Target position as (latitude, longitude, altitude).
+        """
+        # pylint: disable=protected-access
+        position_target = self.drone._master.recv_match(...)
+        # pylint: enable=protected-access
+        if position_target:
+            latitude = position_target.lat_int / 1e7
+            longitude = position_target.lon_int / 1e7
+            altitude = position_target.alt
+        else:
+            print("No POSITION_TARGET_GLOBAL_INT message received.")
+
+        return (latitude, longitude, altitude) if position_target else self.target_position
+
+    def periodic(self) -> None:
+        """
+        Periodic function.
+        """
+
+        self.target_position = self.get_target_position()
+
+        self.inject_position(self.target_position[0], self.target_position[1], self.target_position[2])
+
+>>>>>>> 2bf98af (Adds proper position listening for mission waypoints in hitl)
     def inject_position(
         self,
         latitude: float = 43.43405014107003,
