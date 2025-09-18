@@ -137,7 +137,6 @@ class HITL:
                 self.position_emulator.periodic()
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"HITL position thread error: {exc}")
-            time.sleep(0.02)
 
     def run_camera(self) -> None:
         assert self._stop_event is not None

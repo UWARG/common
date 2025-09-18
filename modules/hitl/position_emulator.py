@@ -75,6 +75,8 @@ class PositionEmulator:
 
         self.inject_position(self.target_position[0], self.target_position[1], self.target_position[2])
 
+        time.sleep(0.1) # 10 Hz
+
     def inject_position(
         self,
         latitude: float = 43.43405014107003,
