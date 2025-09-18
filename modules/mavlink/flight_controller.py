@@ -211,7 +211,6 @@ class FlightController:
         position_module: bool = False,
         camera_module: bool = False,
         images_path: str | None = None,
-        positions_path: str | None = None,
     ) -> "tuple[bool, FlightController | None]":
         """
         address: TCP address or serial port of the drone (e.g. "tcp:127.0.0.1:14550").
