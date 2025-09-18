@@ -77,7 +77,6 @@ class PositionEmulator:
 
         self.inject_position(self.target_position[0], self.target_position[1], self.target_position[2])
 
->>>>>>> 2bf98af (Adds proper position listening for mission waypoints in hitl)
     def inject_position(
         self,
         latitude: float = 43.43405014107003,

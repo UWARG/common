@@ -137,11 +137,7 @@ class HITL:
                 self.position_emulator.periodic()
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"HITL position thread error: {exc}")
-<<<<<<< HEAD
-                time.sleep(0.1)
-=======
             time.sleep(0.02)
->>>>>>> b2af852 (Makes gps speed faster)
 
     def run_camera(self) -> None:
         """
