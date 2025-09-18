@@ -32,7 +32,26 @@ class PositionEmulator:
         """
         assert class_private_create_key is PositionEmulator.__create_key, "Use create() method"
 
+        self.target_position = (43.43405014107003, -80.57898027451816, 373.0)  # lat, lon, alt
+
         self.drone = drone
+
+    def set_target_position(self, latitude: float, longitude: float, altitude: float) -> None:
+        """
+        Sets the target position.
+
+        Args:
+            latitude: Latitude in degrees.
+            longitude: Longitude in degrees.
+            altitude: Altitude in meters.
+        """
+        self.target_position = (latitude, longitude, altitude)
+
+    def periodic(self) -> None:
+        """
+        Periodic function.
+        """
+        self.inject_position(self.target_position[0], self.target_position[1], self.target_position[2])
 
     def inject_position(
         self,
@@ -68,7 +87,6 @@ class PositionEmulator:
             10,  # satellites_visible
             0,  # yaw (deg*100)
         ]
-        print("Packing values:", values)
         gps_input_msg = self.drone.message_factory.gps_input_encode(*values)
         self.drone.send_mavlink(gps_input_msg)
         self.drone.flush()
