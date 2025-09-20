@@ -1,0 +1,142 @@
+HITL JSON Position Emulator - Execution Flow
+=============================================
+
+INITIALIZATION PHASE:
+---------------------
+1. HITL.create() called with json_file_path parameter
+2. PositionEmulator.create() called with json_file_path and update_interval
+3. PositionEmulator.__init__() runs:
+   - Sets up json_coordinates = []
+   - Sets current_coordinate_index = 0
+   - Sets update_interval (default 1.0 seconds)
+   - Sets next_coordinate_time = current_time + update_interval
+   - Calls _load_json_coordinates() if json_file_path provided
+
+4. _load_json_coordinates() runs:
+   - Opens and parses JSON file
+   - Validates format: list of [lat, lon, alt] lists
+   - Stores in self.json_coordinates
+   - Prints confirmation message
+
+RUNTIME PHASE (periodic() called every loop):
+---------------------------------------------
+1. periodic() called by HITL thread
+2. Check if json_coordinates exist:
+   
+   IF JSON COORDINATES EXIST:
+   ---------------------------
+   3a. Check if current_time >= next_coordinate_time:
+       - IF YES: Call _next_json_coordinate()
+         * Get coordinate: json_coordinates[current_coordinate_index]
+         * Extract: latitude, longitude, altitude
+         * Call set_target_position(lat, lon, alt)
+         * Print progress message
+         * Increment current_coordinate_index (cycle at end)
+         * Set next_coordinate_time = current_time + update_interval
+       - IF NO: Do nothing (wait for next cycle)
+   
+   ELSE (NO JSON COORDINATES):
+   ---------------------------
+   3b. Call get_target_position() to get Ardupilot position
+       - Try to get POSITION_TARGET_GLOBAL_INT from flight controller
+       - If available: use Ardupilot coordinates
+       - If not available: use fallback target_position
+
+4. ALWAYS: Call inject_position(*target_position)
+   - Create GPS_INPUT MAVLink message
+   - Send to flight controller
+   - Flush connection
+
+EXAMPLE EXECUTION WITH test_coordinates.json:
+=============================================
+
+JSON File Content:
+[
+    [43.43405014107003, -80.57898027451816, 373.0],  // Coordinate 0
+    [40.0, -40.0, 200.0],                            // Coordinate 1  
+    [41.29129039399329, -81.78471782918818, 373.0]   // Coordinate 2
+]
+
+Time 0.0s: INITIALIZATION
+- Loads 3 coordinates from JSON
+- Sets current_coordinate_index = 0
+- Sets next_coordinate_time = 0.0 + 1.0 = 1.0s
+- Prints: "HITL loaded 3 coordinates from test_coordinates.json"
+
+Time 0.1s: periodic() call
+- current_time = 0.1s
+- 0.1s < 1.0s, so no coordinate change
+- Uses current target_position (default: 43.434..., -80.578..., 373.0)
+- Injects position to flight controller
+
+Time 0.2s: periodic() call
+- current_time = 0.2s  
+- 0.2s < 1.0s, so no coordinate change
+- Uses current target_position
+- Injects position to flight controller
+
+... (continues every ~0.1s) ...
+
+Time 1.0s: periodic() call
+- current_time = 1.0s
+- 1.0s >= 1.0s, so TIME TO CHANGE COORDINATE!
+- Calls _next_json_coordinate():
+  * Gets coordinate[0]: [43.434..., -80.578..., 373.0]
+  * Sets target_position = (43.434..., -80.578..., 373.0)
+  * Prints: "HITL set JSON coordinate 1/3: (43.434..., -80.578..., 373.0)"
+  * Increments current_coordinate_index = 1
+  * Sets next_coordinate_time = 1.0 + 1.0 = 2.0s
+- Injects new position to flight controller
+
+Time 1.1s: periodic() call
+- current_time = 1.1s
+- 1.1s < 2.0s, so no coordinate change
+- Uses current target_position (still coordinate 0)
+- Injects position to flight controller
+
+... (continues every ~0.1s) ...
+
+Time 2.0s: periodic() call
+- current_time = 2.0s
+- 2.0s >= 2.0s, so TIME TO CHANGE COORDINATE!
+- Calls _next_json_coordinate():
+  * Gets coordinate[1]: [40.0, -40.0, 200.0]
+  * Sets target_position = (40.0, -40.0, 200.0)
+  * Prints: "HITL set JSON coordinate 2/3: (40.0, -40.0, 200.0)"
+  * Increments current_coordinate_index = 2
+  * Sets next_coordinate_time = 2.0 + 1.0 = 3.0s
+- Injects new position to flight controller
+
+Time 3.0s: periodic() call
+- current_time = 3.0s
+- 3.0s >= 3.0s, so TIME TO CHANGE COORDINATE!
+- Calls _next_json_coordinate():
+  * Gets coordinate[2]: [41.291..., -81.784..., 373.0]
+  * Sets target_position = (41.291..., -81.784..., 373.0)
+  * Prints: "HITL set JSON coordinate 3/3: (41.291..., -81.784..., 373.0)"
+  * Increments current_coordinate_index = 3, but 3 % 3 = 0 (cycles back!)
+  * Sets next_coordinate_time = 3.0 + 1.0 = 4.0s
+- Injects new position to flight controller
+
+Time 4.0s: periodic() call
+- current_time = 4.0s
+- 4.0s >= 4.0s, so TIME TO CHANGE COORDINATE!
+- Calls _next_json_coordinate():
+  * Gets coordinate[0]: [43.434..., -80.578..., 373.0] (back to first!)
+  * Sets target_position = (43.434..., -80.578..., 373.0)
+  * Prints: "HITL set JSON coordinate 1/3: (43.434..., -80.578..., 373.0)"
+  * Increments current_coordinate_index = 1
+  * Sets next_coordinate_time = 4.0 + 1.0 = 5.0s
+- Injects new position to flight controller
+
+... (continues cycling forever) ...
+
+KEY POINTS:
+===========
+- Coordinates change every 1 second (or custom interval)
+- Cycles through all coordinates then repeats
+- Each coordinate is held for the full interval duration
+- Position is injected to flight controller every periodic() call
+- JSON coordinates override Ardupilot when available
+- If no JSON file, falls back to Ardupilot pathing
+- Error handling prevents crashes if JSON loading fails
