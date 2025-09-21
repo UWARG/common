@@ -66,11 +66,13 @@ def main() -> int:
                 else:
                     print("GPS: No data")
 
-            # Test camera feed every 3 seconds  
+            # Test camera feed every 3 seconds
             if int(current_time) % 3 == 0 and current_time > 1:
                 if controller.hitl_instance and controller.hitl_instance.camera_emulator:
                     try:
-                        frame = controller.hitl_instance.camera_emulator._CameraEmulator__current_frame
+                        frame = (
+                            controller.hitl_instance.camera_emulator._CameraEmulator__current_frame
+                        )
                         if frame is not None:
                             camera_count += 1
                             print("Camera: Frame available")
@@ -99,6 +101,6 @@ def main() -> int:
         if controller.hitl_instance is not None:
             controller.hitl_instance.shutdown()
 
+
 if __name__ == "__main__":
     exit(main())
-    

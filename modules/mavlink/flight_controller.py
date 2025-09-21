@@ -324,7 +324,7 @@ class FlightController:
         try:
             loc = self.drone.location
         except Exception:  # pylint: disable=broad-except
-            print(f"HITL get_location error")
+            print("HITL get_location error")
             return False, None
 
         if loc is None or loc.global_frame is None:
