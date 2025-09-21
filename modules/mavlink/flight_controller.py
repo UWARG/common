@@ -319,6 +319,23 @@ class FlightController:
 
         return True, odometry_data
 
+    def get_location(self) -> "tuple[bool, tuple[float, float, float] | None]":
+        """Return (lat, lon, alt) if available via the drone, otherwise (False, None)."""
+        try:
+            loc = self.drone.location
+        except Exception:  # pylint: disable=broad-except
+            print(f"HITL get_location error")
+            return False, None
+
+        if loc is None or loc.global_frame is None:
+            return False, None
+
+        gf = loc.global_frame
+        if gf.lat is None or gf.lon is None or gf.alt is None:
+            return False, None
+
+        return True, (gf.lat, gf.lon, gf.alt)
+
     def get_home_position(
         self, timeout: float
     ) -> "tuple[bool, position_global.PositionGlobal | None]":
