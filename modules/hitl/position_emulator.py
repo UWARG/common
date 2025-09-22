@@ -72,7 +72,7 @@ class PositionEmulator:
             altitude = position_target.alt
             return (latitude, longitude, altitude)
 
-        print("No POSITION_TARGET_GLOBAL_INT message received.")
+        # print("No POSITION_TARGET_GLOBAL_INT message received.")
 
         return self.target_position
 
