@@ -57,7 +57,6 @@ class PositionEmulator:
         # pylint: disable=protected-access
         position_target = None
         try:
-            # Poll non-blocking for the latest global position target from the FCU
             position_target = self.drone._master.recv_match(
                 type="POSITION_TARGET_GLOBAL_INT", blocking=False
             )
@@ -72,6 +71,7 @@ class PositionEmulator:
             altitude = position_target.alt
             return (latitude, longitude, altitude)
 
+        # Optionally log if no message received
         # print("No POSITION_TARGET_GLOBAL_INT message received.")
 
         return self.target_position
