@@ -24,12 +24,6 @@ def main() -> int:
         print("Failed to create flight controller")
         return -1
 
-    time.sleep(1)
-
-    controller.set_flight_mode("AUTO")
-
-    controller.insert_waypoint(0, 40, -40, 300)
-
     time.sleep(10)
 
     return 0
