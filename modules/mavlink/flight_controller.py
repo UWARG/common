@@ -211,11 +211,16 @@ class FlightController:
         position_module: bool = False,
         camera_module: bool = False,
         images_path: str | None = None,
+        movement_speed: float = 5.0,
     ) -> "tuple[bool, FlightController | None]":
         """
         address: TCP address or serial port of the drone (e.g. "tcp:127.0.0.1:14550").
         baud: Baud rate for the connection (default is 57600).
-        mode: True to enable HITL mode, False or None to disable it.
+        hitl_enabled: True to enable HITL mode, False to disable it.
+        position_module: True to enable position emulation.
+        camera_module: True to enable camera emulation.
+        images_path: Path to images directory for camera emulation.
+        movement_speed: Speed of drone movement in m/s for position interpolation (default: 5.0).
         Establishes connection to drone through provided address
         and stores the DroneKit object.
         """
@@ -227,7 +232,7 @@ class FlightController:
             )
             # Enable/disable HITL based on mode
             success, hitl_instance = hitl_base.HITL.create(
-                drone, hitl_enabled, position_module, camera_module, images_path
+                drone, hitl_enabled, position_module, camera_module, images_path, movement_speed
             )
             if success:
                 if hitl_enabled and hitl_instance is not None:

@@ -26,6 +26,7 @@ class HITL:
         position_module: bool,
         camera_module: bool,
         images_path: str | None = None,
+        movement_speed: float = 5.0,
     ) -> "tuple[True, HITL] | tuple[False, None]":
         """
         Factory method to create a HITL instance.
@@ -36,6 +37,7 @@ class HITL:
             position_module: Boolean indicating if the position module is enabled.
             camera_module: Boolean indicating if the camera module is enabled.
             images_path: Optional path to the images directory for the camera emulator.
+            movement_speed: Speed of drone movement in m/s for position interpolation (default: 5.0).
 
         Returns:
             Success, HITL instance | None.
@@ -47,7 +49,7 @@ class HITL:
             return True, HITL(cls.__create_key, drone, None, None)
 
         if position_module:
-            result, position_emulator = PositionEmulator.create(drone)
+            result, position_emulator = PositionEmulator.create(drone, movement_speed)
             if not result:
                 return False, None
 

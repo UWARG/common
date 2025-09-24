@@ -15,7 +15,7 @@ def main() -> int:
     Main function.
     """
     result, controller = flight_controller.FlightController.create(
-        MISSION_PLANNER_ADDRESS, 57600, True, True, False, None
+        MISSION_PLANNER_ADDRESS, 57600, True, True, False, None, 5.0
     )
     if not result:
         print("Failed to create flight controller")
