@@ -11,7 +11,7 @@ import pyvirtualcam
 import cv2
 
 IMAGE_SIZE = (720, 480)
-IMAGE_FORMATS = (".png", ".jpeg", "jpg")
+IMAGE_FORMATS = (".png", ".jpeg", ".jpg")
 CAMERA_FPS = 30
 
 
