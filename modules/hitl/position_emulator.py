@@ -16,7 +16,10 @@ class PositionEmulator:
 
     @classmethod
     def create(
-        cls, drone: dronekit.Vehicle, json_file_path: str | None = None, update_interval: float = 1.0
+        cls,
+        drone: dronekit.Vehicle,
+        json_file_path: str | None = None,
+        update_interval: float = 1.0,
     ) -> "tuple[True, PositionEmulator] | tuple[False, None]":
         """
         Setup position emulator.
@@ -59,7 +62,7 @@ class PositionEmulator:
         Loads coordinates from the JSON file and validates them.
         """
         try:
-            with open(self.json_file_path, 'r', encoding='utf-8') as file:
+            with open(self.json_file_path, "r", encoding="utf-8") as file:
                 self.json_coordinates = json.load(file)
 
             if not isinstance(self.json_coordinates, list) or not all(
@@ -67,7 +70,9 @@ class PositionEmulator:
             ):
                 raise ValueError("JSON must be a list of [lat, lon, alt] lists")
 
-            print(f"HITL loaded {len(self.json_coordinates)} coordinates from {self.json_file_path}")
+            print(
+                f"HITL loaded {len(self.json_coordinates)} coordinates from {self.json_file_path}"
+            )
         except Exception as exc:  # pylint: disable=broad-except
             print(f"HITL JSON coordinate loading error: {exc}")
             self.json_coordinates = []
@@ -88,7 +93,9 @@ class PositionEmulator:
         )
 
         # Cycle to next coordinate
-        self.current_coordinate_index = (self.current_coordinate_index + 1) % len(self.json_coordinates)
+        self.current_coordinate_index = (self.current_coordinate_index + 1) % len(
+            self.json_coordinates
+        )
 
 <<<<<<< HEAD
 =======
