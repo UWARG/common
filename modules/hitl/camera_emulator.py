@@ -23,7 +23,9 @@ class CameraEmulator:
     __create_key = object()
 
     @classmethod
-    def create(cls, images_path: str, time_between_images: float = 1.0) -> "tuple[True, CameraEmulator] | tuple[False, None]":
+    def create(
+        cls, images_path: str, time_between_images: float = 1.0
+    ) -> "tuple[True, CameraEmulator] | tuple[False, None]":
         """
         Setup camera emulator.
 
@@ -38,11 +40,11 @@ class CameraEmulator:
         if not isinstance(images_path, str):
             print("Images path is not a string")
             return False, None
-        
+
         if not os.path.isdir(images_path):
             print("Images path is not a valid directory")
             return False, None
-        
+
         if not isinstance(time_between_images, (int, float)):
             print("Time between images is not a number")
             return False, None
@@ -66,10 +68,16 @@ class CameraEmulator:
         if virtual_camera_instance is None:
             return False, None
 
-        return True, CameraEmulator(cls.__create_key, images_path, time_between_images, virtual_camera_instance)
+        return True, CameraEmulator(
+            cls.__create_key, images_path, time_between_images, virtual_camera_instance
+        )
 
     def __init__(
-        self, class_private_create_key: object, images_path: str, time_between_images: float, virtual_camera: pyvirtualcam
+        self,
+        class_private_create_key: object,
+        images_path: str,
+        time_between_images: float,
+        virtual_camera: pyvirtualcam,
     ) -> None:
         """
         Private constructor, use create() method.
