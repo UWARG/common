@@ -229,7 +229,10 @@ class FlightController:
             success, hitl_instance = hitl_base.HITL.create(
                 drone, hitl_enabled, position_module, camera_module, images_path
             )
-            if not success:
+            if success:
+                if hitl_enabled and hitl_instance is not None:
+                    hitl_instance.start()
+            else:
                 print("Error creating HITL module")
 
         except dronekit.TimeoutError:

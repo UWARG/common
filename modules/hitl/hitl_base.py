@@ -3,6 +3,7 @@ Setup for HITL modules.
 """
 
 import time
+from threading import Event, Thread
 from modules.hitl.position_emulator import PositionEmulator
 from modules.hitl.camera_emulator import CameraEmulator
 from ..mavlink import dronekit
@@ -47,7 +48,6 @@ class HITL:
 
         if position_module:
             result, position_emulator = PositionEmulator.create(drone)
-            position_emulator.inject_position()  # Inject initial position
             if not result:
                 return False, None
 
@@ -81,26 +81,75 @@ class HITL:
         self.position_emulator = position_emulator
         self.camera_emulator = camera_emulator
 
-    def set_inject_position(self) -> None:
-        """
-        Set the position to inject into the drone.
-        Print out a message if position emulator is not enabled.
+        self._stop_event: Event | None = None
+        self._threads: list[Thread] = []
 
+    def start(self) -> None:
         """
-        if self.position_emulator is None:
-            print("Position emulator is not enabled.")
+        Start HITL module threads.
+        """
+        if self._stop_event is not None:
             return
-        # pylint: disable=protected-access
-        position_target = self.drone._master.recv_match(...)
-        # pylint: enable=protected-access
-        if position_target:
-            latitude = position_target.lat_int / 1e7
-            longitude = position_target.lon_int / 1e7
-            altitude = position_target.alt
 
-            self.position_emulator.inject_position(latitude, longitude, altitude)
-            print(f"Injected position: lat={latitude}, lon={longitude}, alt={altitude}")
-        else:
-            print("No POSITION_TARGET_GLOBAL_INT message received.")
+        self._stop_event = Event()
+        self._threads = []
 
-        time.sleep(3)
+        if self.position_emulator is not None:
+            t = Thread(target=self.run_position, name="HITL-Position", daemon=True)
+            self._threads.append(t)
+            t.start()
+
+        if self.camera_emulator is not None:
+            t = Thread(target=self.run_camera, name="HITL-Camera", daemon=True)
+            self._threads.append(t)
+            t.start()
+
+    def shutdown(self, join_timeout: float | None = 5.0) -> None:
+        """
+        Signal threads to stop and join them.
+        """
+        if self._stop_event is None:
+            return
+
+        self._stop_event.set()
+
+        for t in self._threads:
+            if t.is_alive():
+                t.join(timeout=join_timeout)
+
+        self._threads.clear()
+        self._stop_event = None
+
+    def __del__(self) -> None:
+        """
+        Best-effort cleanup when HITL object is destroyed.
+        Ensures threads are stopped and the drone connection is closed.
+        """
+        try:
+            self.shutdown()
+        except Exception:  # pylint: disable=broad-except
+            pass
+
+    def run_position(self) -> None:
+        """
+        Runs the position emulator periodic function in a loop.
+        """
+        assert self._stop_event is not None
+        while not self._stop_event.is_set():
+            try:
+                self.position_emulator.periodic()
+            except Exception as exc:  # pylint: disable=broad-except
+                print(f"HITL position thread error: {exc}")
+                time.sleep(0.1)
+
+    def run_camera(self) -> None:
+        """
+        Runs the camera emulator periodic function in a loop.
+        """
+        assert self._stop_event is not None
+        while not self._stop_event.is_set():
+            try:
+                self.camera_emulator.periodic()
+            except Exception as exc:  # pylint: disable=broad-except
+                print(f"HITL camera thread error: {exc}")
+                time.sleep(0.1)

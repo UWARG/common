@@ -32,7 +32,60 @@ class PositionEmulator:
         """
         assert class_private_create_key is PositionEmulator.__create_key, "Use create() method"
 
+        self.target_position = (43.43405014107003, -80.57898027451816, 373.0)  # lat, lon, alt
+
         self.drone = drone
+
+    def set_target_position(self, latitude: float, longitude: float, altitude: float) -> None:
+        """
+        Sets the target position manually (currently a fallback if Ardupilot target doesnt work).
+
+        Args:
+            latitude: Latitude in degrees.
+            longitude: Longitude in degrees.
+            altitude: Altitude in meters.
+        """
+        self.target_position = (latitude, longitude, altitude)
+
+    def get_target_position(self) -> tuple[float, float, float]:
+        """
+        Gets the target position from the Ardupilot target.
+
+        Returns:
+            Target position as (latitude, longitude, altitude).
+        """
+        # pylint: disable=protected-access
+        position_target = None
+        try:
+            position_target = self.drone._master.recv_match(
+                type="POSITION_TARGET_GLOBAL_INT", blocking=False
+            )
+        except Exception as exc:  # pylint: disable=broad-except
+            print(f"HITL get_target_position recv_match error: {exc}")
+            position_target = None
+        # pylint: enable=protected-access
+
+        if position_target:
+            latitude = position_target.lat_int / 1e7
+            longitude = position_target.lon_int / 1e7
+            altitude = position_target.alt
+            return (latitude, longitude, altitude)
+
+        # Optionally log if no message received
+        # print("No POSITION_TARGET_GLOBAL_INT message received.")
+
+        return self.target_position
+
+    def periodic(self) -> None:
+        """
+        Periodic function.
+        """
+
+        self.target_position = self.get_target_position()
+
+        self.inject_position(
+            self.target_position[0], self.target_position[1], self.target_position[2]
+        )
 
     def inject_position(
         self,
@@ -68,7 +121,6 @@ class PositionEmulator:
             10,  # satellites_visible
             0,  # yaw (deg*100)
         ]
-        print("Packing values:", values)
         gps_input_msg = self.drone.message_factory.gps_input_encode(*values)
         self.drone.send_mavlink(gps_input_msg)
         self.drone.flush()
