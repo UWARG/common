@@ -89,7 +89,9 @@ class CameraEmulator:
         self.__image_paths: "list[str]" = []
         self.__current_frame = None
         self.__image_index = 0
-
+        self.__next_image_time = time.time() + time_between_images
+        self.__time_between_images = time_between_images
+        
         self.__get_images()
         self.update_current_image()
 
