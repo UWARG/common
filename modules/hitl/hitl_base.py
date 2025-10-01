@@ -51,9 +51,7 @@ class HITL:
             return True, HITL(cls.__create_key, drone, None, None)
 
         if position_module:
-            result, position_emulator = PositionEmulator.create(
-                drone, json_file_path, position_update_interval
-            )
+            result, position_emulator = PositionEmulator.create(drone, json_file_path, position_update_interval)
             if not result:
                 return False, None
 
