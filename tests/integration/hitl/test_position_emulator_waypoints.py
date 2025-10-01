@@ -330,7 +330,28 @@ class PositionEmulatorTest:
                 
                 print(f"[{elapsed_time:6.1f}s] Position: {lat:.6f}, {lon:.6f}, {alt:.1f}m")
             else:
-                print(f"[{elapsed_time:6.1f}s]  Could not get position data")
+                # Simple debug info when position data not available
+                print(f"[{elapsed_time:6.1f}s] Could not get position data")
+                
+                # Check raw GPS data
+                try:
+                    location = self.controller.drone.location
+                    if location and location.global_frame:
+                        gf = location.global_frame
+                        if gf.lat is not None and gf.lon is not None:
+                            print(f"         Raw GPS: {gf.lat:.6f}, {gf.lon:.6f}, Alt: {gf.alt}")
+                        else:
+                            print(f"         Raw GPS: No data yet")
+                    else:
+                        print(f"         Raw GPS: Location not available")
+                    
+                    # HITL status
+                    if self.controller.hitl:
+                        print(f"         HITL: Active, waiting for GPS initialization...")
+                        self.controller.send_statustext_msg(f"HITL - GPS initializing ({elapsed_time:.0f}s)")
+                    
+                except Exception:
+                    print(f"         Debug: Unable to check GPS status")
             
             # Get next waypoint info
             result, next_wp = self.controller.get_next_waypoint()
