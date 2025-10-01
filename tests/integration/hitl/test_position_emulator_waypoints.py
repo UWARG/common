@@ -203,6 +203,17 @@ class PositionEmulatorTest:
             self.controller.drone.commands.wait_ready()
             self.controller.drone.commands.clear()
             
+            # takeoff command 
+            takeoff_command = dronekit.Command(
+                0, 0, 0,
+                mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
+                mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
+                0, 0,
+                0, 0, 0, 0,  # param1-4
+                0, 0, 20.0   # takeoff altitude
+            )
+            self.controller.drone.commands.add(takeoff_command)
+            
             # Waypoint 1
             wp1 = dronekit.Command(
                 0, 0, 0,
@@ -230,8 +241,13 @@ class PositionEmulatorTest:
             try:
                 self.controller.drone.commands.upload()
                 result = True
+                print("Upload completed successfully")
             except dronekit.TimeoutError:
                 print("Upload timeout, commands are not being sent.")
+                return False
+            except Exception as e:
+                print(f"Upload failed with error: {e}")
+                print(f"Error type: {type(e)}")
                 return False
             
             if result:
