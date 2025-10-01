@@ -199,12 +199,9 @@ class PositionEmulatorTest:
         try:
             # Clear existing mission
             print("Clearing existing mission...")
-            result, _ = self.controller.download_commands()
-            if not result:
-                print("Could not download existing commands, continuing...")
-            
-            # Create waypoint commands
-            waypoints = []
+            self.controller.drone.commands.download()
+            self.controller.drone.commands.wait_ready()
+            self.controller.drone.commands.clear()
             
             # Waypoint 1
             wp1 = dronekit.Command(
@@ -215,7 +212,7 @@ class PositionEmulatorTest:
                 0, 0, 0, 0,  # param1-4
                 WAYPOINT_1_LAT, WAYPOINT_1_LON, WAYPOINT_1_ALT
             )
-            waypoints.append(wp1)
+            self.controller.drone.commands.add(wp1)
             
             # Waypoint 2
             wp2 = dronekit.Command(
@@ -226,11 +223,16 @@ class PositionEmulatorTest:
                 0, 0, 0, 0,  # param1-4
                 WAYPOINT_2_LAT, WAYPOINT_2_LON, WAYPOINT_2_ALT
             )
-            waypoints.append(wp2)
+            self.controller.drone.commands.add(wp2)
             
             # Upload mission
-            print(f"Uploading mission with {len(waypoints)} waypoints...")
-            result = self.controller.upload_commands(waypoints)
+            print(f"Uploading mission with 2 waypoints...")
+            try:
+                self.controller.drone.commands.upload()
+                result = True
+            except dronekit.TimeoutError:
+                print("Upload timeout, commands are not being sent.")
+                return False
             
             if result:
                 print(" Mission uploaded successfully!")

@@ -363,6 +363,9 @@ class FlightController:
         -------
         bool: Whether the upload is successful.
         """
+        if commands is None:
+            return False
+        
         if len(commands) == 0:
             return False
 
