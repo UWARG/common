@@ -26,6 +26,8 @@ class HITL:
         position_module: bool,
         camera_module: bool,
         images_path: str | None = None,
+        json_file_path: str | None = None,
+        position_update_interval: float = 1.0,
     ) -> "tuple[True, HITL] | tuple[False, None]":
         """
         Factory method to create a HITL instance.
@@ -36,6 +38,8 @@ class HITL:
             position_module: Boolean indicating if the position module is enabled.
             camera_module: Boolean indicating if the camera module is enabled.
             images_path: Optional path to the images directory for the camera emulator.
+            json_file_path: Optional path to JSON file containing coordinates for position emulator.
+            position_update_interval: Interval (seconds) between switching JSON coordinates.
 
         Returns:
             Success, HITL instance | None.
@@ -47,7 +51,7 @@ class HITL:
             return True, HITL(cls.__create_key, drone, None, None)
 
         if position_module:
-            result, position_emulator = PositionEmulator.create(drone)
+            result, position_emulator = PositionEmulator.create(drone, json_file_path, position_update_interval)
             if not result:
                 return False, None
 
@@ -81,10 +85,7 @@ class HITL:
         self.position_emulator = position_emulator
         self.camera_emulator = camera_emulator
 
-        self._stop_event: Event | None = None
-        self._threads: list[Thread] = []
-
-    def start(self) -> None:
+    def set_inject_position(self) -> None:
         """
         Start HITL module threads.
         """
@@ -140,7 +141,6 @@ class HITL:
                 self.position_emulator.periodic()
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"HITL position thread error: {exc}")
-                time.sleep(0.1)
 
     def run_camera(self) -> None:
         """
@@ -152,4 +152,3 @@ class HITL:
                 self.camera_emulator.periodic()
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"HITL camera thread error: {exc}")
-                time.sleep(0.1)
