@@ -1,19 +1,42 @@
 """
 HITL Test - GPS + Camera Feed Verification
 
-Tests:
-1. Read GPS data from FlightController
-2. Check camera feed from image emulator
 """
-
+import cv2
 import os
 import time
 
 from modules.mavlink import flight_controller
 
 
+
+
 PIXHAWK_ADDRESS = "tcp:localhost:5762"
 TEST_DURATION = 10
+
+
+
+def test_camera_feed() -> bool:
+    """
+    Returns True if camera feed is available, False otherwise.
+    """
+    try:
+        camera = cv2.VideoCapture(2)
+        
+        if not camera.isOpened():
+            camera.release()
+            return False
+        
+        ret, frame = camera.read()
+        camera.release()
+        
+        if ret and frame is not None and frame.size > 0:
+            return True
+        
+        return False
+        
+    except Exception:
+        return False
 
 
 def main() -> int:
@@ -41,11 +64,20 @@ def main() -> int:
     if controller.hitl_instance is not None:
         controller.hitl_instance.start()
         print("HITL emulators started")
+        
+        print("Waiting for camera creation...")
+        time.sleep(5)  
+        
+        print("Checking for camera...")
+        camera_available = test_camera_feed()
+        if camera_available:
+            print("Camera: detected")
+        else:
+            print("Camera: not detected")
+                
     else:
         print("ERROR: HITL instance not created")
         return -1
-
-    time.sleep(2)  # Initialization time
 
     try:
         print(f"\nRunning test for {TEST_DURATION}s...")
@@ -68,20 +100,11 @@ def main() -> int:
 
             # Test camera feed every 3 seconds
             if int(current_time) % 3 == 0 and current_time > 1:
-                if controller.hitl_instance and controller.hitl_instance.camera_emulator:
-                    try:
-                        frame = (
-                            controller.hitl_instance.camera_emulator._CameraEmulator__current_frame
-                        )
-                        if frame is not None:
-                            camera_count += 1
-                            print("Camera: Frame available")
-                        else:
-                            print("Camera: No frame")
-                    except Exception as exc:
-                        print(f"Camera: Error accessing frame - {exc}")
+                if test_camera_feed():
+                    camera_count += 1
+                    print("Camera: Feed available")
                 else:
-                    print("Camera: No emulator")
+                    print("Camera: No feed")
 
             time.sleep(0.5)
 
