@@ -2,12 +2,12 @@
 HITL Test - GPS + Camera Feed Verification
 
 """
+
 import cv2
 import os
 import time
 
 from modules.mavlink import flight_controller
-
 
 
 # Physical connection to Pixhawk: /dev/ttyAMA0
@@ -16,26 +16,25 @@ PIXHAWK_ADDRESS = "/dev/ttyAMA0"
 TEST_DURATION = 10
 
 
-
 def test_camera_feed() -> bool:
     """
     Returns True if camera feed is available, False otherwise.
     """
     try:
         camera = cv2.VideoCapture(2)
-        
+
         if not camera.isOpened():
             camera.release()
             return False
-        
+
         ret, frame = camera.read()
         camera.release()
-        
+
         if ret and frame is not None and frame.size > 0:
             return True
-        
+
         return False
-        
+
     except Exception:
         return False
 
@@ -65,17 +64,17 @@ def main() -> int:
     if controller.hitl_instance is not None:
         controller.hitl_instance.start()
         print("HITL emulators started")
-        
+
         print("Waiting for camera creation...")
-        time.sleep(5)  
-        
+        time.sleep(5)
+
         print("Checking for camera...")
         camera_available = test_camera_feed()
         if camera_available:
             print("Camera: detected")
         else:
             print("Camera: not detected")
-                
+
     else:
         print("ERROR: HITL instance not created")
         return -1
