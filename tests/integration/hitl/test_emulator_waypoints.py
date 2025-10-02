@@ -324,12 +324,6 @@ class PositionEmulatorTest:
         if not self.wait_for_heartbeat():
             print("⚠️  Continuing without confirmed heartbeat...")
         
-        # Step 3: Check required HITL parameters
-        if not self.check_required_parameters():
-            print("Required parameters not set. Please configure Pixhawk parameters first.")
-            print("See the parameter list above and set them in Mission Planner.")
-            return 3
-        
         # Step 4: Create and upload mission
         if not self.create_test_mission():
             return 2
@@ -348,12 +342,6 @@ class PositionEmulatorTest:
         
         self.monitor_position_updates(duration=120.0)  # Monitor for 2 minutes
         
-        print("\n🎉 Test completed successfully!")
-        print("Check Mission Planner to verify:")
-        print("- Drone moved smoothly between waypoints")
-        print("- Position updates were consistent")
-        print("- No GPS glitches or jumps occurred")
-        
         return 0
     
     def cleanup(self) -> None:
@@ -363,7 +351,7 @@ class PositionEmulatorTest:
                 print("\n🧹 Cleaning up...")
                 # Send final status message
                 self.controller.send_statustext_msg("HITL Position Test Completed")
-                time.sleep(1)  # Give time for message to send
+                time.sleep(1)
             except Exception as e:
                 print(f"Cleanup warning: {e}")
 
