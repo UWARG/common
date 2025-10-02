@@ -197,11 +197,8 @@ class PositionEmulatorTest:
         print("\n Creating test mission with 2 waypoints...")
         
         try:
-            # Clear existing mission
-            print("Clearing existing mission...")
-            self.controller.drone.commands.download()
-            self.controller.drone.commands.wait_ready()
-            self.controller.drone.commands.clear()
+            # Create list of commands
+            commands = []
             
             # takeoff command 
             takeoff_command = dronekit.Command(
@@ -212,7 +209,7 @@ class PositionEmulatorTest:
                 0, 0, 0, 0,  # param1-4
                 0, 0, 20.0   # takeoff altitude
             )
-            self.controller.drone.commands.add(takeoff_command)
+            commands.append(takeoff_command)
             
             # Waypoint 1
             wp1 = dronekit.Command(
@@ -223,7 +220,7 @@ class PositionEmulatorTest:
                 0, 0, 0, 0,  # param1-4
                 WAYPOINT_1_LAT, WAYPOINT_1_LON, WAYPOINT_1_ALT
             )
-            self.controller.drone.commands.add(wp1)
+            commands.append(wp1)
             
             # Waypoint 2
             wp2 = dronekit.Command(
@@ -234,21 +231,11 @@ class PositionEmulatorTest:
                 0, 0, 0, 0,  # param1-4
                 WAYPOINT_2_LAT, WAYPOINT_2_LON, WAYPOINT_2_ALT
             )
-            self.controller.drone.commands.add(wp2)
+            commands.append(wp2)
             
-            # Upload mission
+            # Upload mission using FlightController method
             print(f"Uploading mission with 2 waypoints...")
-            try:
-                self.controller.drone.commands.upload()
-                result = True
-                print("Upload completed successfully")
-            except dronekit.TimeoutError:
-                print("Upload timeout, commands are not being sent.")
-                return False
-            except Exception as e:
-                print(f"Upload failed with error: {e}")
-                print(f"Error type: {type(e)}")
-                return False
+            result = self.controller.upload_commands(commands)
             
             if result:
                 print(" Mission uploaded successfully!")
