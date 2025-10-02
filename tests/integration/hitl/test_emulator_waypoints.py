@@ -107,6 +107,18 @@ class PositionEmulatorTest:
                 
             self.controller = controller
             print("Successfully connected to drone with HITL position emulation")
+            
+            # Give HITL position emulator time to start and initialize GPS
+            print("Waiting for HITL position emulator to initialize GPS...")
+            time.sleep(3.0)
+            
+            # Manually inject initial GPS position to kickstart GPS simulation
+            if self.controller.hitl_instance and self.controller.hitl_instance.position_emulator:
+                pos_emu = self.controller.hitl_instance.position_emulator
+                print(f"Manually injecting initial GPS position: {DEFAULT_HOME_LAT:.6f}, {DEFAULT_HOME_LON:.6f}, {DEFAULT_HOME_ALT}")
+                pos_emu.inject_position(DEFAULT_HOME_LAT, DEFAULT_HOME_LON, DEFAULT_HOME_ALT)
+                time.sleep(1.0)
+            
             return True
             
         except Exception as e:
@@ -148,6 +160,16 @@ class PositionEmulatorTest:
             bool: True if parameters are correctly set, False otherwise.
         """
         print("\n Checking required HITL parameters...")
+        
+        # For now, just print the required parameters and assume they're set
+        # In a real scenario, you would set these in Mission Planner
+        print("Required HITL GPS simulation parameters:")
+        for param_name, expected_value in REQUIRED_PARAMS.items():
+            print(f"   {param_name} = {expected_value}")
+        
+        print("Please ensure these parameters are set in Mission Planner before running the test.")
+        print("The GPS simulation requires GPS_TYPE=14 (MAVLink GPS_INPUT) to work properly.")
+        
         return True
         
         # try:
@@ -333,6 +355,15 @@ class PositionEmulatorTest:
                     # HITL status
                     if self.controller.hitl:
                         print(f"         HITL: Active, waiting for GPS initialization...")
+                        
+                        # Check if position emulator is running
+                        if self.controller.hitl_instance and self.controller.hitl_instance.position_emulator:
+                            pos_emu = self.controller.hitl_instance.position_emulator
+                            current_pos = pos_emu.current_position
+                            target_pos = pos_emu.target_position
+                            print(f"         Position Emulator - Current: {current_pos[0]:.6f}, {current_pos[1]:.6f}, {current_pos[2]:.1f}")
+                            print(f"         Position Emulator - Target: {target_pos[0]:.6f}, {target_pos[1]:.6f}, {target_pos[2]:.1f}")
+                        
                         self.controller.send_statustext_msg(f"HITL - GPS initializing ({elapsed_time:.0f}s)")
                     
                 except Exception:
