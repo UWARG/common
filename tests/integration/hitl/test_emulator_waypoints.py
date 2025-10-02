@@ -7,16 +7,6 @@ This script tests the position emulator changes by:
 3. Creating and uploading a mission with 2 waypoints
 4. Monitoring drone movement in Mission Planner
 5. Providing status updates and logging
-
-Usage:
-    # For Raspberry Pi + Pixhawk connection:
-    python test_position_emulator_waypoints.py --connection /dev/ttyAMA0
-    
-    # For SITL simulation:
-    python test_position_emulator_waypoints.py --connection tcp:127.0.0.1:5762
-    
-    # For Mission Planner connection:
-    python test_position_emulator_waypoints.py --connection tcp:127.0.0.1:14550
 """
 
 import argparse
@@ -151,62 +141,7 @@ class PositionEmulatorTest:
         
         print("No heartbeat received within timeout, continuing anyway...")
         return True  # Continue even without explicit heartbeat for HITL
-    
-    def check_required_parameters(self) -> bool:
-        """
-        Check and optionally set required parameters for HITL GPS simulation.
-        
-        Returns:
-            bool: True if parameters are correctly set, False otherwise.
-        """
-        print("\n Checking required HITL parameters...")
-        
-        # For now, just print the required parameters and assume they're set
-        # In a real scenario, you would set these in Mission Planner
-        print("Required HITL GPS simulation parameters:")
-        for param_name, expected_value in REQUIRED_PARAMS.items():
-            print(f"   {param_name} = {expected_value}")
-        
-        
-        return True
-        
-        # try:
-        #     # Get current parameters
-        #     params = self.controller.drone.parameters
-            
-        #     incorrect_params = []
-        #     for param_name, expected_value in REQUIRED_PARAMS.items():
-        #         try:
-        #             current_value = params.get(param_name, None)
-        #             if current_value != expected_value:
-        #                 incorrect_params.append((param_name, current_value, expected_value))
-        #         except Exception as e:
-        #             print(f" Could not read parameter {param_name}: {e}")
-        #             incorrect_params.append((param_name, "ERROR", expected_value))
-            
-        #     if incorrect_params:
-        #         print("Some required parameters are not set correctly:")
-        #         for param_name, current, expected in incorrect_params:
-        #             print(f"   {param_name}: current={current}, required={expected}")
-                
-        #         print("\n Please set these parameters in Mission Planner:")
-        #         print("   1. Go to CONFIG/TUNING > Full Parameter List")
-        #         print("   2. Set the following parameters:")
-        #         for param_name, _, expected in incorrect_params:
-        #             print(f"      {param_name} = {expected}")
-        #         print("   3. Write parameters to the Pixhawk")
-        #         print("   4. Reboot the Pixhawk")
-                
-        #         return False
-        #     else:
-        #         print("All required HITL parameters are correctly set!")
-        #         return True
-                
-        # except Exception as e:
-        #     print(f"Could not check parameters: {e}")
-        #     print("Please ensure the required HITL parameters are set manually.")
-        #     return True  # Continue anyway
-    
+
     def create_test_mission(self) -> bool:
         """
         Create a test mission with 2 waypoints.
@@ -259,7 +194,7 @@ class PositionEmulatorTest:
             time.sleep(1.0)  # Wait for final waypoint insertion to complete
             
             print(" Mission uploaded successfully!")
-            print(f"   Takeoff altitude: 20.0m")
+            print(f"   Takeoff altitude: " )
             print(f"   Waypoint 1: {WAYPOINT_1_LAT:.6f}, {WAYPOINT_1_LON:.6f}, {WAYPOINT_1_ALT}m")
             print(f"   Waypoint 2: {WAYPOINT_2_LAT:.6f}, {WAYPOINT_2_LON:.6f}, {WAYPOINT_2_ALT}m")
             return True
@@ -337,19 +272,7 @@ class PositionEmulatorTest:
             else:
                 # Simple debug info when position data not available
                 print(f"[{elapsed_time:6.1f}s] Could not get position data")
-                
-                # Check raw GPS data
                 try:
-                    location = self.controller.drone.location
-                    if location and location.global_frame:
-                        gf = location.global_frame
-                        if gf.lat is not None and gf.lon is not None:
-                            print(f"         Raw GPS: {gf.lat:.6f}, {gf.lon:.6f}, Alt: {gf.alt}")
-                        else:
-                            print(f"         Raw GPS: No data yet")
-                    else:
-                        print(f"         Raw GPS: Location not available")
-                    
                     # HITL status
                     if self.controller.hitl:
                         print(f"         HITL: Active, waiting for GPS initialization...")
