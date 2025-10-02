@@ -9,10 +9,8 @@ import time
 
 from modules.mavlink import flight_controller
 
-
-# Physical connection to Pixhawk: /dev/ttyAMA0
-# Simulated connection to Pixhawk: tcp:localhost:5762
-PIXHAWK_ADDRESS = "/dev/ttyAMA0"
+# /dev/ttyAMA0 for drone, tcp:127.0.0.1:14550 for mission planner simulator
+PIXHAWK_ADDRESS = "tcp:127.0.0.1:14550"
 TEST_DURATION = 10
 
 
