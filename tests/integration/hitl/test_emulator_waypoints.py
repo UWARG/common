@@ -167,8 +167,6 @@ class PositionEmulatorTest:
         for param_name, expected_value in REQUIRED_PARAMS.items():
             print(f"   {param_name} = {expected_value}")
         
-        print("Please ensure these parameters are set in Mission Planner before running the test.")
-        print("The GPS simulation requires GPS_TYPE=14 (MAVLink GPS_INPUT) to work properly.")
         
         return True
         
