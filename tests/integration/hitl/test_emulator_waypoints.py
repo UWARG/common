@@ -197,8 +197,11 @@ class PositionEmulatorTest:
         print("\n Creating test mission with 2 waypoints...")
         
         try:
-            # Create list of commands
-            commands = []
+            # Clear existing mission first
+            print("Clearing existing mission...")
+            self.controller.drone.commands.download()
+            self.controller.drone.commands.wait_ready()
+            self.controller.drone.commands.clear()
             
             # takeoff command 
             takeoff_command = dronekit.Command(
@@ -209,51 +212,30 @@ class PositionEmulatorTest:
                 0, 0, 0, 0,  # param1-4
                 0, 0, 20.0   # takeoff altitude
             )
-            commands.append(takeoff_command)
+            self.controller.drone.commands.add(takeoff_command)
             
-            # Waypoint 1
-            wp1 = dronekit.Command(
-                0, 0, 0,
-                mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-                mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,
-                0, 0,
-                0, 0, 0, 0,  # param1-4
-                WAYPOINT_1_LAT, WAYPOINT_1_LON, WAYPOINT_1_ALT
-            )
-            commands.append(wp1)
+            # Upload the takeoff command first
+            print("Uploading takeoff command...")
+            self.controller.drone.commands.upload()
             
-            # Waypoint 2
-            wp2 = dronekit.Command(
-                0, 0, 0,
-                mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
-                mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,
-                0, 0,
-                0, 0, 0, 0,  # param1-4
-                WAYPOINT_2_LAT, WAYPOINT_2_LON, WAYPOINT_2_ALT
-            )
-            commands.append(wp2)
-            
-            # Upload mission using FlightController method
-            print(f"Uploading mission with {len(commands)} commands...")
-            print(f"Commands created: takeoff + {len(commands)-1} waypoints")
-            
-            # Debug: Check if commands are valid
-            for i, cmd in enumerate(commands):
-                if cmd is None:
-                    print(f"ERROR: Command {i} is None!")
-                    return False
-                print(f"Command {i}: {cmd.command}, lat={cmd.x}, lon={cmd.y}, alt={cmd.z}")
-            
-            result = self.controller.upload_commands(commands)
-            
-            if result:
-                print(" Mission uploaded successfully!")
-                print(f"   Waypoint 1: {WAYPOINT_1_LAT:.6f}, {WAYPOINT_1_LON:.6f}, {WAYPOINT_1_ALT}m")
-                print(f"   Waypoint 2: {WAYPOINT_2_LAT:.6f}, {WAYPOINT_2_LON:.6f}, {WAYPOINT_2_ALT}m")
-                return True
-            else:
-                print(" Failed to upload mission")
+            # Now use FlightController's insert_waypoint method for waypoints
+            print("Adding waypoint 1...")
+            result1 = self.controller.insert_waypoint(1, WAYPOINT_1_LAT, WAYPOINT_1_LON, WAYPOINT_1_ALT)
+            if not result1:
+                print("Failed to insert waypoint 1")
                 return False
+            
+            print("Adding waypoint 2...")
+            result2 = self.controller.insert_waypoint(2, WAYPOINT_2_LAT, WAYPOINT_2_LON, WAYPOINT_2_ALT)
+            if not result2:
+                print("Failed to insert waypoint 2")
+                return False
+            
+            print(" Mission uploaded successfully!")
+            print(f"   Takeoff altitude: 20.0m")
+            print(f"   Waypoint 1: {WAYPOINT_1_LAT:.6f}, {WAYPOINT_1_LON:.6f}, {WAYPOINT_1_ALT}m")
+            print(f"   Waypoint 2: {WAYPOINT_2_LAT:.6f}, {WAYPOINT_2_LON:.6f}, {WAYPOINT_2_ALT}m")
+            return True
                 
         except Exception as e:
             print(f" Error creating mission: {e}")
