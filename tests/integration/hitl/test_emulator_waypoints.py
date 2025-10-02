@@ -234,7 +234,16 @@ class PositionEmulatorTest:
             commands.append(wp2)
             
             # Upload mission using FlightController method
-            print(f"Uploading mission with 2 waypoints...")
+            print(f"Uploading mission with {len(commands)} commands...")
+            print(f"Commands created: takeoff + {len(commands)-1} waypoints")
+            
+            # Debug: Check if commands are valid
+            for i, cmd in enumerate(commands):
+                if cmd is None:
+                    print(f"ERROR: Command {i} is None!")
+                    return False
+                print(f"Command {i}: {cmd.command}, lat={cmd.x}, lon={cmd.y}, alt={cmd.z}")
+            
             result = self.controller.upload_commands(commands)
             
             if result:

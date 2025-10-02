@@ -386,6 +386,16 @@ class FlightController:
         except ConnectionResetError:
             print("Connection with drone reset. Unable to upload commands.")
             return False
+        except TypeError as e:
+            if "NoneType" in str(e) and "iterable" in str(e):
+                print(f"ERROR: NoneType iteration error during upload - possible dronekit internal issue: {e}")
+                print("This may indicate that the vehicle is not properly connected or in an unexpected state.")
+            else:
+                print(f"ERROR: Type error during command upload: {e}")
+            return False
+        except Exception as e:
+            print(f"ERROR: Unexpected error during command upload: {e}")
+            return False
 
         return True
 
