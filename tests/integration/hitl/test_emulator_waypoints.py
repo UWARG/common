@@ -201,7 +201,10 @@ class PositionEmulatorTest:
             print("Clearing existing mission...")
             self.controller.drone.commands.download()
             self.controller.drone.commands.wait_ready()
+            time.sleep(1.0)  # Wait for download to complete
+            
             self.controller.drone.commands.clear()
+            time.sleep(0.5)  # Wait for clear to complete
             
             # takeoff command 
             takeoff_command = dronekit.Command(
@@ -213,10 +216,12 @@ class PositionEmulatorTest:
                 0, 0, 20.0   # takeoff altitude
             )
             self.controller.drone.commands.add(takeoff_command)
+            time.sleep(0.5)  # Wait for add to complete
             
             # Upload the takeoff command first
             print("Uploading takeoff command...")
             self.controller.drone.commands.upload()
+            time.sleep(2.0)  # Wait for upload to complete
             
             # Now use FlightController's insert_waypoint method for waypoints
             print("Adding waypoint 1...")
@@ -224,12 +229,14 @@ class PositionEmulatorTest:
             if not result1:
                 print("Failed to insert waypoint 1")
                 return False
+            time.sleep(1.5)  # Wait between waypoint insertions
             
             print("Adding waypoint 2...")
             result2 = self.controller.insert_waypoint(2, WAYPOINT_2_LAT, WAYPOINT_2_LON, WAYPOINT_2_ALT)
             if not result2:
                 print("Failed to insert waypoint 2")
                 return False
+            time.sleep(1.0)  # Wait for final waypoint insertion to complete
             
             print(" Mission uploaded successfully!")
             print(f"   Takeoff altitude: 20.0m")
