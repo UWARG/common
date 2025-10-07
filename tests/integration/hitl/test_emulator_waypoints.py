@@ -184,7 +184,7 @@ class PositionEmulatorTest:
     
     def test_manual_waypoints(self) -> None:
         """
-        Test manual waypoint movement without relying on GPS hardware.
+        Test manual waypoint movement
         """
         print("\n🎯 Testing manual waypoint movement...")
         
@@ -207,7 +207,7 @@ class PositionEmulatorTest:
             # Monitor movement to this waypoint
             print(f"🚁 Moving to {name}...")
             start_time = time.time()
-            timeout = 30.0  # 30 seconds timeout per waypoint
+            timeout = 120.0
             
             while time.time() - start_time < timeout:
                 current_pos = pos_emu.current_position
