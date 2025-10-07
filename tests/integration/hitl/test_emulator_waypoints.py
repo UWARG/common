@@ -319,7 +319,7 @@ class PositionEmulatorTest:
             print("⚠️  Continuing without confirmed heartbeat...")
         
         
-        # self.test_manual_waypoints()# Step 4: Test manual waypoint movement
+        self.test_manual_waypoints()# Step 4: Test manual waypoint movement
         
         # Step 5: Optional - Create and upload mission for Mission Planner visualization
         print("\n📋 Creating mission for Mission Planner visualization (optional)...")
