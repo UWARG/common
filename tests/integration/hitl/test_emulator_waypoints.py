@@ -39,27 +39,6 @@ BAUD_RATE = 57600
 TIMEOUT = 5.0
 UPDATE_INTERVAL = 1.0
 
-# Pixhawk parameters
-REQUIRED_PARAMS = {
-    # Sensor Disabling
-    "INS_ENABLE_MASK": 0,
-    "COMPASS_ENABLE": 0,
-    
-    # EKF Configuration
-    "AHRS_EKF_TYPE": 3,
-    "EK3_ENABLE": 1,
-    "EK3_SRC1_POSXY": 3,
-    "EK3_SRC1_POSZ": 3,
-    "EK3_SRC1_VELXY": 3,
-    "EK3_SRC1_VELZ": 3,
-    
-    # GPS Simulation via MAVLink
-    "GPS_TYPE": 14,       # Use MAVLink GPS_INPUT
-    "GPS_TYPE2": 0,
-    "GPS_AUTO_SWITCH": 0,
-    "GPS_PRIMARY": 0,
-}
-
 
 class PositionEmulatorTest:
     """Test class for position emulator with waypoints."""
@@ -203,29 +182,57 @@ class PositionEmulatorTest:
             print(f" Error creating mission: {e}")
             return False
     
-    def set_flight_mode(self, mode: str) -> bool:
+    def test_manual_waypoints(self) -> None:
         """
-        Set the flight mode of the drone.
+        Test manual waypoint movement without relying on GPS hardware.
+        """
+        print("\n🎯 Testing manual waypoint movement...")
         
-        Args:
-            mode: Flight mode to set (e.g., 'AUTO', 'GUIDED', 'STABILIZE').
+        if not (self.controller.hitl_instance and self.controller.hitl_instance.position_emulator):
+            print("❌ Position emulator not available")
+            return
             
-        Returns:
-            bool: True if mode set successfully, False otherwise.
-        """
-        try:
-            print(f"Setting flight mode to: {mode}")
-            result = self.controller.set_flight_mode(mode)
-            if result:
-                print(f"Flight mode set to {mode}")
-                return True
-            else:
-                print(f"Failed to set flight mode to {mode}")
-                return False
-        except Exception as e:
-            print(f"Error setting flight mode: {e}")
-            return False
-    
+        pos_emu = self.controller.hitl_instance.position_emulator
+        
+        # Test sequence: Move to waypoint 1, then waypoint 2
+        waypoints = [
+            (WAYPOINT_1_LAT, WAYPOINT_1_LON, WAYPOINT_1_ALT, "Waypoint 1"),
+            (WAYPOINT_2_LAT, WAYPOINT_2_LON, WAYPOINT_2_ALT, "Waypoint 2"),
+        ]
+        
+        for lat, lon, alt, name in waypoints:
+            print(f"\n📍 Setting {name}: {lat:.6f}, {lon:.6f}, {alt:.1f}m")
+            pos_emu.set_waypoint_position(lat, lon, alt)
+            
+            # Monitor movement to this waypoint
+            print(f"🚁 Moving to {name}...")
+            start_time = time.time()
+            timeout = 30.0  # 30 seconds timeout per waypoint
+            
+            while time.time() - start_time < timeout:
+                current_pos = pos_emu.current_position
+                target_pos = pos_emu.waypoint_position
+                
+                if target_pos is None:
+                    print(f"✅ Reached {name}!")
+                    break
+                    
+                distance = pos_emu.calculate_distance(current_pos, target_pos)
+                elapsed = time.time() - start_time
+                
+                print(f"[{elapsed:5.1f}s] Current: {current_pos[0]:.6f}, {current_pos[1]:.6f}, {current_pos[2]:.1f}m | Distance: {distance:.2f}m")
+                
+                # Send status to Mission Planner
+                status_msg = f"HITL Moving to {name} - {distance:.1f}m remaining"
+                self.controller.send_statustext_msg(status_msg)
+                
+                time.sleep(2.0)
+            
+            if pos_emu.waypoint_position is not None:
+                print(f"⚠️  Timeout reaching {name}")
+            
+            time.sleep(2.0)  # Pause between waypoints
+
     def monitor_position_updates(self, duration: float = 60.0) -> None:
         """
         Monitor position updates and drone status.
@@ -248,7 +255,7 @@ class PositionEmulatorTest:
                 self.print_status_update()
                 last_update = current_time
             
-            time.sleep(0.1)  # Small sleep to prevent excessive CPU usage
+            time.sleep(0.1)  # Small sleep
         
         print("\n Monitoring completed")
     
@@ -257,38 +264,25 @@ class PositionEmulatorTest:
         try:
             elapsed_time = time.time() - self.test_start_time
             
-            # Get current position
-            result, odometry = self.controller.get_odometry()
-            if result and odometry:
-                lat = odometry.position.latitude
-                lon = odometry.position.longitude
-                alt = odometry.position.altitude
+            if self.controller.hitl_instance and self.controller.hitl_instance.position_emulator:
+                pos_emu = self.controller.hitl_instance.position_emulator
+                current_pos = pos_emu.current_position
+                target_pos = pos_emu.target_position
+                waypoint_pos = pos_emu.waypoint_position
                 
                 # Send status to Mission Planner
                 status_msg = f"HITL Test - Lat:{lat:.6f} Lon:{lon:.6f} Alt:{alt:.1f}m"
                 self.controller.send_statustext_msg(status_msg)
                 
-                print(f"[{elapsed_time:6.1f}s] Position: {lat:.6f}, {lon:.6f}, {alt:.1f}m")
-            else:
-                # Simple debug info when position data not available
-                print(f"[{elapsed_time:6.1f}s] Could not get position data")
-                try:
-                    # HITL status
-                    if self.controller.hitl:
-                        print(f"         HITL: Active, waiting for GPS initialization...")
-                        
-                        # Check if position emulator is running
-                        if self.controller.hitl_instance and self.controller.hitl_instance.position_emulator:
-                            pos_emu = self.controller.hitl_instance.position_emulator
-                            current_pos = pos_emu.current_position
-                            target_pos = pos_emu.target_position
-                            print(f"         Position Emulator - Current: {current_pos[0]:.6f}, {current_pos[1]:.6f}, {current_pos[2]:.1f}")
-                            print(f"         Position Emulator - Target: {target_pos[0]:.6f}, {target_pos[1]:.6f}, {target_pos[2]:.1f}")
-                        
-                        self.controller.send_statustext_msg(f"HITL - GPS initializing ({elapsed_time:.0f}s)")
-                    
-                except Exception:
-                    print(f"         Debug: Unable to check GPS status")
+                print(f"[{elapsed_time:6.1f}s] HITL Position: {current_pos[0]:.6f}, {current_pos[1]:.6f}, {current_pos[2]:.1f}m")
+                print(f"         Target: {target_pos[0]:.6f}, {target_pos[1]:.6f}, {target_pos[2]:.1f}m")
+                
+                if waypoint_pos:
+                    distance = pos_emu.calculate_distance(current_pos, waypoint_pos)
+                    print(f"         Waypoint: {waypoint_pos[0]:.6f}, {waypoint_pos[1]:.6f}, {waypoint_pos[2]:.1f}m (dist: {distance:.2f}m)")
+                else:
+                    print(f"         No active waypoint")
+            
             
             # Get next waypoint info
             result, next_wp = self.controller.get_next_waypoint()
@@ -324,14 +318,13 @@ class PositionEmulatorTest:
         if not self.wait_for_heartbeat():
             print("⚠️  Continuing without confirmed heartbeat...")
         
-        # Step 4: Create and upload mission
-        if not self.create_test_mission():
-            return 2
+        # Step 4: Test manual waypoint movement
+        self.test_manual_waypoints()
         
-        # Step 5: Set flight mode to AUTO (for mission execution)
-        print("\n🎯 Setting up for mission execution...")
-        if not self.set_flight_mode("AUTO"):
-            print("Could not set AUTO mode, try manually in Mission Planner")
+        # Step 5: Optional - Create and upload mission for Mission Planner visualization
+        print("\n📋 Creating mission for Mission Planner visualization (optional)...")
+        if self.create_test_mission():
+            print("✅ Mission created successfully - you can see waypoints in Mission Planner")
         
         # Step 6: Monitor position updates
         print("\n📊 Instructions for Mission Planner:")

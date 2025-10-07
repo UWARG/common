@@ -56,6 +56,18 @@ class PositionEmulator:
         """
         self.target_position = (latitude, longitude, altitude)
 
+    def set_waypoint_position(self, latitude: float, longitude: float, altitude: float) -> None:
+        """
+        Manually sets a waypoint for the emulator to move towards.
+
+        Args:
+            latitude: Latitude in degrees.
+            longitude: Longitude in degrees.
+            altitude: Altitude in meters.
+        """
+        self.waypoint_position = (latitude, longitude, altitude)
+        print(f"HITL Position: Manual waypoint set to {latitude:.6f}, {longitude:.6f}, {altitude:.1f}m")
+
     def get_target_position(self) -> tuple[float, float, float]:
         """
         Gets the target position from the Ardupilot target and stores it as waypoint.
@@ -159,6 +171,7 @@ class PositionEmulator:
             
             # If we're close enough to the waypoint, consider it reached
             if distance_to_waypoint < 1.0:  # 1 meter tolerance
+                print(f"HITL Position: Reached waypoint {self.waypoint_position[0]:.6f}, {self.waypoint_position[1]:.6f}, {self.waypoint_position[2]:.1f}m")
                 self.current_position = self.waypoint_position
                 self.target_position = self.waypoint_position
                 self.waypoint_position = None  # Clear waypoint
