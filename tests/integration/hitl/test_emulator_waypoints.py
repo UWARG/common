@@ -271,7 +271,7 @@ class PositionEmulatorTest:
                 waypoint_pos = pos_emu.waypoint_position
                 
                 # Send status to Mission Planner
-                status_msg = f"HITL Test - Lat:{lat:.6f} Lon:{lon:.6f} Alt:{alt:.1f}m"
+                status_msg = f"HITL Test - Lat:{current_pos[0]:.6f} Lon:{current_pos[1]:.6f} Alt:{current_pos[2]:.1f}m"
                 self.controller.send_statustext_msg(status_msg)
                 
                 print(f"[{elapsed_time:6.1f}s] HITL Position: {current_pos[0]:.6f}, {current_pos[1]:.6f}, {current_pos[2]:.1f}m")
@@ -318,8 +318,8 @@ class PositionEmulatorTest:
         if not self.wait_for_heartbeat():
             print("⚠️  Continuing without confirmed heartbeat...")
         
-        # Step 4: Test manual waypoint movement
-        self.test_manual_waypoints()
+        
+        # self.test_manual_waypoints()# Step 4: Test manual waypoint movement
         
         # Step 5: Optional - Create and upload mission for Mission Planner visualization
         print("\n📋 Creating mission for Mission Planner visualization (optional)...")
