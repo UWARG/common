@@ -38,7 +38,7 @@ UPDATE_INTERVAL = 1.0
 class PositionEmulatorTest:
     """Test class for position emulator with waypoints."""
 
-    def __init__(self, connection_string: str):
+    def __init__(self, connection_string: str) -> None:
         """Initialize the test with connection string."""
         self.connection_string = connection_string
         self.controller: Optional[flight_controller.FlightController] = None
