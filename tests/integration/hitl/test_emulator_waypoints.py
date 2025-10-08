@@ -6,7 +6,6 @@ Test script for position_emulator with 2 waypoints.
 
 import argparse
 import time
-import sys
 from typing import Optional
 
 from modules.mavlink import flight_controller
