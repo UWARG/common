@@ -51,7 +51,7 @@ def example_json_position_emulator() -> None:
 
         # Simulate running for 5 seconds to show coordinate cycling
         print("\n📊 Coordinate cycling simulation:")
-        for i in range(5):
+        for i in range(10):
             time.sleep(1)
             print(f"⏰ Time: {i+1}s - Position emulator is running...")
 
@@ -60,6 +60,7 @@ def example_json_position_emulator() -> None:
     print("\n" + "=" * 60)
 
     # Example 2: Custom update interval
+    """
     print("=== Example 2: Custom Update Interval (2 seconds) ===")
 
     success, flight_controller = FlightController.create(
@@ -78,8 +79,10 @@ def example_json_position_emulator() -> None:
         print("⏱️  Coordinates will change every 2 seconds")
 
     print("\n" + "=" * 60)
+    """
 
     # Example 3: No JSON file (uses Ardupilot)
+    """
     print("=== Example 3: No JSON File (Ardupilot Mode) ===")
 
     success, flight_controller = FlightController.create(
@@ -95,6 +98,7 @@ def example_json_position_emulator() -> None:
         print("✅ HITL created without JSON file")
         print("🎯 Will use Ardupilot's internal pathing")
         print("❌ No 1-second coordinate shifting")
+    """
 
 
 def explain_coordinate_cycling() -> None:
