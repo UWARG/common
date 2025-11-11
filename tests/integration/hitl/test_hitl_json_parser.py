@@ -37,7 +37,7 @@ def example_json_position_emulator() -> None:
         True,
         True,
         images_folder_path,
-        json_file_path=position_json_path,  # Our test file
+        position_json_path,  # Our test file
     )
 
     if success and flight_controller:
@@ -47,7 +47,6 @@ def example_json_position_emulator() -> None:
         print("🔄 Will cycle through coordinates every second")
 
         # Start the HITL system
-        flight_controller.start()
         print("🚀 HITL started - position emulation running...")
 
         # Simulate running for 5 seconds to show coordinate cycling
@@ -70,7 +69,7 @@ def example_json_position_emulator() -> None:
         True,
         True,
         images_folder_path,
-        json_file_path=position_json_path,  # Our test file
+        position_json_path,  # Our test file
         position_update_interval=2.0,
     )
 
@@ -198,4 +197,4 @@ if success:
     )
 
     # Uncomment to run actual examples (requires drone connection):
-    # example_json_position_emulator()
+    example_json_position_emulator()
