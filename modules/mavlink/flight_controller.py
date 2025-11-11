@@ -211,6 +211,8 @@ class FlightController:
         position_module: bool = False,
         camera_module: bool = False,
         images_path: str | None = None,
+        position_json_path: str | None = None,
+        position_update_interval: float = 1.0,
     ) -> "tuple[bool, FlightController | None]":
         """
         address: TCP address or serial port of the drone (e.g. "tcp:127.0.0.1:14550").
@@ -227,7 +229,13 @@ class FlightController:
             )
             # Enable/disable HITL based on mode
             success, hitl_instance = hitl_base.HITL.create(
-                drone, hitl_enabled, position_module, camera_module, images_path
+                drone,
+                hitl_enabled,
+                position_module,
+                camera_module,
+                images_path,
+                position_json_path,
+                position_update_interval,
             )
             if success:
                 if hitl_enabled and hitl_instance is not None:

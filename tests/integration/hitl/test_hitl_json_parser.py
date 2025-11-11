@@ -3,16 +3,24 @@ Example usage of the JSON Position Emulator in HITL mode.
 This demonstrates how the position emulator cycles through JSON coordinates.
 """
 
+import os
 import time
-from modules.hitl.hitl_base import HITL
-from modules.mavlink import dronekit
+from modules.mavlink.flight_controller import FlightController
+
+# Physical connection to Pixhawk: /dev/ttyAMA0
+# Simulated connection to Pixhawk: tcp:localhost:5762
+PIXHAWK_ADDRESS = "/dev/ttyAMA0"
+
 
 def example_json_position_emulator() -> None:
     """
     Example showing how the JSON position emulator works.
 
-    
+
     """
+
+    images_folder_path = os.path.join("tests", "integration", "camera_emulator", "images")
+    position_json_path = os.path.join("tests", "integration", "hitl", "test_coordinates.json")
 
     # Example 1: Basic usage with JSON file
     print("=== Example 1: Basic JSON Position Emulation ===")
@@ -22,23 +30,24 @@ def example_json_position_emulator() -> None:
     # drone = dronekit.connect("tcp:127.0.0.1:5760")  # SITL connection
 
     # Create HITL with JSON coordinates
-    success, hitl = HITL.create(
-        drone=None,  # Replace with actual drone connection
-        hitl_enabled=True,
-        position_module=True,
-        camera_module=False,
-        json_file_path="test_coordinates.json",  # Our test file
-        position_update_interval=1.0  # 1 second intervals
+    success, flight_controller = FlightController.create(
+        PIXHAWK_ADDRESS,
+        57600,
+        True,
+        True,
+        True,
+        images_folder_path,
+        json_file_path=position_json_path,  # Our test file
     )
 
-    if success and hitl:
+    if success and flight_controller:
         print("✅ HITL created successfully with JSON position emulation")
         print("📁 JSON file: test_coordinates.json")
         print("⏱️  Update interval: 1.0 seconds")
         print("🔄 Will cycle through coordinates every second")
 
         # Start the HITL system
-        hitl.start()
+        flight_controller.start()
         print("🚀 HITL started - position emulation running...")
 
         # Simulate running for 5 seconds to show coordinate cycling
@@ -47,55 +56,58 @@ def example_json_position_emulator() -> None:
             time.sleep(1)
             print(f"⏰ Time: {i+1}s - Position emulator is running...")
 
-        # Stop the system
-        hitl.shutdown()
         print("🛑 HITL stopped")
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
 
     # Example 2: Custom update interval
     print("=== Example 2: Custom Update Interval (2 seconds) ===")
 
-    success, hitl2 = HITL.create(
-        drone=None,  # Replace with actual drone connection
-        hitl_enabled=True,
-        position_module=True,
-        camera_module=False,
-        json_file_path="test_coordinates.json",
-        position_update_interval=2.0  # 2 second intervals
+    success, flight_controller = FlightController.create(
+        PIXHAWK_ADDRESS,
+        57600,
+        True,
+        True,
+        True,
+        images_folder_path,
+        json_file_path=position_json_path,  # Our test file
+        position_update_interval=2.0,
     )
 
-    if success and hitl2:
+    if success and flight_controller:
         print("✅ HITL created with 2-second update interval")
         print("⏱️  Coordinates will change every 2 seconds")
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
 
     # Example 3: No JSON file (uses Ardupilot)
     print("=== Example 3: No JSON File (Ardupilot Mode) ===")
 
-    success, hitl3 = HITL.create(
-        drone=None,  # Replace with actual drone connection
-        hitl_enabled=True,
-        position_module=True,
-        camera_module=False
-        # No json_file_path - will use Ardupilot pathing
+    success, flight_controller = FlightController.create(
+        PIXHAWK_ADDRESS,
+        57600,
+        True,
+        True,
+        True,
+        images_folder_path,
     )
 
-    if success and hitl3:
+    if success and flight_controller:
         print("✅ HITL created without JSON file")
         print("🎯 Will use Ardupilot's internal pathing")
         print("❌ No 1-second coordinate shifting")
+
 
 def explain_coordinate_cycling() -> None:
     """
     Explains how the coordinate cycling works internally.
     """
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("🔍 HOW COORDINATE CYCLING WORKS INTERNALLY")
-    print("="*60)
+    print("=" * 60)
 
-    print("""
+    print(
+        """
 1. 📁 JSON Loading:
    - Loads coordinates from test_coordinates.json
    - Validates format: [[lat, lon, alt], [lat, lon, alt], ...]
@@ -116,17 +128,20 @@ def explain_coordinate_cycling() -> None:
    - JSON coordinates have priority over Ardupilot
    - If JSON available: use JSON cycling
    - If no JSON: fallback to Ardupilot pathing
-""")
+"""
+    )
+
 
 def show_json_format() -> None:
     """
     Shows the expected JSON format and example data.
     """
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("📄 JSON FILE FORMAT")
-    print("="*60)
+    print("=" * 60)
 
-    print("""
+    print(
+        """
 Expected JSON format:
 [
     [latitude, longitude, altitude],
@@ -144,11 +159,13 @@ This will cycle through:
 2. Second coordinate for 1 second  
 3. Third coordinate for 1 second
 4. Back to first coordinate (loops forever)
-""")
+"""
+    )
+
 
 if __name__ == "__main__":
     print("🚁 HITL JSON Position Emulator Example")
-    print("="*60)
+    print("=" * 60)
 
     # Show JSON format
     show_json_format()
@@ -157,10 +174,11 @@ if __name__ == "__main__":
     explain_coordinate_cycling()
 
     # Run examples (commented out since we don't have real drone)
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("💡 TO USE IN REAL CODE:")
-    print("="*60)
-    print("""
+    print("=" * 60)
+    print(
+        """
 # In your flight_controller.py:
 from modules.hitl.hitl_base import HITL
 # Create HITL with JSON coordinates
@@ -176,7 +194,8 @@ if success:
     hitl.start()  # Start position emulation
     # Your main flight loop here
     hitl.shutdown()  # Clean shutdown
-""")
+"""
+    )
 
     # Uncomment to run actual examples (requires drone connection):
     # example_json_position_emulator()
