@@ -322,19 +322,25 @@ class FlightController:
     def get_location(self) -> "tuple[bool, tuple[float, float, float] | None]":
         """Return (lat, lon, alt) if available via the drone, otherwise (False, None)."""
         try:
-            loc = self.drone.location
-        except Exception:  # pylint: disable=broad-except
-            print("get_location: could not complete request")
+            # pylint: disable=protected-access
+            msg = self.drone._master.recv_match(
+                type="GLOBAL_POSITION_INT", blocking=False, timeout=1.0
+            )
+            # pylint: enable=protected-access
+            
+            if msg is None:
+                return False, None
+            
+            lat = msg.lat / 1e7  
+            lon = msg.lon / 1e7 
+            alt = msg.alt / 1000.0  
+            
+            return True, (lat, lon, alt)
+            
+        except Exception as exc:  # pylint: disable=broad-except
+            print(f"get_location_mavlink: error receiving GLOBAL_POSITION_INT: {exc}")
             return False, None
 
-        if loc is None or loc.global_frame is None:
-            return False, None
-
-        gf = loc.global_frame
-        if gf.lat is None or gf.lon is None or gf.alt is None:
-            return False, None
-
-        return True, (gf.lat, gf.lon, gf.alt)
 
     def get_home_position(
         self, timeout: float
