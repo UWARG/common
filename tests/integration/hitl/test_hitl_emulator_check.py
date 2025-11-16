@@ -85,21 +85,18 @@ def main() -> int:
 
             if int(current_time) % 2 == 0 and current_time > 0:
                 success, location = controller.get_location()
-                
+
                 if success and location is not None:
                     lat, lon, alt = location
                     gps_count += 1
                     print(f"GPS: {lat:.6f}, {lon:.6f}, {alt:.1f}m")
                     controller.hitl_instance.position_emulator.set_target_position(
-                        lat + 0.001,  
-                        lon + 0.001,  
-                        alt + 10      
+                        lat + 0.001, lon + 0.001, alt + 10
                     )
-                    
 
                 else:
                     print("GPS: No data")
-                    
+
             # Test camera feed every 3 seconds
             if int(current_time) % 3 == 0 and current_time > 1:
                 if test_camera_feed():

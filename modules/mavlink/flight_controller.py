@@ -327,20 +327,19 @@ class FlightController:
                 type="GLOBAL_POSITION_INT", blocking=False, timeout=1.0
             )
             # pylint: enable=protected-access
-            
+
             if msg is None:
                 return False, None
-            
-            lat = msg.lat / 1e7  
-            lon = msg.lon / 1e7 
-            alt = msg.alt / 1000.0  
-            
+
+            lat = msg.lat / 1e7
+            lon = msg.lon / 1e7
+            alt = msg.alt / 1000.0
+
             return True, (lat, lon, alt)
-            
+
         except Exception as exc:  # pylint: disable=broad-except
             print(f"get_location_mavlink: error receiving GLOBAL_POSITION_INT: {exc}")
             return False, None
-
 
     def get_home_position(
         self, timeout: float
