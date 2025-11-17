@@ -1,6 +1,6 @@
 """
 Encoding and Decoding Global Positions
-Save first byte as char to represent which worker sent the message 
+Save first byte as char to represent which worker sent the message
 """
 
 import base64
