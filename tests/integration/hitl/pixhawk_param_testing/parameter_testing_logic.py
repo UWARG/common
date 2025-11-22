@@ -140,7 +140,7 @@ def fetch_all_params_mavlink(
     - decrypts and strips messages into values
     """
     # imported here so other modules can import this file without pymavlink
-    from pymavlink import mavutil   # pylint: disable=import-outside-toplevel
+    from pymavlink import mavutil  # pylint: disable=import-outside-toplevel
 
     # checks if vehicle is alive
     connection = mavutil.mavlink_connection(address, baud=baud)
@@ -231,10 +231,7 @@ def main() -> int:
     if missing:
         print(f"- Missing ({len(missing)}): {missing}")
     if mismatches:
-        lines = [
-            f"{name}: expected={exp} actual={act}"
-            for name, exp, act in mismatches
-        ]
+        lines = [f"{name}: expected={exp} actual={act}" for name, exp, act in mismatches]
         print(f"- Mismatches ({len(mismatches)}):")
         print("  " + "\n  ".join(lines))
     if extras:
