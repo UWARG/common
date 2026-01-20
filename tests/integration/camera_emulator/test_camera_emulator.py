@@ -6,7 +6,7 @@ INSTRUCTIONS:
 run this script (this will create a virtual camera and start streaming images to it)
 
 - Run test_camera_read (will open the virtual camera using opencv and display the images)
-Note: may need to mess around with camera index 
+Note: may need to mess around with camera index
 (usually will be # of cameras connected to computer + 1)
 """
 
