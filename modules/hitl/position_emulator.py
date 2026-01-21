@@ -13,6 +13,7 @@ class PositionEmulator:
     """
 
     __create_key = object()
+    WAYPOINT_TOLERANCE = 1.0  # meters - distance tolerance for considering waypoint reached
 
     @classmethod
     def create(
@@ -44,6 +45,7 @@ class PositionEmulator:
         self.movement_speed = movement_speed  # m/s
         self.last_update_time = time.time()
         self.waypoint_position = None
+        self.waypoint_start_position = None  # Position when waypoint was set
 
         self.drone = drone
 
@@ -68,6 +70,7 @@ class PositionEmulator:
             altitude: Altitude in meters.
         """
         self.waypoint_position = (latitude, longitude, altitude)
+        self.waypoint_start_position = self.current_position  # Record starting position
         print(
             f"HITL Position: Manual waypoint set to {latitude:.6f}, {longitude:.6f}, {altitude:.1f}m"
         )
@@ -95,7 +98,11 @@ class PositionEmulator:
             longitude = position_target.lon_int / 1e7
             altitude = position_target.alt
 
-            self.waypoint_position = (latitude, longitude, altitude)
+            # Only update if this is a new waypoint
+            new_waypoint = (latitude, longitude, altitude)
+            if self.waypoint_position != new_waypoint:
+                self.waypoint_position = new_waypoint
+                self.waypoint_start_position = self.current_position  # Record starting position
 
         return self.target_position
 
@@ -179,21 +186,43 @@ class PositionEmulator:
             )
 
             # If we're close enough to the waypoint, consider it reached
-            if distance_to_waypoint < 1.0:
+            if distance_to_waypoint < self.WAYPOINT_TOLERANCE:
                 print(
                     f"HITL Position: Reached waypoint {self.waypoint_position[0]:.6f}, {self.waypoint_position[1]:.6f}, {self.waypoint_position[2]:.1f}m"
                 )
                 self.current_position = self.waypoint_position
                 self.target_position = self.waypoint_position
                 self.waypoint_position = None  # Clear waypoint
+                self.waypoint_start_position = None  # Clear start position
             else:
-                # Move towards the waypoint
-                distance_to_move = self.movement_speed * dt
-                progress = min(distance_to_move / distance_to_waypoint, 1.0)
+                # Move towards the waypoint using proper progress calculation
+                if self.waypoint_start_position is not None:
+                    total_distance = self.calculate_distance(
+                        self.waypoint_start_position, self.waypoint_position
+                    )
+                    traveled_distance = self.calculate_distance(
+                        self.waypoint_start_position, self.current_position
+                    )
 
-                self.current_position = self.interpolate_position(
-                    self.current_position, self.waypoint_position, progress
-                )
+                    # Calculate how much further we should move this frame
+                    distance_to_move = self.movement_speed * dt
+                    new_traveled_distance = min(
+                        traveled_distance + distance_to_move, total_distance
+                    )
+                    progress = new_traveled_distance / total_distance if total_distance > 0 else 1.0
+
+                    self.current_position = self.interpolate_position(
+                        self.waypoint_start_position, self.waypoint_position, progress
+                    )
+                else:
+                    # Fallback to old method if start position not set
+                    distance_to_move = self.movement_speed * dt
+                    progress = min(distance_to_move / distance_to_waypoint, 1.0)
+
+                    self.current_position = self.interpolate_position(
+                        self.current_position, self.waypoint_position, progress
+                    )
+
                 self.target_position = self.current_position
 
         # Inject the current interpolated position
