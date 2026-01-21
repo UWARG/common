@@ -195,7 +195,7 @@ class PositionEmulator:
                 self.waypoint_position = None  # Clear waypoint
                 self.waypoint_start_position = None  # Clear start position
             else:
-                # Move towards the waypoint using proper progress calculation
+                # Move towards the waypoint
                 if self.waypoint_start_position is not None:
                     total_distance = self.calculate_distance(
                         self.waypoint_start_position, self.waypoint_position
